@@ -14,7 +14,7 @@ using System.Security.Claims;
 using System.Text;
 using Xunit;
 
-namespace Cafe.Business.Tests.Identity
+namespace Cafe.Tests.Business.Auth
 {
     public class JwtFactoryTests
     {

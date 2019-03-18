@@ -22,20 +22,20 @@
             it's just that it will not be properly displayed in the Swagger UI.
             </summary>
         </member>
-        <member name="M:Cafe.Api.Controllers.UsersController.Login(Cafe.Models.Auth.LoginUserModel)">
+        <member name="M:Cafe.Api.Controllers.UsersController.Login(Cafe.Core.Auth.Commands.Login)">
             <summary>
             Login.
             </summary>
-            <param name="model">The credentials.</param>
+            <param name="command">The credentials.</param>
             <returns>A JWT token.</returns>
             <response code="200">If the credentials have a match.</response>
             <response code="400">If the credentials don't match/don't meet the requirements.</response>
         </member>
-        <member name="M:Cafe.Api.Controllers.UsersController.Register(Cafe.Models.Auth.RegisterUserModel)">
+        <member name="M:Cafe.Api.Controllers.UsersController.Register(Cafe.Core.Auth.Commands.Register)">
             <summary>
             Register.
             </summary>
-            <param name="model">The user model.</param>
+            <param name="command">The user model.</param>
             <returns>A user model.</returns>
             <response code="201">A user was created.</response>
             <response code="400">Invalid input.</response>

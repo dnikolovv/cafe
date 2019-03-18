@@ -1,8 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Cafe.Core.CQRS;
+using Cafe.Models.Auth;
+using System.ComponentModel.DataAnnotations;
 
-namespace Cafe.Models.Auth
+namespace Cafe.Core.Auth.Commands
 {
-    public class RegisterUserModel
+    public class Register : ICommand<UserModel>
     {
         [Required]
         public string FirstName { get; set; }

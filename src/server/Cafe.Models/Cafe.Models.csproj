@@ -1,12 +1,13 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <CodeAnalysisRuleSet>..\..\configuration\analyzers.ruleset</CodeAnalysisRuleSet>
     <LangVersion>8.0</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="..\..\configuration\stylecop.json" Link="stylecop.json" />
+    <AdditionalFiles Include="..\..\configuration\stylecop.json" Link="stylecop.json" />
   </ItemGroup>
 
   <ItemGroup>

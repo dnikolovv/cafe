@@ -21,6 +21,12 @@ namespace Cafe.Domain
 
         public DateTime Date { get; }
 
+        public static Error FromString(string error) =>
+            new Error(error);
+
+        public static Error FromCollection(IEnumerable<string> errors) =>
+            new Error(errors);
+
         public static implicit operator Error(string message) =>
             new Error(message);
 

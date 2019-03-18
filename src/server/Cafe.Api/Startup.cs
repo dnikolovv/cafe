@@ -3,11 +3,10 @@ using Cafe.Api.Configuration;
 using Cafe.Api.Filters;
 using Cafe.Api.ModelBinders;
 using Cafe.Business.Auth;
-using Cafe.Business.Services;
 using Cafe.Core.Auth;
 using Cafe.Core.Auth.Configuration;
-using Cafe.Core.Auth.Services;
 using Cafe.Persistance.EntityFramework;
+using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -42,7 +41,8 @@ namespace Cafe.Api
 
             services.AddLogging(logBuilder => logBuilder.AddSerilog(dispose: true));
 
-            services.AddTransient<IAuthService, AuthService>();
+            services.AddMediatR();
+
             services.AddTransient<IJwtFactory, JwtFactory>();
 
             services.AddMvc(options =>
