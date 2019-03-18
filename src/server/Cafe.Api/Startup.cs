@@ -19,6 +19,11 @@ namespace Cafe.Api
 {
     public class Startup
     {
+        public Startup(IConfiguration configuration)
+        {
+            Configuration = configuration;
+        }
+
         public Startup(IHostingEnvironment env)
         {
             var builder = new ConfigurationBuilder()
@@ -30,11 +35,11 @@ namespace Cafe.Api
             Configuration = builder.Build();
         }
 
-        public IConfigurationRoot Configuration { get; }
+        public IConfiguration Configuration { get; }
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext(Configuration.GetConnectionString("DbConnectionString"));
+            services.AddDbContext(Configuration.GetConnectionString("DefaultConnection"));
             services.AddAutoMapper();
             services.AddSwagger();
             services.AddJwtIdentity(Configuration.GetSection(nameof(JwtConfiguration)));
