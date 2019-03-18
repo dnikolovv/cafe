@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Cafe.Api</name>
+    </assembly>
+    <members>
+        <member name="M:Cafe.Api.Controllers.OptionController.Get(Cafe.Api.Controllers.OptionController.ParametersDemo)">
+            <summary>
+            Demonstrates the Option model binding with query string parameters.
+            </summary>
+            <param name="request">The request object.</param>
+            <returns>A model showing the bound data.</returns>
+            <response code="200">The model was bound successfully.</response>
+            <response code="400">When it could not parse some of the inputted data.</response>
+        </member>
+        <member name="T:Cafe.Api.Controllers.OptionController.ParametersDemo">
+            <summary>
+            This class is for demonstration purposes.
+            The optional values need to be put in as class properties in order
+            for Swagger to be able to display them properly. There is nothing wrong with
+            having something like Get([FromQuery] Option&lt;string&gt; text), it's going to work,
+            it's just that it will not be properly displayed in the Swagger UI.
+            </summary>
+        </member>
+        <member name="M:Cafe.Api.Controllers.UsersController.Login(Cafe.Models.Auth.LoginUserModel)">
+            <summary>
+            Login.
+            </summary>
+            <param name="model">The credentials.</param>
+            <returns>A JWT token.</returns>
+            <response code="200">If the credentials have a match.</response>
+            <response code="400">If the credentials don't match/don't meet the requirements.</response>
+        </member>
+        <member name="M:Cafe.Api.Controllers.UsersController.Register(Cafe.Models.Auth.RegisterUserModel)">
+            <summary>
+            Register.
+            </summary>
+            <param name="model">The user model.</param>
+            <returns>A user model.</returns>
+            <response code="201">A user was created.</response>
+            <response code="400">Invalid input.</response>
+        </member>
+        <member name="T:Cafe.Api.OperationFilters.OptionOperationFilter">
+            <summary>
+            This operation filter only works on <see cref="T:Optional.Option"/> types that are contained in a class.
+            Optional values that are put as type parameters will not be properly displayed in Swagger, although they will work.
+            </summary>
+        </member>
+    </members>
+</doc>
