@@ -1,6 +1,8 @@
 ﻿using Cafe.Core.Auth.Commands;
 using Cafe.Tests.Customizations;
 using Shouldly;
+using System;
+using System.IdentityModel.Tokens.Jwt;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -32,8 +34,22 @@ namespace Cafe.Tests.Business.Auth.Handlers
             var result = await _fixture.SendAsync(loginCommand);
 
             // Assert
-            // TODO: Validate if it's a real jwt with all of the claims properly set up
-            result.Exists(jwt => !string.IsNullOrEmpty(jwt.TokenString)).ShouldBeTrue();
+            // TODO: Validate subject, claims, etc.
+            result.Exists(jwt => IsValidJwt(jwt.TokenString)).ShouldBeTrue();
+        }
+
+        private static bool IsValidJwt(string tokenString)
+        {
+            try
+            {
+                var decodedJwt = new JwtSecurityToken(tokenString);
+
+                return true;
+            }
+            catch (ArgumentException e)
+            {
+                return false;
+            }
         }
     }
 }
