@@ -27,7 +27,7 @@ namespace Cafe.Business
             return validationResult
                 .SomeWhen(
                     r => r.IsValid,
-                    r => Error.FromCollection(r.Errors.Select(e => e.ErrorMessage)))
+                    r => Error.Validation(r.Errors.Select(e => e.ErrorMessage)))
 
                 // If the validation result is successfull, disregard it and simply return the command
                 .Map(_ => command);

@@ -20,7 +20,7 @@ namespace Cafe.Api.Filters
                     .Values
                     .SelectMany(v => v.Errors.Select(e => e.ErrorMessage));
 
-                context.Result = new BadRequestObjectResult(new Error(errors));
+                context.Result = new BadRequestObjectResult(Error.Validation(errors));
             }
         }
     }

@@ -1,5 +1,7 @@
 ﻿using Cafe.Core.Auth.Commands;
+using Cafe.Domain;
 using Cafe.Tests.Customizations;
+using Cafe.Tests.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Optional.Unsafe;
 using Shouldly;
@@ -41,6 +43,50 @@ namespace Cafe.Tests.Business.Auth.Handlers
             userInDb.Email.ShouldBe(command.Email);
             userInDb.FirstName.ShouldBe(command.FirstName);
             userInDb.LastName.ShouldBe(command.LastName);
+        }
+
+        [Theory]
+        [CustomizedAutoData]
+        public async Task CannotRegisterWithInvalidEmail(Register command)
+        {
+            // Arrange
+            command.Email = "invalid-email";
+
+            // Act
+            var result = await _fixture.SendAsync(command);
+
+            // Assert
+            result.ShouldHaveErrorOfType(ErrorType.ValidationError);
+        }
+
+        [Theory]
+        [CustomizedAutoData]
+        public async Task CannotRegisterTheSameEmailTwice(Register command)
+        {
+            // Arrange
+            // First register
+            await _fixture.SendAsync(command);
+
+            // Act
+            var result = await _fixture.SendAsync(command);
+
+            // Assert
+            result.ShouldHaveErrorOfType(ErrorType.Conflict);
+        }
+
+        [Theory]
+        [CustomizedAutoData]
+        public async Task CannotRegisterWithMissingNames(Register command)
+        {
+            // Arrange
+            command.FirstName = null;
+            command.LastName = null;
+
+            // Act
+            var result = await _fixture.SendAsync(command);
+
+            // Assert
+            result.ShouldHaveErrorOfType(ErrorType.ValidationError);
         }
     }
 }
