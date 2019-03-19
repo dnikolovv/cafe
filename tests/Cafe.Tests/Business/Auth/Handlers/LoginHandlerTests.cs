@@ -35,10 +35,10 @@ namespace Cafe.Tests.Business.Auth.Handlers
 
             // Assert
             // TODO: Validate subject, claims, etc.
-            result.Exists(jwt => IsValidJwt(jwt.TokenString)).ShouldBeTrue();
+            result.Exists(jwt => IsValidJwtString(jwt.TokenString)).ShouldBeTrue();
         }
 
-        private static bool IsValidJwt(string tokenString)
+        private static bool IsValidJwtString(string tokenString)
         {
             try
             {
