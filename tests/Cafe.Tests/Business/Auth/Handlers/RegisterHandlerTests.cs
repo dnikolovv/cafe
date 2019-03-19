@@ -1,6 +1,7 @@
-﻿using AutoFixture.Xunit2;
-using Cafe.Core.Auth.Commands;
+﻿using Cafe.Core.Auth.Commands;
 using Cafe.Tests.Customizations;
+using Microsoft.EntityFrameworkCore;
+using Optional.Unsafe;
 using Shouldly;
 using System.Threading.Tasks;
 using Xunit;
@@ -24,12 +25,22 @@ namespace Cafe.Tests.Business.Auth.Handlers
             var result = await _fixture.SendAsync(command);
 
             // Assert
-            result.Exists(user =>
-                !string.IsNullOrEmpty(user.Id) &&
-                user.Email == command.Email &&
-                user.FirstName == command.FirstName &&
-                user.LastName == command.LastName)
-                .ShouldBeTrue();
+            result.HasValue.ShouldBeTrue();
+
+            var userModel = result.ValueOrDefault();
+
+            userModel.Id.ShouldNotBeNullOrEmpty();
+            userModel.Email.ShouldBe(command.Email);
+            userModel.FirstName.ShouldBe(command.FirstName);
+            userModel.LastName.ShouldBe(command.LastName);
+
+            var userInDb = await _fixture
+                .ExecuteDbContextAsync(context => context.Users.FirstOrDefaultAsync(u => u.Id == userModel.Id));
+
+            userInDb.ShouldNotBeNull();
+            userInDb.Email.ShouldBe(command.Email);
+            userInDb.FirstName.ShouldBe(command.FirstName);
+            userInDb.LastName.ShouldBe(command.LastName);
         }
     }
 }

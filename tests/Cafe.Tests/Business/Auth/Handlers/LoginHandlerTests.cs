@@ -1,5 +1,4 @@
-﻿using AutoFixture.Xunit2;
-using Cafe.Core.Auth.Commands;
+﻿using Cafe.Core.Auth.Commands;
 using Cafe.Tests.Customizations;
 using Shouldly;
 using System.Threading.Tasks;
