@@ -37,7 +37,7 @@ namespace Cafe.Tests
             dbContext.Database.EnsureCreated();
         }
 
-        public static string RelationalDbConnectionString => _configuration.GetConnectionString("DefaultConnection");
+        public static string DbConnectionString => _configuration.GetConnectionString("DefaultConnection");
 
         public Task ExecuteDbContextAsync(Func<ApplicationDbContext, Task> action) =>
             ExecuteScopeAsync(sp =>

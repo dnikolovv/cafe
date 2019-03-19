@@ -4,6 +4,7 @@ using Cafe.Models.Auth;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using System.Net.Mail;
 using System.Threading.Tasks;
 
 namespace Cafe.Api.Controllers

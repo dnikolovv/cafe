@@ -1,12 +1,13 @@
 ﻿using AutoFixture.Xunit2;
 using Cafe.Core.Auth.Commands;
+using Cafe.Tests.Customizations;
 using Shouldly;
 using System.Threading.Tasks;
 using Xunit;
 
 namespace Cafe.Tests.Business.Auth.Handlers
 {
-    public class LoginHandlerTests
+    public class LoginHandlerTests : ResetDatabaseLifetime
     {
         private readonly SliceFixture _fixture;
 
@@ -16,7 +17,7 @@ namespace Cafe.Tests.Business.Auth.Handlers
         }
 
         [Theory]
-        [AutoData]
+        [CustomizedAutoData]
         public async Task CanLogin(Register registerUserCommand)
         {
             // Arrange

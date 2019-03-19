@@ -5,6 +5,7 @@ using Cafe.Core.CQRS;
 using Cafe.Domain;
 using Cafe.Domain.Entities;
 using Cafe.Models.Auth;
+using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 using Optional;
 using Optional.Async;
@@ -14,26 +15,28 @@ using System.Threading.Tasks;
 
 namespace Cafe.Business.Auth.Handlers
 {
-    public class RegisterHandler : BaseHandler, ICommandHandler<Register, UserModel>
+    public class RegisterHandler : BaseAuthHandler<Register>, ICommandHandler<Register, UserModel>
     {
         public RegisterHandler(
+            IValidator<Register> validator,
             UserManager<User> userManager,
             IJwtFactory jwtFactory,
             IMapper mapper)
-            : base(userManager, jwtFactory, mapper)
+            : base(validator, userManager, jwtFactory, mapper)
         {
         }
 
-        public async Task<Option<UserModel, Error>> Handle(Register model, CancellationToken cancellationToken = default)
-        {
-            var user = Mapper.Map<User>(model);
+        public Task<Option<UserModel, Error>> Handle(Register command, CancellationToken cancellationToken = default) =>
+            ValidateCommand(command).FlatMapAsync(async cmd =>
+            {
+                var user = Mapper.Map<User>(command);
 
-            var creationResult = (await UserManager.CreateAsync(user, model.Password))
-                .SomeWhen(
-                    x => x.Succeeded,
-                    x => Error.FromCollection(x.Errors.Select(e => e.Description)));
+                var creationResult = (await UserManager.CreateAsync(user, command.Password))
+                    .SomeWhen(
+                        x => x.Succeeded,
+                        x => Error.FromCollection(x.Errors.Select(e => e.Description)));
 
-            return creationResult.Map(_ => Mapper.Map<UserModel>(user));
-        }
+                return creationResult.Map(_ => Mapper.Map<UserModel>(user));
+            });
     }
 }
