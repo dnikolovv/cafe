@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -6,37 +7,40 @@ namespace Cafe.Domain
 {
     public readonly struct Error
     {
-        public Error(IEnumerable<string> messages)
-            : this(messages.ToArray())
+        private Error(ErrorType errorType, IEnumerable<string> messages)
+            : this(errorType, messages.ToArray())
         {
         }
 
-        public Error(params string[] messages)
+        private Error(ErrorType errorType, params string[] messages)
         {
-            Messages = messages;
+            Type = errorType;
             Date = DateTime.Now;
+            Messages = messages;
         }
-
-        public IReadOnlyList<string> Messages { get; }
 
         public DateTime Date { get; }
+        public IReadOnlyList<string> Messages { get; }
 
-        public static Error FromString(string error) =>
-            new Error(error);
+        [JsonIgnore]
+        public ErrorType Type { get; }
 
-        public static Error FromCollection(IEnumerable<string> errors) =>
-            new Error(errors);
+        public static Error Validation(string error) =>
+            new Error(ErrorType.ValidationError, error);
 
-        public static implicit operator Error(string message) =>
-            new Error(message);
+        public static Error Validation(IEnumerable<string> errors) =>
+            new Error(ErrorType.ValidationError, errors);
 
-        public static implicit operator Error(string[] messages) =>
-            new Error(messages);
+        public static Error Unauthorized(string error) =>
+            new Error(ErrorType.Unauthorized, error);
 
-        public static implicit operator Error(Error[] errors) =>
-            errors.Aggregate(MergeErrors);
+        public static Error Critical(string error) =>
+            new Error(ErrorType.Critical, error);
 
-        public static Error MergeErrors(Error first, Error second) =>
-            new Error(first.Messages.Concat(second.Messages));
+        public static Error Conflict(string error) =>
+            new Error(ErrorType.Conflict, error);
+
+        public static Error NotFound(string error) =>
+            new Error(ErrorType.NotFound, error);
     }
 }

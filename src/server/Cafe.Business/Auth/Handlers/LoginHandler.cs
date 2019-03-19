@@ -39,7 +39,7 @@ namespace Cafe.Business.Auth.Handlers
                 .CheckPasswordAsync(user, password);
 
             var result = passwordIsValid
-                .SomeWhen(isValid => isValid == true, Error.FromString("Invalid credentials."));
+                .SomeWhen(isValid => isValid == true, Error.Unauthorized("Invalid credentials."));
 
             return result;
         }
@@ -47,7 +47,7 @@ namespace Cafe.Business.Auth.Handlers
         private Task<Option<User, Error>> FindUser(string email) =>
             UserManager
                 .FindByEmailAsync(email)
-                .SomeNotNull<User, Error>($"No user with email {email} was found.");
+                .SomeNotNull(Error.NotFound($"No user with email {email} was found."));
 
         private JwtModel GenerateJwt(User user) =>
             new JwtModel

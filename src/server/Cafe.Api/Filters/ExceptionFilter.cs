@@ -21,7 +21,7 @@ namespace Cafe.Api.Filters
 
             var result = _hostingEnvironment.IsDevelopment() ?
                 new JsonResult(context.Exception) :
-                new JsonResult(new Error("An unexpected internal server error has occurred."));
+                new JsonResult(Error.Critical("An unexpected internal server error has occurred."));
 
             context.HttpContext.Response.StatusCode = status;
             context.Result = result;
