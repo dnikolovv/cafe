@@ -4,6 +4,7 @@
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <CodeAnalysisRuleSet>..\..\src\configuration\analyzers.ruleset</CodeAnalysisRuleSet>
     <IsPackable>false</IsPackable>
+    <LangVersion>7.3</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
