@@ -1,5 +1,5 @@
 ﻿using AutoFixture;
-using Cafe.Core.Auth.Commands;
+using Cafe.Core.AuthContext.Commands;
 using System.Net.Mail;
 
 namespace Cafe.Tests.Customizations

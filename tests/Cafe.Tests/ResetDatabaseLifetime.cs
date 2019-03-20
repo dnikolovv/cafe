@@ -1,4 +1,5 @@
-﻿using Respawn;
+﻿using Npgsql;
+using Respawn;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -6,23 +7,45 @@ namespace Cafe.Tests
 {
     public class ResetDatabaseLifetime : IAsyncLifetime
     {
-        private readonly Checkpoint _checkpoint;
+        private readonly Checkpoint _relationalCheckpoint;
+        private readonly Checkpoint _eventStoreCheckpoint;
 
         public ResetDatabaseLifetime()
         {
-            _checkpoint = new Checkpoint();
+            _relationalCheckpoint = new Checkpoint
+            {
+                SchemasToInclude = new[]
+                {
+                    "public"
+                },
+                DbAdapter = DbAdapter.Postgres
+            };
+
+            _eventStoreCheckpoint = new Checkpoint
+            {
+                SchemasToInclude = new[]
+                {
+                    "public"
+                },
+                DbAdapter = DbAdapter.Postgres
+            };
         }
 
         public Task DisposeAsync() => Task.CompletedTask;
 
         public async Task InitializeAsync()
         {
-            await Reset(_checkpoint, SliceFixture.DbConnectionString);
+            await Reset(_relationalCheckpoint, SliceFixture.RelationalDbConnectionString);
+            await Reset(_eventStoreCheckpoint, SliceFixture.EventStoreConnectionString);
         }
 
         private static async Task Reset(Checkpoint checkpoint, string connectionString)
         {
-            await checkpoint.Reset(connectionString);
+            using (var connection = new NpgsqlConnection(connectionString))
+            {
+                await connection.OpenAsync();
+                await checkpoint.Reset(connection);
+            }
         }
     }
 }

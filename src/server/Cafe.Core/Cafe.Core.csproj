@@ -24,4 +24,8 @@
     <ProjectReference Include="..\Cafe.Models\Cafe.Models.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="TableContext\Queries\" />
+  </ItemGroup>
+
 </Project>

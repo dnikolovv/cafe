@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="8.0.0" />
+    <PackageReference Include="Marten" Version="3.4.0" />
     <PackageReference Include="Optional" Version="4.0.0" />
     <PackageReference Include="Optional.Async" Version="1.2.0" />
     <PackageReference Include="StyleCop.Analyzers" Version="1.0.2" />
@@ -22,6 +23,11 @@
     <ProjectReference Include="..\Cafe.Core\Cafe.Core.csproj" />
     <ProjectReference Include="..\Cafe.Domain\Cafe.Domain.csproj" />
     <ProjectReference Include="..\Cafe.Models\Cafe.Models.csproj" />
+    <ProjectReference Include="..\Cafe.Persistance\Cafe.Persistance.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="TableContext\QueryHandlers\" />
   </ItemGroup>
 
 </Project>
