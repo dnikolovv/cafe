@@ -8,7 +8,7 @@ using Shouldly;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Cafe.Tests.Business.Auth.Handlers
+namespace Cafe.Tests.Business.AuthHandlers
 {
     public class RegisterHandlerTests : ResetDatabaseLifetime
     {

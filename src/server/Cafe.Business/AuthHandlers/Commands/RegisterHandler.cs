@@ -1,11 +1,14 @@
 ﻿using AutoMapper;
+using Cafe.Core;
 using Cafe.Core.Auth;
 using Cafe.Core.Auth.Commands;
-using Cafe.Core.CQRS;
 using Cafe.Domain;
 using Cafe.Domain.Entities;
+using Cafe.Domain.Events;
 using Cafe.Models.Auth;
+using Cafe.Persistance.EntityFramework;
 using FluentValidation;
+using Marten;
 using Microsoft.AspNetCore.Identity;
 using Optional;
 using Optional.Async;
@@ -13,16 +16,19 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Cafe.Business.Auth.Handlers
+namespace Cafe.Business.AuthHandlers.Commands
 {
     public class RegisterHandler : BaseAuthHandler<Register>, ICommandHandler<Register, UserModel>
     {
         public RegisterHandler(
-            IValidator<Register> validator,
             UserManager<User> userManager,
             IJwtFactory jwtFactory,
-            IMapper mapper)
-            : base(validator, userManager, jwtFactory, mapper)
+            IMapper mapper,
+            IValidator<Register> validator,
+            ApplicationDbContext dbContext,
+            IDocumentSession documentSession,
+            IEventBus eventBus)
+            : base(userManager, jwtFactory, mapper, validator, dbContext, documentSession, eventBus)
         {
         }
 

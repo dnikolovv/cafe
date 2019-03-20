@@ -1,7 +1,7 @@
 ﻿using AutoFixture;
 using AutoFixture.Kernel;
 using AutoFixture.Xunit2;
-using Cafe.Business.Auth;
+using Cafe.Business.AuthHandlers;
 using Cafe.Core.Auth.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -14,7 +14,7 @@ using System.Security.Claims;
 using System.Text;
 using Xunit;
 
-namespace Cafe.Tests.Business.Auth
+namespace Cafe.Tests.Business.AuthHandlers
 {
     public class JwtFactoryTests
     {

@@ -1,6 +1,4 @@
-﻿using Cafe.Core.CQRS;
-using Cafe.Models.Auth;
-using System.ComponentModel.DataAnnotations;
+﻿using Cafe.Models.Auth;
 
 namespace Cafe.Core.Auth.Commands
 {

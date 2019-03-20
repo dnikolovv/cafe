@@ -2,7 +2,7 @@
 using MediatR;
 using Optional;
 
-namespace Cafe.Core.CQRS
+namespace Cafe.Core
 {
     public interface ICommandHandler<in TCommand> :
         IRequestHandler<TCommand, Option<Unit, Error>>

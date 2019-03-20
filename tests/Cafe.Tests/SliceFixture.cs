@@ -1,5 +1,5 @@
 ﻿using Cafe.Api;
-using Cafe.Core.CQRS;
+using Cafe.Core;
 using Cafe.Persistance.EntityFramework;
 using MediatR;
 using Microsoft.Extensions.Configuration;

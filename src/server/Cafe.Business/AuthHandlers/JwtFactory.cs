@@ -7,7 +7,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 
-namespace Cafe.Business.Auth
+namespace Cafe.Business.AuthHandlers
 {
     public class JwtFactory : IJwtFactory
     {

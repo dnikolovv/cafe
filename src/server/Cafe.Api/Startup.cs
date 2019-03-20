@@ -2,7 +2,7 @@
 using Cafe.Api.Configuration;
 using Cafe.Api.Filters;
 using Cafe.Api.ModelBinders;
-using Cafe.Business.Auth;
+using Cafe.Business.AuthHandlers;
 using Cafe.Core.Auth;
 using Cafe.Core.Auth.Commands;
 using Cafe.Core.Auth.Configuration;

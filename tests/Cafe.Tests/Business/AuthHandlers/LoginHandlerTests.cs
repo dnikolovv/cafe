@@ -8,7 +8,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Cafe.Tests.Business.Auth.Handlers
+namespace Cafe.Tests.Business.AuthHandlers
 {
     public class LoginHandlerTests : ResetDatabaseLifetime
     {
