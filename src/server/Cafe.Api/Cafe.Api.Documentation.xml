@@ -22,7 +22,7 @@
             it's just that it will not be properly displayed in the Swagger UI.
             </summary>
         </member>
-        <member name="M:Cafe.Api.Controllers.UsersController.Login(Cafe.Core.Auth.Commands.Login)">
+        <member name="M:Cafe.Api.Controllers.UsersController.Login(Cafe.Core.AuthContext.Commands.Login)">
             <summary>
             Login.
             </summary>
@@ -31,7 +31,7 @@
             <response code="200">If the credentials have a match.</response>
             <response code="400">If the credentials don't match/don't meet the requirements.</response>
         </member>
-        <member name="M:Cafe.Api.Controllers.UsersController.Register(Cafe.Core.Auth.Commands.Register)">
+        <member name="M:Cafe.Api.Controllers.UsersController.Register(Cafe.Core.AuthContext.Commands.Register)">
             <summary>
             Register.
             </summary>

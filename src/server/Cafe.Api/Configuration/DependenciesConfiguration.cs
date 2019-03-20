@@ -1,7 +1,17 @@
-﻿using Cafe.Api.OperationFilters;
-using Cafe.Core.Auth.Configuration;
+﻿using Cafe.Api.Events;
+using Cafe.Api.OperationFilters;
+using Cafe.Business.TabContext.CommandHandlers;
+using Cafe.Business.TabContext.QueryHandlers;
+using Cafe.Core.AuthContext.Configuration;
+using Cafe.Core.TabContext.Commands;
+using Cafe.Core.TabContext.Queries;
+using Cafe.Domain;
 using Cafe.Domain.Entities;
+using Cafe.Domain.Events;
+using Cafe.Domain.Views;
 using Cafe.Persistance.EntityFramework;
+using Marten;
+using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -9,6 +19,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Optional;
 using Swashbuckle.AspNetCore.Swagger;
 using System;
 using System.Collections.Generic;
@@ -95,6 +106,41 @@ namespace Cafe.Api.Configuration
                 });
 
                 setup.OperationFilter<OptionOperationFilter>();
+            });
+        }
+
+        public static void AddCqrs(this IServiceCollection services)
+        {
+            services.AddScoped<IEventBus, EventBus>();
+        }
+
+        public static void AddMarten(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddScoped(_ =>
+            {
+                var documentStore = DocumentStore.For(options =>
+                {
+                    var config = configuration.GetSection("EventStore");
+                    var connectionString = config.GetValue<string>("ConnectionString");
+                    var schemaName = config.GetValue<string>("Schema");
+
+                    options.Connection(connectionString);
+                    options.AutoCreateSchemaObjects = AutoCreate.All;
+                    options.Events.DatabaseSchemaName = schemaName;
+                    options.DatabaseSchemaName = schemaName;
+
+                    options.Events.InlineProjections.AggregateStreamsWith<Tab>();
+                    options.Events.InlineProjections.Add(new TabViewProjection());
+
+                    var events = typeof(TabOpened)
+                        .Assembly
+                        .GetTypes()
+                        .Where(t => typeof(IEvent).IsAssignableFrom(t));
+
+                    options.Events.AddEventTypes(events);
+                });
+
+                return documentStore.OpenSession();
             });
         }
     }

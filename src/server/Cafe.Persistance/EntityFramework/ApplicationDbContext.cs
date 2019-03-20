@@ -11,5 +11,19 @@ namespace Cafe.Persistance.EntityFramework
             : base(options)
         {
         }
+
+        public DbSet<Waiter> Waiters { get; set; }
+
+        public DbSet<Table> Tables { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            builder
+                .Entity<Table>()
+                .HasIndex(t => t.Number)
+                .IsUnique();
+
+            base.OnModelCreating(builder);
+        }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Cafe.Domain;
+﻿using AutoMapper;
+using Cafe.Domain;
 using Cafe.Domain.Events;
 using Cafe.Persistance.EntityFramework;
 using FluentValidation;
@@ -18,7 +19,8 @@ namespace Cafe.Business
             IValidator<TCommand> validator,
             ApplicationDbContext dbContext,
             IDocumentSession documentSession,
-            IEventBus eventBus)
+            IEventBus eventBus,
+            IMapper mapper)
         {
             Validator = validator ??
                 throw new InvalidOperationException(
@@ -28,6 +30,7 @@ namespace Cafe.Business
             DbContext = dbContext;
             DocumentSession = documentSession;
             EventBus = eventBus;
+            Mapper = mapper;
         }
 
         protected IValidator<TCommand> Validator { get; }
@@ -37,6 +40,8 @@ namespace Cafe.Business
         protected IDocumentSession DocumentSession { get; }
 
         protected IEventBus EventBus { get; }
+
+        protected IMapper Mapper { get; }
 
         protected Option<TCommand, Error> ValidateCommand(TCommand command)
         {

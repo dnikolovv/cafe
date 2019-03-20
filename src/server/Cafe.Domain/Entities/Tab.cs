@@ -23,7 +23,7 @@ namespace Cafe.Domain.Entities
         public TabOpened OpenTab(string customerName, string waiterName, int tableNumber) =>
             new TabOpened
             {
-                Id = Id,
+                TabId = Id,
                 CustomerName = customerName,
                 WaiterName = waiterName,
                 TableNumber = tableNumber

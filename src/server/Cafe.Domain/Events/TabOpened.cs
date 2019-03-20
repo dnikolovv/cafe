@@ -4,7 +4,7 @@ namespace Cafe.Domain.Events
 {
     public class TabOpened : IEvent
     {
-        public Guid Id { get; set; }
+        public Guid TabId { get; set; }
 
         public string CustomerName { get; set; }
 

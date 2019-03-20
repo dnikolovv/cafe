@@ -1,4 +1,4 @@
-﻿using Cafe.Core.Auth.Commands;
+﻿using Cafe.Core.AuthContext.Commands;
 using Cafe.Domain;
 using Cafe.Models.Auth;
 using MediatR;

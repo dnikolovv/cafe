@@ -1,8 +1,8 @@
 ﻿using AutoFixture;
 using AutoFixture.Kernel;
 using AutoFixture.Xunit2;
-using Cafe.Business.AuthHandlers;
-using Cafe.Core.Auth.Configuration;
+using Cafe.Business.AuthContext;
+using Cafe.Core.AuthContext.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Shouldly;

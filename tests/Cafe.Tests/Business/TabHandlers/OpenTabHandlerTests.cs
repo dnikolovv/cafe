@@ -1,5 +1,8 @@
-﻿using Cafe.Core.Tab.Commands;
-using Cafe.Core.Tab.Queries;
+﻿using Cafe.Core.TabContext.Commands;
+using Cafe.Core.TabContext.Queries;
+using Cafe.Core.TableContext.Commands;
+using Cafe.Core.WaiterContext.Commands;
+using Cafe.Domain.Entities;
 using Cafe.Domain.Views;
 using Cafe.Tests.Customizations;
 using Shouldly;
@@ -22,14 +25,32 @@ namespace Cafe.Tests.Business.TabHandlers
 
         [Theory]
         [CustomizedAutoData]
-        public async Task CanOpenTab(OpenTab command)
+        public async Task CanOpenTab(OpenTab openTabCommand, HireWaiter hireWaiterCommand, AddTable addTableCommand)
         {
             // Arrange
+            await _fixture.SendAsync(addTableCommand);
+            await _fixture.SendAsync(hireWaiterCommand);
+
+            var assignTableCommand = new AssignTable
+            {
+                TableNumber = addTableCommand.Number,
+                WaiterToAssignToId = hireWaiterCommand.Id
+            };
+
+            await _fixture.SendAsync(assignTableCommand);
+
+            // Make sure we're trying to open a tab on the added table
+            openTabCommand.TableNumber = addTableCommand.Number;
+
             // Act
-            var result = await _fixture.SendAsync(command);
+            var result = await _fixture.SendAsync(openTabCommand);
 
             // Assert
-            await AssertTabExists(command.Id, t => t.IsOpen == true);
+            await AssertTabExists(
+                openTabCommand.Id,
+                t => t.IsOpen == true &&
+                     t.WaiterName == hireWaiterCommand.ShortName &&
+                     t.CustomerName == openTabCommand.CustomerName);
         }
 
         private async Task AssertTabExists(Guid tabId, Func<TabView, bool> predicate)

@@ -2,16 +2,19 @@
 using Cafe.Api.Configuration;
 using Cafe.Api.Filters;
 using Cafe.Api.ModelBinders;
-using Cafe.Business.AuthHandlers;
-using Cafe.Core.Auth;
-using Cafe.Core.Auth.Commands;
-using Cafe.Core.Auth.Configuration;
+using Cafe.Business.AuthContext;
+using Cafe.Business.AuthContext.CommandHandlers;
+using Cafe.Business.TabContext.CommandHandlers;
+using Cafe.Core.AuthContext;
+using Cafe.Core.AuthContext.Commands;
+using Cafe.Core.AuthContext.Configuration;
 using Cafe.Persistance.EntityFramework;
 using FluentValidation.AspNetCore;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -41,7 +44,9 @@ namespace Cafe.Api
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext(Configuration.GetConnectionString("DefaultConnection"));
+            services.AddDbContext<ApplicationDbContext>(opts =>
+                opts.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
+
             services.AddAutoMapper();
             services.AddSwagger();
             services.AddJwtIdentity(Configuration.GetSection(nameof(JwtConfiguration)));
@@ -49,6 +54,8 @@ namespace Cafe.Api
             services.AddLogging(logBuilder => logBuilder.AddSerilog(dispose: true));
 
             services.AddMediatR();
+            services.AddMarten(Configuration);
+            services.AddCqrs();
 
             services.AddTransient<IJwtFactory, JwtFactory>();
 
@@ -64,11 +71,7 @@ namespace Cafe.Api
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, ApplicationDbContext dbContext)
         {
-            if (env.IsDevelopment())
-            {
-                dbContext.Database.EnsureCreated();
-            }
-            else
+            if (!env.IsDevelopment())
             {
                 app.UseHsts();
             }

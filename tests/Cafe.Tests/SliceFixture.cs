@@ -1,7 +1,9 @@
 ﻿using Cafe.Api;
 using Cafe.Core;
 using Cafe.Persistance.EntityFramework;
+using Marten;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -35,9 +37,23 @@ namespace Cafe.Tests
 
             var dbContext = provider.GetService<ApplicationDbContext>();
             dbContext.Database.EnsureCreated();
+
+            DocumentStore.For(options =>
+            {
+                options.Connection(EventStoreConnectionString);
+                options.CreateDatabasesForTenants(c =>
+                {
+                    c.ForTenant()
+                        .CheckAgainstPgDatabase()
+                        .WithOwner("postgres")
+                        .WithEncoding("UTF-8")
+                        .ConnectionLimit(-1);
+                });
+            });
         }
 
-        public static string DbConnectionString => _configuration.GetConnectionString("DefaultConnection");
+        public static string RelationalDbConnectionString => _configuration.GetConnectionString("DefaultConnection");
+        public static string EventStoreConnectionString => _configuration.GetSection("EventStore")["ConnectionString"];
 
         public Task ExecuteDbContextAsync(Func<ApplicationDbContext, Task> action) =>
             ExecuteScopeAsync(sp =>
