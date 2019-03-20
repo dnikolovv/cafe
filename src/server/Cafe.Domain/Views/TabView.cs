@@ -9,6 +9,8 @@ namespace Cafe.Domain.Views
     {
         public Guid Id { get; set; }
 
+        public int TableNumber { get; set; }
+
         public string CustomerName { get; set; }
 
         public string WaiterName { get; set; }
@@ -26,6 +28,7 @@ namespace Cafe.Domain.Views
             IsOpen = true;
             CustomerName = @event.CustomerName;
             WaiterName = @event.WaiterName;
+            TableNumber = @event.TableNumber;
         }
     }
 }

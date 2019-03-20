@@ -26,4 +26,8 @@
     <ProjectReference Include="..\Cafe.Persistance\Cafe.Persistance.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="TableContext\QueryHandlers\" />
+  </ItemGroup>
+
 </Project>
