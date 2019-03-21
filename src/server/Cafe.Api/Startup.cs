@@ -53,9 +53,9 @@ namespace Cafe.Api
 
             services.AddLogging(logBuilder => logBuilder.AddSerilog(dispose: true));
 
-            services.AddMediatR();
             services.AddMarten(Configuration);
             services.AddCqrs();
+            services.AddMediatR();
 
             services.AddTransient<IJwtFactory, JwtFactory>();
 
@@ -69,7 +69,7 @@ namespace Cafe.Api
             .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, ApplicationDbContext dbContext)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             if (!env.IsDevelopment())
             {

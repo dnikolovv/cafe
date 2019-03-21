@@ -44,7 +44,7 @@ namespace Cafe.Business.TabContext.CommandHandlers
             // This can be fixed by using repositories/some other entities that encapsulate the data fetching
             var takenTablesView = await Marten
                 .QueryableExtensions
-                .AnyAsync(DocumentSession
+                .AnyAsync(Session
                     .Query<TabView>()
                     .Where(t => t.TableNumber == tableNumber));
 

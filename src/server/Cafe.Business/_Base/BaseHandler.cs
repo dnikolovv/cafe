@@ -28,7 +28,7 @@ namespace Cafe.Business
                     "Did you forget to add one?");
 
             DbContext = dbContext;
-            DocumentSession = documentSession;
+            Session = documentSession;
             EventBus = eventBus;
             Mapper = mapper;
         }
@@ -37,7 +37,7 @@ namespace Cafe.Business
 
         protected ApplicationDbContext DbContext { get; }
 
-        protected IDocumentSession DocumentSession { get; }
+        protected IDocumentSession Session { get; }
 
         protected IEventBus EventBus { get; }
 
@@ -58,8 +58,8 @@ namespace Cafe.Business
 
         protected async Task<Unit> PublishEvents(Guid tabId, params IEvent[] events)
         {
-            DocumentSession.Events.Append(tabId, events);
-            await DocumentSession.SaveChangesAsync();
+            Session.Events.Append(tabId, events);
+            await Session.SaveChangesAsync();
             await EventBus.Publish(events);
 
             return Unit.Value;
