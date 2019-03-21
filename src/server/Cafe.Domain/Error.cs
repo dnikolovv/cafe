@@ -42,5 +42,8 @@ namespace Cafe.Domain
 
         public static Error NotFound(string error) =>
             new Error(ErrorType.NotFound, error);
+
+        public static Error NotFound(IEnumerable<string> errors) =>
+            new Error(ErrorType.NotFound, errors);
     }
 }

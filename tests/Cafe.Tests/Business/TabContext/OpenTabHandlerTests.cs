@@ -1,25 +1,25 @@
 ﻿using Cafe.Core.TabContext.Commands;
-using Cafe.Core.TabContext.Queries;
 using Cafe.Core.TableContext.Commands;
 using Cafe.Core.WaiterContext.Commands;
 using Cafe.Domain;
-using Cafe.Domain.Views;
+using Cafe.Tests.Business.TabContext.Helpers;
 using Cafe.Tests.Customizations;
 using Cafe.Tests.Extensions;
-using Shouldly;
 using System;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Cafe.Tests.Business.TabHandlers
+namespace Cafe.Tests.Business.TabContext
 {
     public class OpenTabHandlerTests : ResetDatabaseLifetime
     {
         private readonly SliceFixture _fixture;
+        private readonly TabTestsHelper _helper;
 
         public OpenTabHandlerTests()
         {
             _fixture = new SliceFixture();
+            _helper = new TabTestsHelper(_fixture);
         }
 
         [Theory]
@@ -27,7 +27,7 @@ namespace Cafe.Tests.Business.TabHandlers
         public async Task CanOpenTab(OpenTab openTabCommand, HireWaiter hireWaiterCommand, AddTable addTableCommand)
         {
             // Arrange
-            await SetupWaiterWithTable(hireWaiterCommand, addTableCommand);
+            await _helper.SetupWaiterWithTable(hireWaiterCommand, addTableCommand);
 
             // Make sure we're trying to open a tab on the added table
             openTabCommand.TableNumber = addTableCommand.Number;
@@ -36,7 +36,7 @@ namespace Cafe.Tests.Business.TabHandlers
             var result = await _fixture.SendAsync(openTabCommand);
 
             // Assert
-            await AssertTabExists(
+            await _helper.AssertTabExists(
                 openTabCommand.Id,
                 t => t.IsOpen == true &&
                      t.WaiterName == hireWaiterCommand.ShortName &&
@@ -45,10 +45,10 @@ namespace Cafe.Tests.Business.TabHandlers
 
         [Theory]
         [CustomizedAutoData]
-        public async Task CannotOpenTheSameTabTwice(OpenTab openTabCommand, HireWaiter hireWaiterCommand, AddTable addTableCommand)
+        public async Task CannotOpenExistingTab(OpenTab openTabCommand, HireWaiter hireWaiterCommand, AddTable addTableCommand)
         {
             // Arrange
-            await SetupWaiterWithTable(hireWaiterCommand, addTableCommand);
+            await _helper.SetupWaiterWithTable(hireWaiterCommand, addTableCommand);
 
             // Make sure we're trying to open a tab on the added table
             openTabCommand.TableNumber = addTableCommand.Number;
@@ -57,6 +57,9 @@ namespace Cafe.Tests.Business.TabHandlers
             await _fixture.SendAsync(openTabCommand);
 
             // Act
+            // Make sure we won't be getting a conflict on the table numbers
+            openTabCommand.TableNumber += 10;
+
             var result = await _fixture.SendAsync(openTabCommand);
 
             // Assert
@@ -68,7 +71,7 @@ namespace Cafe.Tests.Business.TabHandlers
         public async Task CannotOpenATabOnATakenTable(OpenTab openTabCommand, HireWaiter hireWaiterCommand, AddTable addTableCommand)
         {
             // Arrange
-            await SetupWaiterWithTable(hireWaiterCommand, addTableCommand);
+            await _helper.SetupWaiterWithTable(hireWaiterCommand, addTableCommand);
 
             // Make sure we're trying to open a tab on the added table
             openTabCommand.TableNumber = addTableCommand.Number;
@@ -99,26 +102,6 @@ namespace Cafe.Tests.Business.TabHandlers
 
             // Assert
             result.ShouldHaveErrorOfType(ErrorType.NotFound);
-        }
-
-        private async Task SetupWaiterWithTable(HireWaiter hireWaiterCommand, AddTable addTableCommand)
-        {
-            await _fixture.SendAsync(addTableCommand);
-            await _fixture.SendAsync(hireWaiterCommand);
-
-            var assignTableCommand = new AssignTable
-            {
-                TableNumber = addTableCommand.Number,
-                WaiterToAssignToId = hireWaiterCommand.Id
-            };
-
-            await _fixture.SendAsync(assignTableCommand);
-        }
-
-        private async Task AssertTabExists(Guid tabId, Func<TabView, bool> predicate)
-        {
-            var tab = await _fixture.SendAsync(new GetTabView { Id = tabId });
-            tab.Exists(predicate).ShouldBeTrue();
         }
     }
 }

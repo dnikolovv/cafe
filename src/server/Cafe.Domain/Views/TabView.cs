@@ -1,7 +1,7 @@
-﻿using Cafe.Domain.Events;
+﻿using Cafe.Domain.Entities;
+using Cafe.Domain.Events;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Cafe.Domain.Views
 {
@@ -23,12 +23,24 @@ namespace Cafe.Domain.Views
 
         public decimal TotalPaid { get; set; }
 
-        public void ApplyEvent(TabOpened @event)
+        public IList<MenuItem> OrderedMenuItems { get; set; } = new List<MenuItem>();
+
+        public IList<MenuItem> ServedMenuItems { get; set; } = new List<MenuItem>();
+
+        public void Apply(TabOpened @event)
         {
             IsOpen = true;
             CustomerName = @event.CustomerName;
             WaiterName = @event.WaiterName;
             TableNumber = @event.TableNumber;
+        }
+
+        public void Apply(MenuItemsOrdered @event)
+        {
+            foreach (var item in @event.MenuItems)
+            {
+                OrderedMenuItems.Add(item);
+            }
         }
     }
 }
