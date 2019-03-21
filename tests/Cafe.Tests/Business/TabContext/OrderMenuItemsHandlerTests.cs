@@ -27,22 +27,17 @@ namespace Cafe.Tests.Business.TabContext
         [Theory]
         [CustomizedAutoData]
         public async Task CanOrderMenuItems(
-            MenuItem[] itemsToOrder,
-            OpenTab openTabCommand,
-            HireWaiter hireWaiterCommand,
-            AddTable addTableCommand)
+            Guid tabId,
+            int tableNumber,
+            MenuItem[] itemsToOrder)
         {
             // Arrange
-            await _helper.SetupWaiterWithTable(hireWaiterCommand, addTableCommand);
+            await _helper.OpenTabOnTable(tabId, tableNumber);
             await _helper.AddMenuItems(itemsToOrder);
-
-            openTabCommand.TableNumber = addTableCommand.Number;
-
-            await _fixture.SendAsync(openTabCommand);
 
             var orderItemsCommand = new OrderMenuItems
             {
-                TabId = openTabCommand.Id,
+                TabId = tabId,
                 ItemNumbers = itemsToOrder.Select(i => i.Number).ToList()
             };
 
@@ -60,23 +55,18 @@ namespace Cafe.Tests.Business.TabContext
         [Theory]
         [CustomizedAutoData]
         public async Task CannotOrderUnexistingItems(
-            MenuItem[] itemsToOrder,
-            OpenTab openTabCommand,
-            HireWaiter hireWaiterCommand,
-            AddTable addTableCommand)
+            Guid tabId,
+            int tableNumber,
+            int[] menuItemNumbersToOrder)
         {
             // Arrange
-            await _helper.SetupWaiterWithTable(hireWaiterCommand, addTableCommand);
+            await _helper.OpenTabOnTable(tabId, tableNumber);
 
-            // Purposefully skipping the addition of items
-            openTabCommand.TableNumber = addTableCommand.Number;
-
-            await _fixture.SendAsync(openTabCommand);
-
+            // Purposefully not adding any items
             var orderItemsCommand = new OrderMenuItems
             {
-                TabId = openTabCommand.Id,
-                ItemNumbers = itemsToOrder.Select(i => i.Number).ToList()
+                TabId = tabId,
+                ItemNumbers = menuItemNumbersToOrder
             };
 
             // Act
@@ -108,6 +98,38 @@ namespace Cafe.Tests.Business.TabContext
 
             // Assert
             result.ShouldHaveErrorOfType(ErrorType.NotFound);
+        }
+
+        [Theory]
+        [CustomizedAutoData]
+        public async Task CannotOrderItemsOnAClosedTab(
+            Guid tabId,
+            int tableNumber,
+            MenuItem[] itemsToOrder)
+        {
+            // Arrange
+            await _helper.AddMenuItems(itemsToOrder);
+            await _helper.OpenTabOnTable(tabId, tableNumber);
+
+            var closeTabCommand = new CloseTab
+            {
+                TabId = tabId,
+                AmountPaid = 0
+            };
+
+            await _fixture.SendAsync(closeTabCommand);
+
+            var orderItemsCommand = new OrderMenuItems
+            {
+                TabId = tabId,
+                ItemNumbers = itemsToOrder.Select(i => i.Number).ToList()
+            };
+
+            // Act
+            var result = await _fixture.SendAsync(orderItemsCommand);
+
+            // Assert
+            result.ShouldHaveErrorOfType(ErrorType.Validation);
         }
     }
 }

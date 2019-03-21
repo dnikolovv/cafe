@@ -14,6 +14,7 @@ namespace Cafe.Domain.Entities
         {
             Id = id;
         }
+
         public Guid Id { get; set; }
         public string CustomerName { get; set; }
         public string WaiterName { get; set; }
@@ -31,6 +32,17 @@ namespace Cafe.Domain.Entities
                 TableNumber = tableNumber
             };
 
+        public TabClosed CloseTab(decimal amountPaid) =>
+            new TabClosed
+            {
+                TabId = Id,
+                AmountPaid = amountPaid,
+                OrderValue = ServedItemsValue,
+                TableNumber = TableNumber,
+                TipValue = amountPaid - ServedItemsValue,
+                WaiterName = WaiterName
+            };
+
         public MenuItemsOrdered OrderMenuItems(IList<MenuItem> items) =>
             new MenuItemsOrdered
             {
@@ -44,6 +56,11 @@ namespace Cafe.Domain.Entities
             CustomerName = @event.CustomerName;
             WaiterName = @event.WaiterName;
             TableNumber = @event.TableNumber;
+        }
+
+        public void Apply(TabClosed @event)
+        {
+            IsOpen = false;
         }
 
         public void Apply(MenuItemsOrdered @event)

@@ -9,6 +9,7 @@ namespace Cafe.Domain.Views
         public TabViewProjection()
         {
             ProjectEvent<TabOpened>(ev => ev.TabId, (view, @event) => view.Apply(@event));
+            ProjectEvent<TabClosed>(ev => ev.TabId, (view, @event) => view.Apply(@event));
             ProjectEvent<MenuItemsOrdered>(ev => ev.TabId, (view, @event) => view.Apply(@event));
         }
     }

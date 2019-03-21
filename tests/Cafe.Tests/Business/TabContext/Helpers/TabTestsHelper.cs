@@ -1,8 +1,12 @@
-﻿using Cafe.Core.TabContext.Queries;
+﻿using Cafe.Core.TabContext.Commands;
+using Cafe.Core.TabContext.Queries;
 using Cafe.Core.TableContext.Commands;
 using Cafe.Core.WaiterContext.Commands;
+using Cafe.Domain;
 using Cafe.Domain.Entities;
 using Cafe.Domain.Views;
+using MediatR;
+using Optional;
 using Shouldly;
 using System;
 using System.Collections.Generic;
@@ -31,6 +35,22 @@ namespace Cafe.Tests.Business.TabContext.Helpers
             };
 
             await _fixture.SendAsync(assignTableCommand);
+        }
+
+        public async Task<Option<Unit, Error>> OpenTabOnTable(Guid tabId, int tableNumber)
+        {
+            await SetupWaiterWithTable(
+                new HireWaiter { Id = Guid.NewGuid(), ShortName = $"Waiter{Guid.NewGuid().ToString()}" },
+                new AddTable { Id = Guid.NewGuid(), Number = tableNumber });
+
+            var openTabCommand = new OpenTab
+            {
+                Id = tabId,
+                CustomerName = $"Customer{Guid.NewGuid().ToString()}",
+                TableNumber = tableNumber
+            };
+
+            return await _fixture.SendAsync(openTabCommand);
         }
 
         public async Task AddMenuItems(IList<MenuItem> items)

@@ -11,7 +11,7 @@ namespace Cafe.Api.Controllers
         {
             switch (error.Type)
             {
-                case ErrorType.ValidationError:
+                case ErrorType.Validation:
                     return BadRequest(error);
                 case ErrorType.NotFound:
                     return NotFound(error);

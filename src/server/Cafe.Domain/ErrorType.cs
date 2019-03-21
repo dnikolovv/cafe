@@ -2,7 +2,7 @@
 {
     public enum ErrorType
     {
-        ValidationError,
+        Validation,
         NotFound,
         Unauthorized,
         Conflict,
