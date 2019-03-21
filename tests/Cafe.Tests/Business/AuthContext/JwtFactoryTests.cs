@@ -39,7 +39,7 @@ namespace Cafe.Tests.Business.AuthContext
 
         [Theory]
         [AutoData]
-        public void GenerateEncodedToken_Should_Generate_Proper_Token_With_Extra_Claims(string userId, string email, Fixture claimsFixture)
+        public void CanGenerateProperEncodedTokenWithExtraClaims(string userId, string email, Fixture claimsFixture)
         {
             // Arrange
             // To enable AutoFixture to generate claims
@@ -69,7 +69,7 @@ namespace Cafe.Tests.Business.AuthContext
 
         [Theory]
         [AutoData]
-        public void GenerateEncodedToken_Should_Generate_Proper_Token(string userId, string email)
+        public void CanGenerateProperEncodedToken(string userId, string email)
         {
             // Arrange
             // Act

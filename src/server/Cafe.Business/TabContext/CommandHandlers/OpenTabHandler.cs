@@ -34,7 +34,7 @@ namespace Cafe.Business.TabContext.CommandHandlers
             ValidateCommand(command).FlatMapAsync(_ =>
             TabShouldNotExist(command.Id, cancellationToken).FlatMapAsync(tab =>
             TableShouldNotBeTaken(command.TableNumber).FlatMapAsync(tableNumber =>
-            GetWaiterForTable(tableNumber).MapAsync(waiter =>
+            TheTableShouldHaveAWaiterAssigned(tableNumber).MapAsync(waiter =>
             PublishEvents(tab.Id, tab.OpenTab(command.CustomerName, waiter.ShortName, command.TableNumber))))));
 
         private async Task<Option<int, Error>> TableShouldNotBeTaken(int tableNumber)
@@ -42,18 +42,18 @@ namespace Cafe.Business.TabContext.CommandHandlers
             // TODO: Explicitly using the Marten AnyAsync due to conflicts with EF
             // which result in runtime errors
             // This can be fixed by using repositories/some other entities that encapsulate the data fetching
-            var takenTablesView = await Marten
+            var thereIsATabOnTable = await Marten
                 .QueryableExtensions
                 .AnyAsync(Session
                     .Query<TabView>()
                     .Where(t => t.TableNumber == tableNumber));
 
-            return takenTablesView
+            return thereIsATabOnTable
                 .SomeWhen(isTaken => !isTaken, Error.Conflict($"Table {tableNumber} is already taken."))
                 .Map(_ => tableNumber);
         }
 
-        private async Task<Option<Waiter, Error>> GetWaiterForTable(int tableNumber)
+        private async Task<Option<Waiter, Error>> TheTableShouldHaveAWaiterAssigned(int tableNumber)
         {
             var table = await DbContext
                 .Tables
@@ -62,7 +62,8 @@ namespace Cafe.Business.TabContext.CommandHandlers
 
             return table
                 .SomeNotNull(Error.NotFound($"No table with number {tableNumber} was found."))
-                .Map(t => t.Waiter);
+                .FlatMap(t => t.Waiter
+                    .SomeNotNull(Error.Validation($"Table {tableNumber} does not have a waiter assigned.")));
         }
     }
 }

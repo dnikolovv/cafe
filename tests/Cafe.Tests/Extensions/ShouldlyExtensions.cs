@@ -11,7 +11,9 @@ namespace Cafe.Tests.Extensions
             option.HasValue.ShouldBeFalse();
             option.MatchNone(error =>
             {
-                error.Type.ShouldBe(errorType);
+                error.Type.ShouldBe(
+                    errorType,
+                    $"Expected an error of type {errorType.ToString()}, but got {error.Type.ToString()}: {string.Join(", ", error.Messages)}");
                 error.Messages.ShouldNotBeEmpty();
             });
         }

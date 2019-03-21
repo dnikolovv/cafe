@@ -31,26 +31,36 @@ namespace Cafe.Business.WaiterContext.CommandHandlers
 
         public Task<Option<Unit, Error>> Handle(AssignTable command, CancellationToken cancellationToken) =>
             ValidateCommand(command).FlatMapAsync(_ =>
-            CheckIfTableIsNotTaken(command.TableNumber, command.WaiterToAssignToId).FlatMapAsync(table =>
-            AssignTable(table, command.WaiterToAssignToId)));
+            CheckIfTableExists(command.TableNumber).
+            FilterAsync(async t => t.WaiterId != command.WaiterToAssignToId, Error.Conflict($"Waiter {command.WaiterToAssignToId} is already assigned to this table.")).FlatMapAsync(table =>
+            CheckIfWaiterExists(command.WaiterToAssignToId).FlatMapAsync(waiter =>
+            AssignTable(table, waiter.Id))));
 
         private async Task<Option<Unit, Error>> AssignTable(Table table, Guid waiterToAssignToId)
         {
             table.WaiterId = waiterToAssignToId;
             await DbContext.SaveChangesAsync();
             return Unit.Value.Some<Unit, Error>();
-;        }
+        }
 
-        private async Task<Option<Table, Error>> CheckIfTableIsNotTaken(int tableNumber, Guid waiterToAssignToId)
+        private async Task<Option<Waiter, Error>> CheckIfWaiterExists(Guid waiterId)
         {
-            // TODO: This is duplicated with the one in the OpenTabHandler
+            var waiter = await DbContext
+                .Waiters
+                .FirstOrDefaultAsync(w => w.Id == waiterId);
+
+            return waiter
+                .SomeNotNull(Error.NotFound($"No waiter with an id of {waiterId} was found."));
+        }
+
+        private async Task<Option<Table, Error>> CheckIfTableExists(int tableNumber)
+        {
             var table = await DbContext
                 .Tables
                 .FirstOrDefaultAsync(t => t.Number == tableNumber);
 
             return table
-                .SomeNotNull(Error.NotFound($"No table with number {tableNumber} was found."))
-                .Filter(t => t.WaiterId != waiterToAssignToId, Error.Conflict($"Waiter {waiterToAssignToId} is already assigned to this table."));
+                .SomeNotNull(Error.NotFound($"No table with number {tableNumber} was found."));
         }
     }
 }
