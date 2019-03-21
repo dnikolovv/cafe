@@ -1,7 +1,9 @@
-﻿using Cafe.Domain.Entities;
+﻿using Baseline;
+using Cafe.Domain.Entities;
 using Cafe.Domain.Events;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Cafe.Domain.Views
 {
@@ -23,7 +25,7 @@ namespace Cafe.Domain.Views
 
         public decimal TotalPaid { get; set; }
 
-        public IList<MenuItem> OrderedMenuItems { get; set; } = new List<MenuItem>();
+        public IList<MenuItem> OutstandingMenuItems { get; set; } = new List<MenuItem>();
 
         public IList<MenuItem> ServedMenuItems { get; set; } = new List<MenuItem>();
 
@@ -45,7 +47,24 @@ namespace Cafe.Domain.Views
         {
             foreach (var item in @event.MenuItems)
             {
-                OrderedMenuItems.Add(item);
+                OutstandingMenuItems.Add(item);
+            }
+        }
+
+        public void Apply(MenuItemsServed @event)
+        {
+            ServedMenuItems.AddRange(@event.MenuItems);
+            ServedItemsValue += @event.MenuItems.Sum(i => i.Price);
+
+            foreach (var servedItem in @event.MenuItems)
+            {
+                var outstanding = OutstandingMenuItems
+                    .FirstOrDefault(b => b.Number == servedItem.Number);
+
+                if (outstanding != null)
+                {
+                    OutstandingMenuItems.Remove(outstanding);
+                }
             }
         }
     }

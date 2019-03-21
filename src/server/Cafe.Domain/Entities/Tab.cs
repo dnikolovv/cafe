@@ -1,6 +1,7 @@
 ﻿using Cafe.Domain.Events;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Cafe.Domain.Entities
 {
@@ -21,7 +22,8 @@ namespace Cafe.Domain.Entities
         public bool IsOpen { get; set; }
         public decimal ServedItemsValue { get; set; }
         public int TableNumber { get; set; }
-        public IList<MenuItem> OrderedMenuItems { get; set; } = new List<MenuItem>();
+        public IList<MenuItem> OutstandingMenuItems { get; set; } = new List<MenuItem>();
+        public IList<MenuItem> ServedMenuItems { get; set; } = new List<MenuItem>();
 
         public TabOpened OpenTab(string customerName, string waiterName, int tableNumber) =>
             new TabOpened
@@ -50,6 +52,13 @@ namespace Cafe.Domain.Entities
                 MenuItems = items
             };
 
+        public MenuItemsServed ServeMenuItems(IList<MenuItem> items) =>
+            new MenuItemsServed
+            {
+                TabId = Id,
+                MenuItems = items
+            };
+
         public void Apply(TabOpened @event)
         {
             IsOpen = true;
@@ -67,7 +76,23 @@ namespace Cafe.Domain.Entities
         {
             foreach (var item in @event.MenuItems)
             {
-                OrderedMenuItems.Add(item);
+                OutstandingMenuItems.Add(item);
+            }
+        }
+
+        public void Apply(MenuItemsServed @event)
+        {
+            ServedItemsValue += @event.MenuItems.Sum(i => i.Price);
+
+            foreach (var servedItem in @event.MenuItems)
+            {
+                var outstanding = OutstandingMenuItems
+                    .FirstOrDefault(b => b.Number == servedItem.Number);
+
+                if (outstanding != null)
+                {
+                    OutstandingMenuItems.Remove(outstanding);
+                }
             }
         }
     }
