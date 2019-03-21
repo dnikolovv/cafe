@@ -48,8 +48,8 @@ namespace Cafe.Tests.Business.TabContext
             await _helper.AssertTabExists(
                 orderItemsCommand.TabId,
                 t => t.IsOpen == true &&
-                     t.OrderedMenuItems.Any() &&
-                     orderItemsCommand.ItemNumbers.All(n => t.OrderedMenuItems.Any(i => i.Number == n)));
+                     t.OutstandingMenuItems.Any() &&
+                     orderItemsCommand.ItemNumbers.All(n => t.OutstandingMenuItems.Any(i => i.Number == n)));
         }
 
         [Theory]

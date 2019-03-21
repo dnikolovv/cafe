@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Cafe.Core;
-using Cafe.Core.TabContext.Commands;
+using Cafe.Core.WaiterContext.Commands;
 using Cafe.Domain;
 using Cafe.Domain.Events;
 using Cafe.Persistance.EntityFramework;
@@ -14,10 +14,10 @@ using System.Threading.Tasks;
 
 namespace Cafe.Business.TabContext.CommandHandlers
 {
-    public class CloseTabHandler : BaseTabHandler<CloseTab>, ICommandHandler<CloseTab>
+    public class ServeMenuItemsHandler : BaseTabHandler<ServeMenuItems>, ICommandHandler<ServeMenuItems>
     {
-        public CloseTabHandler(
-            IValidator<CloseTab> validator,
+        public ServeMenuItemsHandler(
+            IValidator<ServeMenuItems> validator,
             ApplicationDbContext dbContext,
             IDocumentSession documentSession,
             IEventBus eventBus,
@@ -26,10 +26,10 @@ namespace Cafe.Business.TabContext.CommandHandlers
         {
         }
 
-        public Task<Option<Unit, Error>> Handle(CloseTab command, CancellationToken cancellationToken) =>
+        public Task<Option<Unit, Error>> Handle(ServeMenuItems command, CancellationToken cancellationToken) =>
             ValidateCommand(command).FlatMapAsync(_ =>
-            TabShouldNotBeClosed(command.TabId, cancellationToken).
-            FilterAsync(async tab => command.AmountPaid >= tab.ServedItemsValue, Error.Validation("You cannot pay less than the bill amount.")).MapAsync(tab =>
-            PublishEvents(tab.Id, tab.CloseTab(command.AmountPaid))));
+            TabShouldNotBeClosed(command.TabId, cancellationToken).FlatMapAsync(tab =>
+            GetMenuItemsIfTheyExist(command.ItemNumbers).MapAsync(items =>
+            PublishEvents(tab.Id, tab.ServeMenuItems(items)))));
     }
 }

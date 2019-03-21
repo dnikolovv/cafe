@@ -10,6 +10,7 @@ using Optional;
 using Shouldly;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Cafe.Tests.Business.TabContext.Helpers
@@ -23,18 +24,45 @@ namespace Cafe.Tests.Business.TabContext.Helpers
             _fixture = fixture;
         }
 
-        public async Task SetupWaiterWithTable(HireWaiter hireWaiterCommand, AddTable addTableCommand)
+        public async Task AddMenuItems(IList<MenuItem> items)
         {
-            await _fixture.SendAsync(addTableCommand);
-            await _fixture.SendAsync(hireWaiterCommand);
-
-            var assignTableCommand = new AssignTable
+            await _fixture.ExecuteDbContextAsync(async dbContext =>
             {
-                TableNumber = addTableCommand.Number,
-                WaiterToAssignToId = hireWaiterCommand.Id
+                dbContext.MenuItems.AddRange(items);
+                await dbContext.SaveChangesAsync();
+            });
+        }
+
+        public async Task AssertTabExists(Guid tabId, Func<TabView, bool> predicate)
+        {
+            var tab = await _fixture.SendAsync(new GetTabView { Id = tabId });
+            tab.Exists(predicate).ShouldBeTrue();
+        }
+
+        public async Task OrderMenuItems(Guid tabId, params MenuItem[] items)
+        {
+            var itemNumbers = items.Select(i => i.Number).ToList();
+
+            var orderItems = new OrderMenuItems
+            {
+                TabId = tabId,
+                ItemNumbers = itemNumbers
             };
 
-            await _fixture.SendAsync(assignTableCommand);
+            await _fixture.SendAsync(orderItems);
+        }
+
+        public async Task ServeMenuItems(Guid tabId, params MenuItem[] items)
+        {
+            var itemNumbers = items.Select(i => i.Number).ToList();
+
+            var serveItems = new ServeMenuItems
+            {
+                TabId = tabId,
+                ItemNumbers = itemNumbers
+            };
+
+            await _fixture.SendAsync(serveItems);
         }
 
         public async Task<Option<Unit, Error>> OpenTabOnTable(Guid tabId, int tableNumber)
@@ -53,19 +81,29 @@ namespace Cafe.Tests.Business.TabContext.Helpers
             return await _fixture.SendAsync(openTabCommand);
         }
 
-        public async Task AddMenuItems(IList<MenuItem> items)
+        public async Task CloseTab(Guid tabId, decimal amountPaid)
         {
-            await _fixture.ExecuteDbContextAsync(async dbContext =>
+            var command = new CloseTab
             {
-                dbContext.MenuItems.AddRange(items);
-                await dbContext.SaveChangesAsync();
-            });
+                TabId = tabId,
+                AmountPaid = amountPaid
+            };
+
+            await _fixture.SendAsync(command);
         }
 
-        public async Task AssertTabExists(Guid tabId, Func<TabView, bool> predicate)
+        public async Task SetupWaiterWithTable(HireWaiter hireWaiterCommand, AddTable addTableCommand)
         {
-            var tab = await _fixture.SendAsync(new GetTabView { Id = tabId });
-            tab.Exists(predicate).ShouldBeTrue();
+            await _fixture.SendAsync(addTableCommand);
+            await _fixture.SendAsync(hireWaiterCommand);
+
+            var assignTableCommand = new AssignTable
+            {
+                TableNumber = addTableCommand.Number,
+                WaiterToAssignToId = hireWaiterCommand.Id
+            };
+
+            await _fixture.SendAsync(assignTableCommand);
         }
     }
 }
