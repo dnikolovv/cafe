@@ -26,10 +26,10 @@ namespace Cafe.Domain
         public ErrorType Type { get; }
 
         public static Error Validation(string error) =>
-            new Error(ErrorType.ValidationError, error);
+            new Error(ErrorType.Validation, error);
 
         public static Error Validation(IEnumerable<string> errors) =>
-            new Error(ErrorType.ValidationError, errors);
+            new Error(ErrorType.Validation, errors);
 
         public static Error Unauthorized(string error) =>
             new Error(ErrorType.Unauthorized, error);

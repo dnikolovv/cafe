@@ -35,6 +35,12 @@ namespace Cafe.Domain.Views
             TableNumber = @event.TableNumber;
         }
 
+        public void Apply(TabClosed @event)
+        {
+            IsOpen = false;
+            TipValue = @event.TipValue;
+        }
+
         public void Apply(MenuItemsOrdered @event)
         {
             foreach (var item in @event.MenuItems)

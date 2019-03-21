@@ -56,7 +56,7 @@ namespace Cafe.Tests.Business.AuthContext
             var result = await _fixture.SendAsync(command);
 
             // Assert
-            result.ShouldHaveErrorOfType(ErrorType.ValidationError);
+            result.ShouldHaveErrorOfType(ErrorType.Validation);
         }
 
         [Theory]
@@ -86,7 +86,7 @@ namespace Cafe.Tests.Business.AuthContext
             var result = await _fixture.SendAsync(command);
 
             // Assert
-            result.ShouldHaveErrorOfType(ErrorType.ValidationError);
+            result.ShouldHaveErrorOfType(ErrorType.Validation);
         }
     }
 }
