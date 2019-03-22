@@ -5,7 +5,6 @@ using Cafe.Tests.Business.TabContext.Helpers;
 using Cafe.Tests.Customizations;
 using Cafe.Tests.Extensions;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
@@ -97,7 +96,7 @@ namespace Cafe.Tests.Business.TabContext
 
         [Theory]
         [CustomizedAutoData]
-        public async Task CanServeOneMenuItemTwiceInARow(Guid tabId, int tableNumber, List<MenuItem> menuItems)
+        public async Task CanServeOneMenuItemTwiceInARow(Guid tabId, int tableNumber, MenuItem[] menuItems)
         {
             // Arrange
             await _helper.AddMenuItems(menuItems);
@@ -128,7 +127,7 @@ namespace Cafe.Tests.Business.TabContext
 
         [Theory]
         [CustomizedAutoData]
-        public async Task CanServeOneMenuItem(Guid tabId, int tableNumber, List<MenuItem> menuItems)
+        public async Task CanServeOneMenuItem(Guid tabId, int tableNumber, MenuItem[] menuItems)
         {
             // Arrange
             await _helper.AddMenuItems(menuItems);

@@ -59,6 +59,13 @@ namespace Cafe.Domain.Entities
                 MenuItems = items
             };
 
+        public MenuItemsRejected RejectMenuItems(IList<MenuItem> items) =>
+            new MenuItemsRejected
+            {
+                TabId = Id,
+                MenuItems = items
+            };
+
         public void Apply(TabOpened @event)
         {
             IsOpen = true;
@@ -92,6 +99,32 @@ namespace Cafe.Domain.Entities
                 if (outstanding != null)
                 {
                     OutstandingMenuItems.Remove(outstanding);
+                }
+            }
+        }
+
+        public void Apply(MenuItemsRejected @event)
+        {
+            foreach (var rejectedItem in @event.MenuItems)
+            {
+                // Prioritize the oustanding over the served ones when removing items
+                var outstanding = OutstandingMenuItems
+                    .FirstOrDefault(b => b.Number == rejectedItem.Number);
+
+                // TODO: Fix fugly implementation
+                if (outstanding != null)
+                {
+                    OutstandingMenuItems.Remove(outstanding);
+                }
+                else
+                {
+                    var served = ServedMenuItems
+                        .FirstOrDefault(b => b.Number == rejectedItem.Number);
+
+                    if (served != null)
+                    {
+                        ServedMenuItems.Remove(served);
+                    }
                 }
             }
         }

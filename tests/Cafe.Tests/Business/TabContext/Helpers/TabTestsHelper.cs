@@ -24,7 +24,7 @@ namespace Cafe.Tests.Business.TabContext.Helpers
             _fixture = fixture;
         }
 
-        public async Task AddMenuItems(IList<MenuItem> items)
+        public async Task AddMenuItems(params MenuItem[] items)
         {
             await _fixture.ExecuteDbContextAsync(async dbContext =>
             {
