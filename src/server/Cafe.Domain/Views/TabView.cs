@@ -19,6 +19,8 @@ namespace Cafe.Domain.Views
 
         public decimal ServedItemsValue { get; set; }
 
+        public decimal RejectedItemsValue { get; set; }
+
         public bool IsOpen { get; set; }
 
         public decimal TipValue { get; set; }
@@ -28,6 +30,8 @@ namespace Cafe.Domain.Views
         public IList<MenuItem> OutstandingMenuItems { get; set; } = new List<MenuItem>();
 
         public IList<MenuItem> ServedMenuItems { get; set; } = new List<MenuItem>();
+
+        public IList<MenuItem> RejectedMenuItems { get; set; } = new List<MenuItem>();
 
         public void Apply(TabOpened @event)
         {
@@ -64,6 +68,35 @@ namespace Cafe.Domain.Views
                 if (outstanding != null)
                 {
                     OutstandingMenuItems.Remove(outstanding);
+                }
+            }
+        }
+
+        public void Apply(MenuItemsRejected @event)
+        {
+            RejectedItemsValue += @event.MenuItems.Sum(i => i.Price);
+            RejectedMenuItems.AddRange(@event.MenuItems);
+
+            foreach (var rejectedItem in @event.MenuItems)
+            {
+                // Prioritize the oustanding over the served ones when removing items
+                var outstanding = OutstandingMenuItems
+                    .FirstOrDefault(b => b.Number == rejectedItem.Number);
+
+                // TODO: Fix fugly implementation
+                if (outstanding != null)
+                {
+                    OutstandingMenuItems.Remove(outstanding);
+                }
+                else
+                {
+                    var served = ServedMenuItems
+                        .FirstOrDefault(b => b.Number == rejectedItem.Number);
+
+                    if (served != null)
+                    {
+                        ServedMenuItems.Remove(served);
+                    }
                 }
             }
         }

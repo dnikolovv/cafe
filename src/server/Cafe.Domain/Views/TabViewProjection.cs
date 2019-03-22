@@ -12,6 +12,7 @@ namespace Cafe.Domain.Views
             ProjectEvent<TabClosed>(ev => ev.TabId, (view, @event) => view.Apply(@event));
             ProjectEvent<MenuItemsOrdered>(ev => ev.TabId, (view, @event) => view.Apply(@event));
             ProjectEvent<MenuItemsServed>(ev => ev.TabId, (view, @event) => view.Apply(@event));
+            ProjectEvent<MenuItemsRejected>(ev => ev.TabId, (view, @event) => view.Apply(@event));
         }
     }
 }
