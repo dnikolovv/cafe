@@ -1,7 +1,6 @@
 ﻿using Cafe.Domain.Entities;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Cafe.Domain.Events
 {
