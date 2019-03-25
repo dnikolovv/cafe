@@ -1,4 +1,5 @@
 ﻿using Cafe.Domain;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
@@ -7,6 +8,12 @@ namespace Cafe.Api.Controllers
     [Route("api/[controller]")]
     public class ApiController : Controller
     {
+        /// <summary>
+        /// Enables using method groups when matching on Unit.
+        /// </summary>
+        protected IActionResult Ok(Unit unit) =>
+            Ok();
+
         protected IActionResult Error(Error error)
         {
             switch (error.Type)

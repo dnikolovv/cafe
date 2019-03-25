@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Cafe.Core.WaiterContext.Commands
+namespace Cafe.Core.TabContext.Commands
 {
     public class ServeMenuItems : ICommand
     {

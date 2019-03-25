@@ -4,25 +4,7 @@
         <name>Cafe.Api</name>
     </assembly>
     <members>
-        <member name="M:Cafe.Api.Controllers.OptionController.Get(Cafe.Api.Controllers.OptionController.ParametersDemo)">
-            <summary>
-            Demonstrates the Option model binding with query string parameters.
-            </summary>
-            <param name="request">The request object.</param>
-            <returns>A model showing the bound data.</returns>
-            <response code="200">The model was bound successfully.</response>
-            <response code="400">When it could not parse some of the inputted data.</response>
-        </member>
-        <member name="T:Cafe.Api.Controllers.OptionController.ParametersDemo">
-            <summary>
-            This class is for demonstration purposes.
-            The optional values need to be put in as class properties in order
-            for Swagger to be able to display them properly. There is nothing wrong with
-            having something like Get([FromQuery] Option&lt;string&gt; text), it's going to work,
-            it's just that it will not be properly displayed in the Swagger UI.
-            </summary>
-        </member>
-        <member name="M:Cafe.Api.Controllers.UsersController.Login(Cafe.Core.AuthContext.Commands.Login)">
+        <member name="M:Cafe.Api.Controllers.AuthController.Login(Cafe.Core.AuthContext.Commands.Login)">
             <summary>
             Login.
             </summary>
@@ -31,7 +13,7 @@
             <response code="200">If the credentials have a match.</response>
             <response code="400">If the credentials don't match/don't meet the requirements.</response>
         </member>
-        <member name="M:Cafe.Api.Controllers.UsersController.Register(Cafe.Core.AuthContext.Commands.Register)">
+        <member name="M:Cafe.Api.Controllers.AuthController.Register(Cafe.Core.AuthContext.Commands.Register)">
             <summary>
             Register.
             </summary>
@@ -39,6 +21,52 @@
             <returns>A user model.</returns>
             <response code="201">A user was created.</response>
             <response code="400">Invalid input.</response>
+        </member>
+        <member name="M:Cafe.Api.Controllers.MenuController.AddMenuItems(Cafe.Core.MenuContext.Commands.AddMenuItems)">
+            <summary>
+            Adds items to the menu.
+            </summary>
+            <param name="command">The items to add.</param>
+        </member>
+        <member name="M:Cafe.Api.Controllers.TabController.OpenTab(Cafe.Core.TabContext.Commands.OpenTab)">
+            <summary>
+            Opens a new tab on a given table.
+            </summary>
+        </member>
+        <member name="M:Cafe.Api.Controllers.TabController.CloseTab(Cafe.Core.TabContext.Commands.CloseTab)">
+            <summary>
+            Closes a tab.
+            </summary>
+        </member>
+        <member name="M:Cafe.Api.Controllers.TabController.OrderMenuItems(Cafe.Core.TabContext.Commands.OrderMenuItems)">
+            <summary>
+            Orders a list of menu items for a given tab.
+            </summary>
+        </member>
+        <member name="M:Cafe.Api.Controllers.TabController.RejectMenuItems(Cafe.Core.TabContext.Commands.RejectMenuItems)">
+            <summary>
+            Rejects a list of menu items for a given tab.
+            </summary>
+        </member>
+        <member name="M:Cafe.Api.Controllers.TableController.AddTable(Cafe.Core.TableContext.Commands.AddTable)">
+            <summary>
+            Adds a table to the café.
+            </summary>
+        </member>
+        <member name="M:Cafe.Api.Controllers.WaiterController.HireWaiter(Cafe.Core.WaiterContext.Commands.HireWaiter)">
+            <summary>
+            Hires a waiter in the café.
+            </summary>
+        </member>
+        <member name="M:Cafe.Api.Controllers.WaiterController.AssignTable(Cafe.Core.WaiterContext.Commands.AssignTable)">
+            <summary>
+            Assigns a table to a waiter.
+            </summary>
+        </member>
+        <member name="M:Cafe.Api.Controllers.ApiController.Ok(MediatR.Unit)">
+            <summary>
+            Enables using method groups when matching on Unit.
+            </summary>
         </member>
         <member name="T:Cafe.Api.OperationFilters.OptionOperationFilter">
             <summary>

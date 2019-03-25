@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace Cafe.Core.WaiterContext.Commands
+namespace Cafe.Core.TabContext.Commands
 {
     public class ServeMenuItemsValidator : AbstractValidator<ServeMenuItems>
     {
