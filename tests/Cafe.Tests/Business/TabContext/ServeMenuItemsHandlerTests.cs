@@ -1,4 +1,4 @@
-﻿using Cafe.Core.WaiterContext.Commands;
+﻿using Cafe.Core.TabContext.Commands;
 using Cafe.Domain;
 using Cafe.Domain.Entities;
 using Cafe.Tests.Business.TabContext.Helpers;

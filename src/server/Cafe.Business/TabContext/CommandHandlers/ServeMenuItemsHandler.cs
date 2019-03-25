@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Cafe.Core;
-using Cafe.Core.WaiterContext.Commands;
+using Cafe.Core.TabContext.Commands;
 using Cafe.Domain;
 using Cafe.Domain.Events;
 using Cafe.Persistance.EntityFramework;
