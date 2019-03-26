@@ -9,6 +9,7 @@ namespace Cafe.Core.MenuContext
         public MappingProfile()
         {
             CreateMap<MenuItemView, MenuItem>(MemberList.Source);
+            CreateMap<MenuItem, MenuItemView>(MemberList.Destination);
         }
     }
 }
