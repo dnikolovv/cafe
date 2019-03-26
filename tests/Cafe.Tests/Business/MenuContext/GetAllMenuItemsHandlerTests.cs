@@ -38,5 +38,19 @@ namespace Cafe.Tests.Business.MenuContext
                                                    i.Price == mi.Price)))
             .ShouldBeTrue();
         }
+
+        [Theory]
+        [CustomizedAutoData]
+        public async Task CanGetAllMenuItemsWhenNoneAreExisting(GetAllMenuItems query)
+        {
+            // Arrange
+            // Purposefully skipping adding any items
+
+            // Act
+            var result = await _fixture.SendAsync(query);
+
+            // Assert
+            result.Exists(items => items.Count == 0).ShouldBeTrue();
+        }
     }
 }

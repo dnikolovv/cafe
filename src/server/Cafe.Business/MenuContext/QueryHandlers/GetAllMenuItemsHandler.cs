@@ -29,7 +29,7 @@ namespace Cafe.Business.MenuContext.QueryHandlers
             var items = await _dbContext
                 .MenuItems
                 .ProjectTo<MenuItemView>(_mapper.ConfigurationProvider)
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
 
             return items
                 .Some<IList<MenuItemView>, Error>();

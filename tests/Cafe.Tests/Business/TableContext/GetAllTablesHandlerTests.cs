@@ -44,5 +44,19 @@ namespace Cafe.Tests.Business.TableContext
                                                               t.WaiterShortName == addedTable.Waiter.ShortName)))
             .ShouldBeTrue();
         }
+
+        [Theory]
+        [CustomizedAutoData]
+        public async Task CanGetAllWhenNoneAreExisting(GetAllTables query)
+        {
+            // Arrange
+            // Purposefully skipping adding any tables
+
+            // Act
+            var result = await _fixture.SendAsync(query);
+
+            // Assert
+            result.Exists(tables => tables.Count == 0).ShouldBeTrue();
+        }
     }
 }

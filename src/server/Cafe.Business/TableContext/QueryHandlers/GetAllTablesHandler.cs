@@ -29,7 +29,7 @@ namespace Cafe.Business.TableContext.QueryHandlers
             var tables = await _dbContext
                 .Tables
                 .ProjectTo<TableView>(_mapper.ConfigurationProvider)
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
 
             return tables
                 .Some<IList<TableView>, Error>();
