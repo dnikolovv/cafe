@@ -1,5 +1,4 @@
 ﻿using Baseline;
-using Cafe.Domain.Entities;
 using Cafe.Domain.Events;
 using System;
 using System.Collections.Generic;
@@ -27,11 +26,11 @@ namespace Cafe.Domain.Views
 
         public decimal TotalPaid { get; set; }
 
-        public IList<MenuItem> OutstandingMenuItems { get; set; } = new List<MenuItem>();
+        public IList<MenuItemView> OutstandingMenuItems { get; set; } = new List<MenuItemView>();
 
-        public IList<MenuItem> ServedMenuItems { get; set; } = new List<MenuItem>();
+        public IList<MenuItemView> ServedMenuItems { get; set; } = new List<MenuItemView>();
 
-        public IList<MenuItem> RejectedMenuItems { get; set; } = new List<MenuItem>();
+        public IList<MenuItemView> RejectedMenuItems { get; set; } = new List<MenuItemView>();
 
         public void Apply(TabOpened @event)
         {
@@ -51,13 +50,13 @@ namespace Cafe.Domain.Views
         {
             foreach (var item in @event.MenuItems)
             {
-                OutstandingMenuItems.Add(item);
+                OutstandingMenuItems.Add(new MenuItemView(item));
             }
         }
 
         public void Apply(MenuItemsServed @event)
         {
-            ServedMenuItems.AddRange(@event.MenuItems);
+            ServedMenuItems.AddRange(@event.MenuItems.Select(i => new MenuItemView(i)));
             ServedItemsValue += @event.MenuItems.Sum(i => i.Price);
 
             foreach (var servedItem in @event.MenuItems)
@@ -75,7 +74,7 @@ namespace Cafe.Domain.Views
         public void Apply(MenuItemsRejected @event)
         {
             RejectedItemsValue += @event.MenuItems.Sum(i => i.Price);
-            RejectedMenuItems.AddRange(@event.MenuItems);
+            RejectedMenuItems.AddRange(@event.MenuItems.Select(i => new MenuItemView(i)));
 
             foreach (var rejectedItem in @event.MenuItems)
             {
