@@ -1,4 +1,5 @@
 ﻿using Cafe.Core.MenuContext.Commands;
+using Cafe.Core.MenuContext.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
@@ -13,6 +14,14 @@ namespace Cafe.Api.Controllers
         {
             _mediator = mediator;
         }
+
+        /// <summary>
+        /// Retrieves a list of all items currently in the menu.
+        /// </summary>
+        [HttpGet("items")]
+        public async Task<IActionResult> GetMenuItems() =>
+            (await _mediator.Send(new GetAllMenuItems()))
+            .Match(Ok, Error);
 
         /// <summary>
         /// Adds items to the menu.
