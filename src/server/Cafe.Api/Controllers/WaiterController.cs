@@ -1,4 +1,5 @@
 ﻿using Cafe.Core.WaiterContext.Commands;
+using Cafe.Core.WaiterContext.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
@@ -13,6 +14,14 @@ namespace Cafe.Api.Controllers
         {
             _mediator = mediator;
         }
+
+        /// <summary>
+        /// Retrieves a list of all currently employed waiters in the café.
+        /// </summary>
+        [HttpGet]
+        public async Task<IActionResult> GetEmployedWaiters() =>
+            (await _mediator.Send(new GetEmployedWaiters()))
+            .Match(Ok, Error);
 
         /// <summary>
         /// Hires a waiter in the café.
