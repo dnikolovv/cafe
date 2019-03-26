@@ -16,7 +16,7 @@ namespace Cafe.Api.Controllers
         }
 
         /// <summary>
-        /// Retrieves a list of all currently employed waiters in the café. 
+        /// Retrieves a list of all currently employed waiters in the café.
         /// </summary>
         [HttpGet]
         public async Task<IActionResult> GetEmployedWaiters() =>
