@@ -1,8 +1,10 @@
-language: csharp
-mono: none
-sudo: required
-dist: xenial
-dotnet: 2.2
+language: generic
+
+services:
+  - docker
+
+before_install:
+  - chmod +x run-integration-tests.sh
+
 script:
-    - dotnet restore
-    - dotnet build
+  - ./run-integration-tests.sh
