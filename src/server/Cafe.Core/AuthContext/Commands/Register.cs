@@ -1,9 +1,11 @@
-﻿using Cafe.Models.Auth;
+﻿using System;
 
 namespace Cafe.Core.AuthContext.Commands
 {
-    public class Register : ICommand<UserModel>
+    public class Register : ICommand
     {
+        public Guid Id { get; set; }
+
         public string FirstName { get; set; }
 
         public string LastName { get; set; }

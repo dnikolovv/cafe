@@ -29,17 +29,10 @@ namespace Cafe.Tests.Business.AuthContext
             // Assert
             result.HasValue.ShouldBeTrue();
 
-            var userModel = result.ValueOrDefault();
-
-            userModel.Id.ShouldNotBeNullOrEmpty();
-            userModel.Email.ShouldBe(command.Email);
-            userModel.FirstName.ShouldBe(command.FirstName);
-            userModel.LastName.ShouldBe(command.LastName);
-
             var userInDb = await _fixture
-                .ExecuteDbContextAsync(context => context.Users.FirstOrDefaultAsync(u => u.Id == userModel.Id));
+                .ExecuteDbContextAsync(context => context.Users.FirstOrDefaultAsync(u => u.Id == command.Id));
 
-            userInDb.ShouldNotBeNull();
+            userInDb.Id.ShouldBe(command.Id);
             userInDb.Email.ShouldBe(command.Email);
             userInDb.FirstName.ShouldBe(command.FirstName);
             userInDb.LastName.ShouldBe(command.LastName);

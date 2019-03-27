@@ -21,7 +21,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Cafe.Domain\Cafe.Domain.csproj" />
-    <ProjectReference Include="..\Cafe.Models\Cafe.Models.csproj" />
   </ItemGroup>
 
 </Project>

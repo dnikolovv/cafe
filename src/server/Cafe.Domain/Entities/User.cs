@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Cafe.Domain.Entities
 {
-    public class User : IdentityUser<string>
+    public class User : IdentityUser<Guid>
     {
         public string FirstName { get; set; }
 

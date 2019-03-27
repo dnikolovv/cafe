@@ -5,21 +5,21 @@ using Cafe.Core.AuthContext.Commands;
 using Cafe.Domain;
 using Cafe.Domain.Entities;
 using Cafe.Domain.Events;
-using Cafe.Models.Auth;
+using Cafe.Domain.Views;
 using Cafe.Persistance.EntityFramework;
 using FluentValidation;
 using Marten;
 using Microsoft.AspNetCore.Identity;
 using Optional;
 using Optional.Async;
-using System.Linq;
+using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Cafe.Business.AuthContext.CommandHandlers
 {
-    public class LoginHandler : BaseAuthHandler<Login>, ICommandHandler<Login, JwtModel>
+    public class LoginHandler : BaseAuthHandler<Login>, ICommandHandler<Login, JwtView>
     {
         public LoginHandler(
             UserManager<User> userManager,
@@ -33,11 +33,12 @@ namespace Cafe.Business.AuthContext.CommandHandlers
         {
         }
 
-        public Task<Option<JwtModel, Error>> Handle(Login command, CancellationToken cancellationToken = default) =>
+        public Task<Option<JwtView, Error>> Handle(Login command, CancellationToken cancellationToken = default) =>
             ValidateCommand(command).FlatMapAsync(cmd =>
             FindUser(command.Email).FlatMapAsync(user =>
-            CheckPassword(user, command.Password).MapAsync(async _ =>
-            GenerateJwt(user))));
+            CheckPassword(user, command.Password).FlatMapAsync(_ =>
+            GetExtraClaims(user).MapAsync(async claims =>
+            GenerateJwt(user, claims)))));
 
         private async Task<Option<bool, Error>> CheckPassword(User user, string password)
         {
@@ -55,10 +56,14 @@ namespace Cafe.Business.AuthContext.CommandHandlers
                 .FindByEmailAsync(email)
                 .SomeNotNull(Error.NotFound($"No user with email {email} was found."));
 
-        private JwtModel GenerateJwt(User user) =>
-            new JwtModel
+        private Task<Option<IList<Claim>, Error>> GetExtraClaims(User user) =>
+            user.SomeNotNull(Error.Validation($"You must provide a non-null user."))
+                .MapAsync(u => UserManager.GetClaimsAsync(u));
+
+        private JwtView GenerateJwt(User user, IEnumerable<Claim> extraClaims) =>
+            new JwtView
             {
-                TokenString = JwtFactory.GenerateEncodedToken(user.Id, user.Email, Enumerable.Empty<Claim>())
+                TokenString = JwtFactory.GenerateEncodedToken(user.Id.ToString(), user.Email, extraClaims)
             };
     }
 }

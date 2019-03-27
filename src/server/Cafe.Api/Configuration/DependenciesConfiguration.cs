@@ -1,17 +1,11 @@
 ﻿using Cafe.Api.Events;
 using Cafe.Api.OperationFilters;
-using Cafe.Business.TabContext.CommandHandlers;
-using Cafe.Business.TabContext.QueryHandlers;
 using Cafe.Core.AuthContext.Configuration;
-using Cafe.Core.TabContext.Commands;
-using Cafe.Core.TabContext.Queries;
-using Cafe.Domain;
 using Cafe.Domain.Entities;
 using Cafe.Domain.Events;
 using Cafe.Domain.Views;
 using Cafe.Persistance.EntityFramework;
 using Marten;
-using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -19,7 +13,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
-using Optional;
 using Swashbuckle.AspNetCore.Swagger;
 using System;
 using System.Collections.Generic;
@@ -45,7 +38,7 @@ namespace Cafe.Api.Configuration
 
         public static void AddJwtIdentity(this IServiceCollection services, IConfigurationSection jwtConfiguration)
         {
-            services.AddIdentity<User, IdentityRole>()
+            services.AddIdentity<User, IdentityRole<Guid>>()
                     .AddEntityFrameworkStores<ApplicationDbContext>();
 
             var signingKey = new SymmetricSecurityKey(
