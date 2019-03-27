@@ -22,7 +22,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Cafe.Core\Cafe.Core.csproj" />
     <ProjectReference Include="..\Cafe.Domain\Cafe.Domain.csproj" />
-    <ProjectReference Include="..\Cafe.Models\Cafe.Models.csproj" />
     <ProjectReference Include="..\Cafe.Persistance\Cafe.Persistance.csproj" />
   </ItemGroup>
 

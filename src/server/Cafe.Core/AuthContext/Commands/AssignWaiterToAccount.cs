@@ -6,6 +6,6 @@ namespace Cafe.Core.AuthContext.Commands
     {
         public Guid WaiterId { get; set; }
 
-        public string AccountId { get; set; }
+        public Guid AccountId { get; set; }
     }
 }

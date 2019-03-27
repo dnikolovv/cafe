@@ -5,10 +5,10 @@ using Cafe.Core.AuthContext.Commands;
 using Cafe.Domain;
 using Cafe.Domain.Entities;
 using Cafe.Domain.Events;
-using Cafe.Models.Auth;
 using Cafe.Persistance.EntityFramework;
 using FluentValidation;
 using Marten;
+using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Optional;
 using Optional.Async;
@@ -18,7 +18,7 @@ using System.Threading.Tasks;
 
 namespace Cafe.Business.AuthContext.CommandHandlers
 {
-    public class RegisterHandler : BaseAuthHandler<Register>, ICommandHandler<Register, UserModel>
+    public class RegisterHandler : BaseAuthHandler<Register>, ICommandHandler<Register>
     {
         public RegisterHandler(
             UserManager<User> userManager,
@@ -32,20 +32,23 @@ namespace Cafe.Business.AuthContext.CommandHandlers
         {
         }
 
-        public Task<Option<UserModel, Error>> Handle(Register command, CancellationToken cancellationToken = default) =>
-            ValidateCommand(command).FlatMapAsync(cmd =>
-            CheckIfUserDoesntExist(command.Email).FlatMapAsync(async _ =>
-            {
-                var user = Mapper.Map<User>(command);
+        public Task<Option<Unit, Error>> Handle(Register command, CancellationToken cancellationToken = default) =>
+            ValidateCommand(command).FlatMapAsync(_ =>
+            CheckIfUserDoesntExist(command.Email).FlatMapAsync(__ =>
+            PersistUser(command)));
 
-                var creationResult = (await UserManager.CreateAsync(user, command.Password))
-                    .SomeWhen(
-                        x => x.Succeeded,
-                        x => Error.Validation(x.Errors.Select(e => e.Description)));
+        private async Task<Option<Unit, Error>> PersistUser(Register command)
+        {
+            var user = Mapper.Map<User>(command);
 
-                // If the result is valid, simply disregard it and return the new user as a DTO
-                return creationResult.Map(__ => Mapper.Map<UserModel>(user));
-            }));
+            var creationResult = (await UserManager.CreateAsync(user, command.Password))
+                .SomeWhen(
+                    x => x.Succeeded,
+                    x => Error.Validation(x.Errors.Select(e => e.Description)));
+
+            return creationResult
+                .Map(_ => Unit.Value);
+        }
 
         private async Task<Option<User, Error>> CheckIfUserDoesntExist(string email)
         {

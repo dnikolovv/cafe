@@ -5,7 +5,7 @@ using Cafe.Core.AuthContext.Commands;
 using Cafe.Domain;
 using Cafe.Domain.Entities;
 using Cafe.Domain.Events;
-using Cafe.Models.Auth;
+using Cafe.Domain.Views;
 using Cafe.Persistance.EntityFramework;
 using FluentValidation;
 using Marten;
@@ -19,7 +19,7 @@ using System.Threading.Tasks;
 
 namespace Cafe.Business.AuthContext.CommandHandlers
 {
-    public class LoginHandler : BaseAuthHandler<Login>, ICommandHandler<Login, JwtModel>
+    public class LoginHandler : BaseAuthHandler<Login>, ICommandHandler<Login, JwtView>
     {
         public LoginHandler(
             UserManager<User> userManager,
@@ -33,7 +33,7 @@ namespace Cafe.Business.AuthContext.CommandHandlers
         {
         }
 
-        public Task<Option<JwtModel, Error>> Handle(Login command, CancellationToken cancellationToken = default) =>
+        public Task<Option<JwtView, Error>> Handle(Login command, CancellationToken cancellationToken = default) =>
             ValidateCommand(command).FlatMapAsync(cmd =>
             FindUser(command.Email).FlatMapAsync(user =>
             CheckPassword(user, command.Password).FlatMapAsync(_ =>
@@ -60,10 +60,10 @@ namespace Cafe.Business.AuthContext.CommandHandlers
             user.SomeNotNull(Error.Validation($"You must provide a non-null user."))
                 .MapAsync(u => UserManager.GetClaimsAsync(u));
 
-        private JwtModel GenerateJwt(User user, IEnumerable<Claim> extraClaims) =>
-            new JwtModel
+        private JwtView GenerateJwt(User user, IEnumerable<Claim> extraClaims) =>
+            new JwtView
             {
-                TokenString = JwtFactory.GenerateEncodedToken(user.Id, user.Email, extraClaims)
+                TokenString = JwtFactory.GenerateEncodedToken(user.Id.ToString(), user.Email, extraClaims)
             };
     }
 }

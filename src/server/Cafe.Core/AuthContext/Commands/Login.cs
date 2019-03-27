@@ -1,8 +1,8 @@
-﻿using Cafe.Models.Auth;
+﻿using Cafe.Domain.Views;
 
 namespace Cafe.Core.AuthContext.Commands
 {
-    public class Login : ICommand<JwtModel>
+    public class Login : ICommand<JwtView>
     {
         public string Email { get; set; }
 

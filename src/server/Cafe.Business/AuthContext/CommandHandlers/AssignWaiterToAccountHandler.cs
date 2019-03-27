@@ -40,9 +40,9 @@ namespace Cafe.Business.AuthContext.CommandHandlers
             WaiterShouldExist(command.WaiterId).MapAsync(waiter =>
             AddWaiterClaim(account, waiter.Id))));
 
-        private Task<Option<User, Error>> AccountShouldExist(string accountId) =>
+        private Task<Option<User, Error>> AccountShouldExist(Guid accountId) =>
             UserManager
-                .FindByIdAsync(accountId)
+                .FindByIdAsync(accountId.ToString())
                 .SomeNotNull(Error.NotFound($"No account with id {accountId} was found."));
 
         private Task<Option<Waiter, Error>> WaiterShouldExist(Guid waiterId) =>

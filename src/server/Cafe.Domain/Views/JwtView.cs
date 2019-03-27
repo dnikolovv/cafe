@@ -1,6 +1,6 @@
-﻿namespace Cafe.Models.Auth
+﻿namespace Cafe.Domain.Views
 {
-    public class JwtModel
+    public class JwtView
     {
         public string TokenString { get; set; }
     }

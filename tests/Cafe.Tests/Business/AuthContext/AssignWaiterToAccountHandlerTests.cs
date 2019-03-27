@@ -1,10 +1,13 @@
 ﻿using Cafe.Core.AuthContext.Commands;
+using Cafe.Domain;
 using Cafe.Domain.Entities;
 using Cafe.Tests.Customizations;
-using Microsoft.EntityFrameworkCore;
+using Cafe.Tests.Extensions;
 using Shouldly;
+using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -30,39 +33,99 @@ namespace Cafe.Tests.Business.AuthContext
                 await dbContext.SaveChangesAsync();
             });
 
-            var registerAccountResult = await _fixture.SendAsync(registerAccountCommand);
-
-            var registeredUser = await _fixture
-                .ExecuteDbContextAsync(dbContext => dbContext
-                    .Users
-                    .SingleAsync(u => u.Email == registerAccountCommand.Email));
+            await _fixture.SendAsync(registerAccountCommand);
 
             var commandToTest = new AssignWaiterToAccount
             {
                 WaiterId = waiterToAssign.Id,
-                AccountId = registeredUser.Id
+                AccountId = registerAccountCommand.Id
             };
 
             // Act
             var result = await _fixture.SendAsync(commandToTest);
 
             // Assert
-            // We're going to check if the operation is successfull by validating whether the returned JWT from the login has a proper waiter claim
+            await LoginAndCheckClaim(
+                registerAccountCommand.Email,
+                registerAccountCommand.Password,
+                c => c.Type == "waiterId" && // TODO: Get rid of magic strings
+                     c.Value == waiterToAssign.Id.ToString());
+        }
+
+        [Theory]
+        [CustomizedAutoData]
+        public async Task CanReassignWaiterForAccount(Register registerAccountCommand, Waiter waiterToAssign, Waiter waiterToReassign)
+        {
+            // Arrange
+            await _fixture.ExecuteDbContextAsync(async dbContext =>
+            {
+                dbContext.Waiters.Add(waiterToAssign);
+                dbContext.Waiters.Add(waiterToReassign);
+                await dbContext.SaveChangesAsync();
+            });
+
+            await _fixture.SendAsync(registerAccountCommand);
+
+            var assignFirstWaiterCommand = new AssignWaiterToAccount
+            {
+                WaiterId = waiterToAssign.Id,
+                AccountId = registerAccountCommand.Id
+            };
+
+            // Note that first we've assigned a waiter before attempting a second time
+            await _fixture.SendAsync(assignFirstWaiterCommand);
+
+            var commandToTest = new AssignWaiterToAccount
+            {
+                AccountId = registerAccountCommand.Id,
+                WaiterId = waiterToReassign.Id
+            };
+
+            // Act
+            var result = await _fixture.SendAsync(commandToTest);
+
+            // Assert
+            await LoginAndCheckClaim(
+                registerAccountCommand.Email,
+                registerAccountCommand.Password,
+                c => c.Type == "waiterId" && // TODO: Get rid of magic strings
+                     c.Value == waiterToReassign.Id.ToString());
+        }
+
+        [Theory]
+        [CustomizedAutoData]
+        public async Task CannotAssignUnexistingWaiter(Register registerAccountCommand)
+        {
+            // Arrange
+            // Purposefully skipping adding any waiters
+            var commandToTest = new AssignWaiterToAccount
+            {
+                WaiterId = Guid.NewGuid(),
+                AccountId = registerAccountCommand.Id
+            };
+
+            // Act
+            var result = await _fixture.SendAsync(commandToTest);
+
+            // Assert
+            result.ShouldHaveErrorOfType(ErrorType.NotFound);
+        }
+
+        private async Task LoginAndCheckClaim(string email, string password, Func<Claim, bool> claimPredicate)
+        {
             var loginResult = await _fixture.SendAsync(new Login
             {
-                Email = registerAccountCommand.Email,
-                Password = registerAccountCommand.Password
+                Email = email,
+                Password = password
             });
 
             loginResult.Exists(jwt =>
             {
                 var decoded = new JwtSecurityToken(jwt.TokenString);
 
-                // TODO: Get rid of magic strings
                 return decoded
                     .Claims
-                    .Any(c => c.Type == "waiterId" &&
-                              c.Value == waiterToAssign.Id.ToString());
+                    .Any(claimPredicate);
             })
             .ShouldBeTrue();
         }

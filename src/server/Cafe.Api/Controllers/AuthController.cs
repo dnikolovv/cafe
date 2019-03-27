@@ -1,6 +1,6 @@
 ﻿using Cafe.Core.AuthContext.Commands;
 using Cafe.Domain;
-using Cafe.Models.Auth;
+using Cafe.Domain.Views;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
@@ -25,7 +25,7 @@ namespace Cafe.Api.Controllers
         /// <response code="200">If the credentials have a match.</response>
         /// <response code="400">If the credentials don't match/don't meet the requirements.</response>
         [HttpPost("login")]
-        [ProducesResponseType(typeof(JwtModel), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(JwtView), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Error), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> Login([FromBody] Login command) =>
             (await _mediator.Send(command))
@@ -39,7 +39,6 @@ namespace Cafe.Api.Controllers
         /// <response code="201">A user was created.</response>
         /// <response code="400">Invalid input.</response>
         [HttpPost("register")]
-        [ProducesResponseType(typeof(UserModel), (int)HttpStatusCode.Created)]
         [ProducesResponseType(typeof(Error), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> Register([FromBody] Register command) =>
             (await _mediator.Send(command))
