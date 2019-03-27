@@ -1,11 +1,18 @@
 ﻿using AutoMapper;
 using Cafe.Core.AuthContext;
+using Cafe.Domain;
 using Cafe.Domain.Entities;
 using Cafe.Domain.Events;
 using Cafe.Persistance.EntityFramework;
 using FluentValidation;
 using Marten;
+using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Optional;
+using Optional.Async;
+using System;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace Cafe.Business.AuthContext.CommandHandlers
 {
@@ -27,5 +34,19 @@ namespace Cafe.Business.AuthContext.CommandHandlers
 
         protected UserManager<User> UserManager { get; }
         protected IJwtFactory JwtFactory { get; }
+
+        protected Task<Option<User, Error>> AccountShouldExist(Guid accountId) =>
+            UserManager
+                .FindByIdAsync(accountId.ToString())
+                .SomeNotNull(Error.NotFound($"No account with id {accountId} was found."));
+
+        protected async Task<Unit> AddClaim(User account, string claimType, string claimValue)
+        {
+            var claimToAdd = new Claim(claimType, claimValue);
+
+            await UserManager.AddClaimAsync(account, claimToAdd);
+
+            return Unit.Value;
+        }
     }
 }

@@ -19,13 +19,13 @@ using IDocumentSession = Marten.IDocumentSession;
 
 namespace Cafe.Business.AuthContext.CommandHandlers
 {
-    public class AssignWaiterToAccountHandler : BaseAuthHandler<AssignWaiterToAccount>, ICommandHandler<AssignWaiterToAccount>
+    public class AssignManagerToAccountHandler : BaseAuthHandler<AssignManagerToAccount>, ICommandHandler<AssignManagerToAccount>
     {
-        public AssignWaiterToAccountHandler(
+        public AssignManagerToAccountHandler(
             UserManager<User> userManager,
             IJwtFactory jwtFactory,
             IMapper mapper,
-            IValidator<AssignWaiterToAccount> validator,
+            IValidator<AssignManagerToAccount> validator,
             ApplicationDbContext dbContext,
             IDocumentSession documentSession,
             IEventBus eventBus)
@@ -33,16 +33,16 @@ namespace Cafe.Business.AuthContext.CommandHandlers
         {
         }
 
-        public Task<Option<Unit, Error>> Handle(AssignWaiterToAccount command, CancellationToken cancellationToken) =>
+        public Task<Option<Unit, Error>> Handle(AssignManagerToAccount command, CancellationToken cancellationToken) =>
             ValidateCommand(command).FlatMapAsync(_ =>
             AccountShouldExist(command.AccountId).FlatMapAsync(account =>
-            WaiterShouldExist(command.WaiterId).MapAsync(waiter =>
-            AddClaim(account, AuthConstants.WaiterIdClaimType, waiter.Id.ToString()))));
+            ManagerShouldExist(command.ManagerId).MapAsync(manager =>
+            AddClaim(account, AuthConstants.ManagerIdClaimType, manager.Id.ToString()))));
 
-        private Task<Option<Waiter, Error>> WaiterShouldExist(Guid waiterId) =>
+        private Task<Option<Manager, Error>> ManagerShouldExist(Guid managerId) =>
             DbContext
-                .Waiters
-                .FirstOrDefaultAsync(w => w.Id == waiterId)
-                .SomeNotNull(Error.NotFound($"No waiter with id {waiterId} was found."));
+                .Managers
+                .FirstOrDefaultAsync(m => m.Id == managerId)
+                .SomeNotNull(Error.NotFound($"No manager with an id of {managerId} was found."));
     }
 }

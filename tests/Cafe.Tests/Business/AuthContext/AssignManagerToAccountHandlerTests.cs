@@ -10,12 +10,12 @@ using Xunit;
 
 namespace Cafe.Tests.Business.AuthContext
 {
-    public class AssignWaiterToAccountHandlerTests : ResetDatabaseLifetime
+    public class AssignManagerToAccountHandlerTests : ResetDatabaseLifetime
     {
         private readonly SliceFixture _fixture;
         private readonly AuthTestsHelper _helper;
 
-        public AssignWaiterToAccountHandlerTests()
+        public AssignManagerToAccountHandlerTests()
         {
             _fixture = new SliceFixture();
             _helper = new AuthTestsHelper(_fixture);
@@ -23,21 +23,21 @@ namespace Cafe.Tests.Business.AuthContext
 
         [Theory]
         [CustomizedAutoData]
-        public async Task CanAssignWaiterToAccount(Register registerAccountCommand, Waiter waiterToAssign)
+        public async Task CanAssignManagerToAccount(Register accountToRegisterCommand, Manager managerToAssign)
         {
             // Arrange
             await _fixture.ExecuteDbContextAsync(async dbContext =>
             {
-                dbContext.Waiters.Add(waiterToAssign);
+                dbContext.Managers.Add(managerToAssign);
                 await dbContext.SaveChangesAsync();
             });
 
-            await _fixture.SendAsync(registerAccountCommand);
+            await _fixture.SendAsync(accountToRegisterCommand);
 
-            var commandToTest = new AssignWaiterToAccount
+            var commandToTest = new AssignManagerToAccount
             {
-                WaiterId = waiterToAssign.Id,
-                AccountId = registerAccountCommand.Id
+                ManagerId = managerToAssign.Id,
+                AccountId = accountToRegisterCommand.Id
             };
 
             // Act
@@ -45,39 +45,39 @@ namespace Cafe.Tests.Business.AuthContext
 
             // Assert
             await _helper.LoginAndCheckClaim(
-                registerAccountCommand.Email,
-                registerAccountCommand.Password,
-                c => c.Type == AuthConstants.WaiterIdClaimType &&
-                     c.Value == waiterToAssign.Id.ToString());
+                accountToRegisterCommand.Email,
+                accountToRegisterCommand.Password,
+                c => c.Type == AuthConstants.ManagerIdClaimType &&
+                     c.Value == managerToAssign.Id.ToString());
         }
 
         [Theory]
         [CustomizedAutoData]
-        public async Task CanReassignWaiterForAccount(Register registerAccountCommand, Waiter waiterToAssign, Waiter waiterToReassign)
+        public async Task CanReassignManagerForAccount(Register registerAccountCommand, Manager managerToAssign, Manager managerToReassign)
         {
             // Arrange
             await _fixture.ExecuteDbContextAsync(async dbContext =>
             {
-                dbContext.Waiters.Add(waiterToAssign);
-                dbContext.Waiters.Add(waiterToReassign);
+                dbContext.Managers.Add(managerToAssign);
+                dbContext.Managers.Add(managerToReassign);
                 await dbContext.SaveChangesAsync();
             });
 
             await _fixture.SendAsync(registerAccountCommand);
 
-            var assignFirstWaiterCommand = new AssignWaiterToAccount
+            var assignFirstManagerCommand = new AssignManagerToAccount
             {
-                WaiterId = waiterToAssign.Id,
+                ManagerId = managerToAssign.Id,
                 AccountId = registerAccountCommand.Id
             };
 
-            // Note that first we've assigned a waiter before attempting a second time
-            await _fixture.SendAsync(assignFirstWaiterCommand);
+            // Note that first we've assigned a manager before attempting a second time
+            await _fixture.SendAsync(assignFirstManagerCommand);
 
-            var commandToTest = new AssignWaiterToAccount
+            var commandToTest = new AssignManagerToAccount
             {
                 AccountId = registerAccountCommand.Id,
-                WaiterId = waiterToReassign.Id
+                ManagerId = managerToReassign.Id
             };
 
             // Act
@@ -87,19 +87,19 @@ namespace Cafe.Tests.Business.AuthContext
             await _helper.LoginAndCheckClaim(
                 registerAccountCommand.Email,
                 registerAccountCommand.Password,
-                c => c.Type == AuthConstants.WaiterIdClaimType &&
-                     c.Value == waiterToReassign.Id.ToString());
+                c => c.Type == AuthConstants.ManagerIdClaimType &&
+                     c.Value == managerToReassign.Id.ToString());
         }
 
         [Theory]
         [CustomizedAutoData]
-        public async Task CannotAssignUnexistingWaiter(Register registerAccountCommand)
+        public async Task CannotAssignUnexistingManager(Register registerAccountCommand)
         {
             // Arrange
-            // Purposefully skipping adding any waiters
-            var commandToTest = new AssignWaiterToAccount
+            // Purposefully skipping adding any managers
+            var commandToTest = new AssignManagerToAccount
             {
-                WaiterId = Guid.NewGuid(),
+                ManagerId = Guid.NewGuid(),
                 AccountId = registerAccountCommand.Id
             };
 
@@ -112,18 +112,18 @@ namespace Cafe.Tests.Business.AuthContext
 
         [Theory]
         [CustomizedAutoData]
-        public async Task CannotAssignUnexistingAccount(Waiter waiterToAdd)
+        public async Task CannotAssignUnexistingAccount(Manager managerToAdd)
         {
             // Arrange
             await _fixture.ExecuteDbContextAsync(async dbContext =>
             {
-                dbContext.Waiters.Add(waiterToAdd);
+                dbContext.Managers.Add(managerToAdd);
                 await dbContext.SaveChangesAsync();
             });
 
-            var commandToTest = new AssignWaiterToAccount
+            var commandToTest = new AssignManagerToAccount
             {
-                WaiterId = waiterToAdd.Id,
+                ManagerId = managerToAdd.Id,
                 AccountId = Guid.NewGuid()
             };
 
