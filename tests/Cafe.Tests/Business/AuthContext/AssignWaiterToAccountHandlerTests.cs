@@ -111,6 +111,30 @@ namespace Cafe.Tests.Business.AuthContext
             result.ShouldHaveErrorOfType(ErrorType.NotFound);
         }
 
+        [Theory]
+        [CustomizedAutoData]
+        public async Task CannotAssignUnexistingAccount(Waiter waiterToAdd)
+        {
+            // Arrange
+            await _fixture.ExecuteDbContextAsync(async dbContext =>
+            {
+                dbContext.Waiters.Add(waiterToAdd);
+                await dbContext.SaveChangesAsync();
+            });
+
+            var commandToTest = new AssignWaiterToAccount
+            {
+                WaiterId = waiterToAdd.Id,
+                AccountId = Guid.NewGuid()
+            };
+
+            // Act
+            var result = await _fixture.SendAsync(commandToTest);
+
+            // Assert
+            result.ShouldHaveErrorOfType(ErrorType.NotFound);
+        }
+
         private async Task LoginAndCheckClaim(string email, string password, Func<Claim, bool> claimPredicate)
         {
             var loginResult = await _fixture.SendAsync(new Login
