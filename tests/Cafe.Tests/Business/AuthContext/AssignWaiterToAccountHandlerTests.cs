@@ -4,11 +4,7 @@ using Cafe.Domain;
 using Cafe.Domain.Entities;
 using Cafe.Tests.Customizations;
 using Cafe.Tests.Extensions;
-using Shouldly;
 using System;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -17,10 +13,12 @@ namespace Cafe.Tests.Business.AuthContext
     public class AssignWaiterToAccountHandlerTests : ResetDatabaseLifetime
     {
         private readonly SliceFixture _fixture;
+        private readonly AuthTestsHelper _helper;
 
         public AssignWaiterToAccountHandlerTests()
         {
             _fixture = new SliceFixture();
+            _helper = new AuthTestsHelper(_fixture);
         }
 
         [Theory]
@@ -46,7 +44,7 @@ namespace Cafe.Tests.Business.AuthContext
             var result = await _fixture.SendAsync(commandToTest);
 
             // Assert
-            await LoginAndCheckClaim(
+            await _helper.LoginAndCheckClaim(
                 registerAccountCommand.Email,
                 registerAccountCommand.Password,
                 c => c.Type == AuthConstants.WaiterIdClaimType &&
@@ -86,7 +84,7 @@ namespace Cafe.Tests.Business.AuthContext
             var result = await _fixture.SendAsync(commandToTest);
 
             // Assert
-            await LoginAndCheckClaim(
+            await _helper.LoginAndCheckClaim(
                 registerAccountCommand.Email,
                 registerAccountCommand.Password,
                 c => c.Type == AuthConstants.WaiterIdClaimType &&
@@ -134,25 +132,6 @@ namespace Cafe.Tests.Business.AuthContext
 
             // Assert
             result.ShouldHaveErrorOfType(ErrorType.NotFound);
-        }
-
-        private async Task LoginAndCheckClaim(string email, string password, Func<Claim, bool> claimPredicate)
-        {
-            var loginResult = await _fixture.SendAsync(new Login
-            {
-                Email = email,
-                Password = password
-            });
-
-            loginResult.Exists(jwt =>
-            {
-                var decoded = new JwtSecurityToken(jwt.TokenString);
-
-                return decoded
-                    .Claims
-                    .Any(claimPredicate);
-            })
-            .ShouldBeTrue();
         }
     }
 }
