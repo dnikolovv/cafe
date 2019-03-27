@@ -10,7 +10,7 @@ using Xunit;
 
 namespace Cafe.Tests.Business.AuthContext
 {
-    public class AssignWaiterToAccountHandlerTests
+    public class AssignWaiterToAccountHandlerTests : ResetDatabaseLifetime
     {
         private readonly SliceFixture _fixture;
 
