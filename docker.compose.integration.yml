@@ -1,0 +1,24 @@
+version: '3.4'
+
+services:
+  cafe.tests.sql:
+    image: postgres:9.5
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: postgres
+  cafe.tests.eventstore:
+    image: postgres:9.5
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: postgres
+  cafe.tests:
+    image: cafetests
+    build:
+      context: .
+      dockerfile: tests/Cafe.Tests/Dockerfile
+    depends_on:
+      - cafe.tests.sql
+      - cafe.tests.eventstore
+    links:
+      - cafe.tests.sql:relationaldb
+      - cafe.tests.eventstore:eventstore
