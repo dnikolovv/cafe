@@ -53,7 +53,7 @@ namespace Cafe.Business.AuthContext.CommandHandlers
 
         private async Task<Unit> AddWaiterClaim(User account, Guid waiterId)
         {
-            var claimToAdd = new Claim("waiterId", waiterId.ToString());
+            var claimToAdd = new Claim(AuthConstants.WaiterIdClaimType, waiterId.ToString());
 
             await UserManager.AddClaimAsync(account, claimToAdd);
 

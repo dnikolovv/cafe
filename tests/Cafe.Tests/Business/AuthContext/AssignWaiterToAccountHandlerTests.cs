@@ -1,4 +1,5 @@
-﻿using Cafe.Core.AuthContext.Commands;
+﻿using Cafe.Core.AuthContext;
+using Cafe.Core.AuthContext.Commands;
 using Cafe.Domain;
 using Cafe.Domain.Entities;
 using Cafe.Tests.Customizations;
@@ -48,7 +49,7 @@ namespace Cafe.Tests.Business.AuthContext
             await LoginAndCheckClaim(
                 registerAccountCommand.Email,
                 registerAccountCommand.Password,
-                c => c.Type == "waiterId" && // TODO: Get rid of magic strings
+                c => c.Type == AuthConstants.WaiterIdClaimType &&
                      c.Value == waiterToAssign.Id.ToString());
         }
 
@@ -88,7 +89,7 @@ namespace Cafe.Tests.Business.AuthContext
             await LoginAndCheckClaim(
                 registerAccountCommand.Email,
                 registerAccountCommand.Password,
-                c => c.Type == "waiterId" && // TODO: Get rid of magic strings
+                c => c.Type == AuthConstants.WaiterIdClaimType &&
                      c.Value == waiterToReassign.Id.ToString());
         }
 
