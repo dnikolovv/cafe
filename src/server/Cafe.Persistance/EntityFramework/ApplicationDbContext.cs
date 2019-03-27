@@ -15,6 +15,8 @@ namespace Cafe.Persistance.EntityFramework
 
         public DbSet<Waiter> Waiters { get; set; }
 
+        public DbSet<Manager> Managers { get; set; }
+
         public DbSet<Table> Tables { get; set; }
 
         public DbSet<MenuItem> MenuItems { get; set; }

@@ -1,7 +1,7 @@
-﻿using Cafe.Tests.Customizations;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Cafe.Core.ManagerContext.Commands;
+using Cafe.Tests.Customizations;
+using Microsoft.EntityFrameworkCore;
+using Shouldly;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -34,8 +34,6 @@ namespace Cafe.Tests.Business.ManagerContext
             });
 
             managerInDb.Id.ShouldBe(command.Id);
-            managerInDb.FirstName.ShouldBe(command.FirstName);
-            managerInDb.LastName.ShouldBe(command.LastName);
             managerInDb.ShortName.ShouldBe(command.ShortName);
         }
     }
