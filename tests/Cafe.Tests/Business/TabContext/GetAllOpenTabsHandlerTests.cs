@@ -39,5 +39,32 @@ namespace Cafe.Tests.Business.TabContext
                 tabs.All(t => tabIds.Contains(t.Id)))
             .ShouldBeTrue();
         }
+
+        [Theory]
+        [CustomizedAutoData]
+        public async Task GetAllOpenTabsReturnsOnlyOpenTabs(Guid[] tabIds)
+        {
+            // Arrange
+            for (int i = 0; i < tabIds.Length; i++)
+            {
+                await _helper.OpenTabOnTable(tabIds[i], tableNumber: i + 1);
+            }
+
+            // Closing one of the tabs
+            var tabToCloseId = tabIds.First();
+            await _helper.CloseTab(tabToCloseId, decimal.MaxValue);
+
+            // Act
+            var result = await _fixture.SendAsync(new GetAllOpenTabs());
+
+            // Assert
+            // Since we've closed only the first one we expect the rest to show
+            var expectedTabIds = tabIds.Skip(1).ToArray();
+
+            result.Exists(tabs =>
+                tabs.Count == tabIds.Length - 1 &&
+                tabs.All(t => expectedTabIds.Contains(t.Id)))
+            .ShouldBeTrue();
+        }
     }
 }
