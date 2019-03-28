@@ -6,11 +6,13 @@ using Cafe.Business.AuthContext;
 using Cafe.Core.AuthContext;
 using Cafe.Core.AuthContext.Commands;
 using Cafe.Core.AuthContext.Configuration;
+using Cafe.Domain.Entities;
 using Cafe.Persistance.EntityFramework;
 using FluentValidation.AspNetCore;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -75,11 +77,15 @@ namespace Cafe.Api
             .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, ApplicationDbContext dbContext, UserManager<User> userManager)
         {
             if (!env.IsDevelopment())
             {
                 app.UseHsts();
+            }
+            else
+            {
+                app.AddDefaultAdminAccountIfNonExisting(dbContext, userManager).Wait();
             }
 
             loggerFactory.AddLogging(Configuration.GetSection("Logging"));

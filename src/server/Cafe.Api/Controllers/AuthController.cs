@@ -1,7 +1,9 @@
-﻿using Cafe.Core.AuthContext.Commands;
+﻿using Cafe.Core.AuthContext;
+using Cafe.Core.AuthContext.Commands;
 using Cafe.Domain;
 using Cafe.Domain.Views;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using System.Threading.Tasks;
@@ -21,7 +23,7 @@ namespace Cafe.Api.Controllers
         /// Login.
         /// </summary>
         /// <param name="command">The credentials.</param>
-        /// <returns>A JWT token.</returns>
+        /// <returns>A JWT.</returns>
         /// <response code="200">If the credentials have a match.</response>
         /// <response code="400">If the credentials don't match/don't meet the requirements.</response>
         [HttpPost("login")]
@@ -48,6 +50,7 @@ namespace Cafe.Api.Controllers
         /// Assigns a waiter to an account.
         /// </summary>
         [HttpPost("assign/waiter")]
+        [Authorize(Policy = AuthConstants.Policies.IsAdmin)]
         public async Task<IActionResult> AssignWaiterToAccount([FromBody] AssignWaiterToAccount command) =>
             (await _mediator.Send(command))
             .Match(Ok, Error);
@@ -56,6 +59,7 @@ namespace Cafe.Api.Controllers
         /// Assigns a manager to an account.
         /// </summary>
         [HttpPost("assign/manager")]
+        [Authorize(Policy = AuthConstants.Policies.IsAdmin)]
         public async Task<IActionResult> AssignManagerToAccount([FromBody] AssignManagerToAccount command) =>
             (await _mediator.Send(command))
             .Match(Ok, Error);
