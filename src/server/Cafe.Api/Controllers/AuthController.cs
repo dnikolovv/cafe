@@ -43,5 +43,21 @@ namespace Cafe.Api.Controllers
         public async Task<IActionResult> Register([FromBody] Register command) =>
             (await _mediator.Send(command))
             .Match(u => CreatedAtAction(nameof(Register), u), Error);
+
+        /// <summary>
+        /// Assigns a waiter to an account.
+        /// </summary>
+        [HttpPost("assign/waiter")]
+        public async Task<IActionResult> AssignWaiterToAccount([FromBody] AssignWaiterToAccount command) =>
+            (await _mediator.Send(command))
+            .Match(Ok, Error);
+
+        /// <summary>
+        /// Assigns a manager to an account.
+        /// </summary>
+        [HttpPost("assign/manager")]
+        public async Task<IActionResult> AssignManagerToAccount([FromBody] AssignManagerToAccount command) =>
+            (await _mediator.Send(command))
+            .Match(Ok, Error);
     }
 }

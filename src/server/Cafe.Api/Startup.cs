@@ -3,8 +3,6 @@ using Cafe.Api.Configuration;
 using Cafe.Api.Filters;
 using Cafe.Api.ModelBinders;
 using Cafe.Business.AuthContext;
-using Cafe.Business.AuthContext.CommandHandlers;
-using Cafe.Business.TabContext.CommandHandlers;
 using Cafe.Core.AuthContext;
 using Cafe.Core.AuthContext.Commands;
 using Cafe.Core.AuthContext.Configuration;
@@ -49,7 +47,15 @@ namespace Cafe.Api
 
             services.AddAutoMapper();
             services.AddSwagger();
-            services.AddJwtIdentity(Configuration.GetSection(nameof(JwtConfiguration)));
+
+            services.AddJwtIdentity(
+                Configuration.GetSection(nameof(JwtConfiguration)),
+                options =>
+                {
+                    options.AddPolicy(AuthConstants.Policies.IsAdmin, pb => pb.RequireClaim(AuthConstants.ClaimTypes.IsAdmin, $"{true}"));
+                    options.AddPolicy(AuthConstants.Policies.IsWaiter, pb => pb.RequireClaim(AuthConstants.ClaimTypes.WaiterId));
+                    options.AddPolicy(AuthConstants.Policies.IsManager, pb => pb.RequireClaim(AuthConstants.ClaimTypes.ManagerId));
+                });
 
             services.AddLogging(logBuilder => logBuilder.AddSerilog(dispose: true));
 

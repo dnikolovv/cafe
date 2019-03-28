@@ -1,6 +1,8 @@
-﻿using Cafe.Core.WaiterContext.Commands;
+﻿using Cafe.Core.AuthContext;
+using Cafe.Core.WaiterContext.Commands;
 using Cafe.Core.WaiterContext.Queries;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
@@ -27,6 +29,7 @@ namespace Cafe.Api.Controllers
         /// Hires a waiter in the café.
         /// </summary>
         [HttpPost("hire")]
+        [Authorize(Policy = AuthConstants.Policies.IsManager)]
         public async Task<IActionResult> HireWaiter([FromBody] HireWaiter command) =>
             (await _mediator.Send(command))
             .Match(Ok, Error);
@@ -35,6 +38,7 @@ namespace Cafe.Api.Controllers
         /// Assigns a table to a waiter.
         /// </summary>
         [HttpPost("table/assign")]
+        [Authorize(Policy = AuthConstants.Policies.IsManager)]
         public async Task<IActionResult> AssignTable([FromBody] AssignTable command) =>
             (await _mediator.Send(command))
             .Match(Ok, Error);
