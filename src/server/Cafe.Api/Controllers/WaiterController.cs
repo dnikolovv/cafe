@@ -21,7 +21,7 @@ namespace Cafe.Api.Controllers
         /// Retrieves a list of all currently employed waiters in the café.
         /// </summary>
         [HttpGet]
-        [Authorize(Policy = AuthConstants.Policies.IsManager)]
+        [Authorize(Policy = AuthConstants.Policies.IsAdminOrManager)]
         public async Task<IActionResult> GetEmployedWaiters() =>
             (await _mediator.Send(new GetEmployedWaiters()))
             .Match(Ok, Error);
@@ -30,7 +30,7 @@ namespace Cafe.Api.Controllers
         /// Hires a waiter in the café.
         /// </summary>
         [HttpPost("hire")]
-        [Authorize(Policy = AuthConstants.Policies.IsManager)]
+        [Authorize(Policy = AuthConstants.Policies.IsAdminOrManager)]
         public async Task<IActionResult> HireWaiter([FromBody] HireWaiter command) =>
             (await _mediator.Send(command))
             .Match(Ok, Error);
@@ -39,7 +39,7 @@ namespace Cafe.Api.Controllers
         /// Assigns a table to a waiter.
         /// </summary>
         [HttpPost("table/assign")]
-        [Authorize(Policy = AuthConstants.Policies.IsManager)]
+        [Authorize(Policy = AuthConstants.Policies.IsAdminOrManager)]
         public async Task<IActionResult> AssignTable([FromBody] AssignTable command) =>
             (await _mediator.Send(command))
             .Match(Ok, Error);

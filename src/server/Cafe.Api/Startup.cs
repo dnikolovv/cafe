@@ -54,9 +54,18 @@ namespace Cafe.Api
                 Configuration.GetSection(nameof(JwtConfiguration)),
                 options =>
                 {
-                    options.AddPolicy(AuthConstants.Policies.IsAdmin, pb => pb.RequireClaim(AuthConstants.ClaimTypes.IsAdmin, $"{true}"));
-                    options.AddPolicy(AuthConstants.Policies.IsWaiter, pb => pb.RequireClaim(AuthConstants.ClaimTypes.WaiterId));
-                    options.AddPolicy(AuthConstants.Policies.IsManager, pb => pb.RequireClaim(AuthConstants.ClaimTypes.ManagerId));
+                    options.AddPolicy(AuthConstants.Policies.IsAdmin, pb => pb.RequireClaim(AuthConstants.ClaimTypes.IsAdmin));
+
+                    // TODO: Fix duplication
+                    options.AddPolicy(AuthConstants.Policies.IsAdminOrManager, pb =>
+                        pb.RequireAssertion(ctx =>
+                            ctx.User.HasClaim(AuthConstants.ClaimTypes.IsAdmin, true.ToString()) ||
+                            ctx.User.HasClaim(c => c.Type == AuthConstants.ClaimTypes.ManagerId)));
+
+                    options.AddPolicy(AuthConstants.Policies.IsAdminOrWaiter, pb =>
+                        pb.RequireAssertion(ctx =>
+                            ctx.User.HasClaim(AuthConstants.ClaimTypes.IsAdmin, true.ToString()) ||
+                            ctx.User.HasClaim(c => c.Type == AuthConstants.ClaimTypes.WaiterId)));
                 });
 
             services.AddLogging(logBuilder => logBuilder.AddSerilog(dispose: true));
@@ -77,7 +86,7 @@ namespace Cafe.Api
             .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, ApplicationDbContext dbContext, UserManager<User> userManager)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, UserManager<User> userManager)
         {
             if (!env.IsDevelopment())
             {
@@ -85,7 +94,7 @@ namespace Cafe.Api
             }
             else
             {
-                app.AddDefaultAdminAccountIfNoneExisting(dbContext, userManager).Wait();
+                app.AddDefaultAdminAccountIfNoneExisting(userManager).Wait();
             }
 
             loggerFactory.AddLogging(Configuration.GetSection("Logging"));

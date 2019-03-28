@@ -29,7 +29,7 @@ namespace Cafe.Api.Controllers
         /// Adds a table to the café.
         /// </summary>
         [HttpPost]
-        [Authorize(Policy = AuthConstants.Policies.IsManager)]
+        [Authorize(Policy = AuthConstants.Policies.IsAdminOrManager)]
         public async Task<IActionResult> AddTable([FromBody] AddTable command) =>
             (await _mediator.Send(command))
             .Match(Ok, Error);

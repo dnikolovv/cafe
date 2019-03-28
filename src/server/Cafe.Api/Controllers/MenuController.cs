@@ -30,7 +30,7 @@ namespace Cafe.Api.Controllers
         /// </summary>
         /// <param name="command">The items to add.</param>
         [HttpPost("items")]
-        [Authorize(Policy = AuthConstants.Policies.IsManager)]
+        [Authorize(Policy = AuthConstants.Policies.IsAdminOrManager)]
         public async Task<IActionResult> AddMenuItems([FromBody] AddMenuItems command) =>
             (await _mediator.Send(command))
             .Match(Ok, Error);

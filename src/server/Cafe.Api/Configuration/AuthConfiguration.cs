@@ -17,23 +17,10 @@ namespace Cafe.Api.Configuration
         private const string AdminUsername = "admin@cafe.org";
         private const string AdminPassword = "Password123$";
 
-        public static async Task AddDefaultAdminAccountIfNoneExisting(this IApplicationBuilder app, ApplicationDbContext dbContext, UserManager<User> userManager)
+        public static async Task AddDefaultAdminAccountIfNoneExisting(this IApplicationBuilder app, UserManager<User> userManager)
         {
             if (!await AdminAccountExists(userManager))
             {
-                // Assign a manager and a waiter for the default admin account
-                var manager = new Manager
-                {
-                    Id = Guid.NewGuid(),
-                    ShortName = "Admin"
-                };
-
-                var waiter = new Waiter
-                {
-                    Id = Guid.NewGuid(),
-                    ShortName = "Admin"
-                };
-
                 var adminUser = new User
                 {
                     Id = Guid.NewGuid(),
@@ -43,19 +30,11 @@ namespace Cafe.Api.Configuration
                     LastName = "Admin"
                 };
 
-                dbContext.Managers.Add(manager);
-                dbContext.Waiters.Add(waiter);
-                await dbContext.SaveChangesAsync();
                 await userManager.CreateAsync(adminUser, AdminPassword);
 
-                var claims = new List<Claim>
-                {
-                    new Claim(AuthConstants.ClaimTypes.IsAdmin, $"{true}"),
-                    new Claim(AuthConstants.ClaimTypes.ManagerId, manager.Id.ToString()),
-                    new Claim(AuthConstants.ClaimTypes.WaiterId, waiter.Id.ToString())
-                };
+                var isAdminClaim = new Claim(AuthConstants.ClaimTypes.IsAdmin, true.ToString());
 
-                await userManager.AddClaimsAsync(adminUser, claims);
+                await userManager.AddClaimAsync(adminUser, isAdminClaim);
             }
         }
 

@@ -11,8 +11,8 @@
 
         public static class Policies
         {
-            public const string IsWaiter = "IsWaiter";
-            public const string IsManager = "IsManager";
+            public const string IsAdminOrWaiter = "IsAdminOrWaiter";
+            public const string IsAdminOrManager = "IsAdminOrManager";
             public const string IsAdmin = "IsAdmin";
         }
     }
