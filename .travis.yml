@@ -1,5 +1,4 @@
-language: csharp
-mono: none
+language: generic
 
 services:
   - docker
