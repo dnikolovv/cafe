@@ -1,6 +1,6 @@
 ﻿using AutoFixture;
 using Cafe.Core.AuthContext.Commands;
-using System.Net.Mail;
+using System;
 
 namespace Cafe.Tests.Customizations
 {
@@ -9,7 +9,13 @@ namespace Cafe.Tests.Customizations
         public void Customize(IFixture fixture)
         {
             fixture.Customize<Register>(composer =>
-                composer.With(c => c.Email, fixture.Create<MailAddress>().Address));
+                composer.FromFactory(() => new Register
+                {
+                    Id = Guid.NewGuid(),
+                    Email = $"Email{Guid.NewGuid()}@example.com"
+                })
+                .Without(r => r.Id)
+                .Without(r => r.Email));
         }
     }
 }

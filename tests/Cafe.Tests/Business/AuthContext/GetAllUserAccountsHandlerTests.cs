@@ -36,18 +36,19 @@ namespace Cafe.Tests.Business.AuthContext
             // Assert
             result.Exists(accounts =>
             {
-                return accounts.All(a => registerAccountsCommands.Any(registeredAccount =>
-                    a.Id == registeredAccount.Id &&
-                    a.FirstName == registeredAccount.FirstName &&
-                    a.LastName == registeredAccount.LastName &&
-                    a.Email == registeredAccount.Email));
+                return accounts.Count == registerAccountsCommands.Length &&
+                       accounts.All(a => registerAccountsCommands.Any(registeredAccount =>
+                           a.Id == registeredAccount.Id &&
+                           a.FirstName == registeredAccount.FirstName &&
+                           a.LastName == registeredAccount.LastName &&
+                           a.Email == registeredAccount.Email));
             })
             .ShouldBeTrue();
         }
 
         [Theory]
         [CustomizedAutoData]
-        public async Task CanGetAllUserAccountsAndCheckForManagers(
+        public async Task ManagersAndWaitersAreMappedCorrectlyWhenQueryingForUserAccounts(
             Manager managerToAssign,
             Waiter waiterToAssign,
             Register managerAccount,
@@ -64,7 +65,7 @@ namespace Cafe.Tests.Business.AuthContext
 
             foreach (var command in registerUnassignedAccountsCommands)
             {
-                await _fixture.SendAsync(command);
+                var testResult = await _fixture.SendAsync(command);
             }
 
             await _fixture.SendAsync(managerAccount);
@@ -79,14 +80,16 @@ namespace Cafe.Tests.Business.AuthContext
             var result = await _fixture.SendAsync(query);
 
             // Assert
+            // It's a bit verbose but it basically checks if all unassigned accounts
+            // don't have Waiter or Manager ids and all assigned accounts do (in this case managerAccount and waiterAccount)
             result.Exists(accounts =>
             {
-                var allUnassignedAccountsAreMappedCorrectly = accounts
-                    .All(a => registerUnassignedAccountsCommands.Any(registeredAccount =>
-                        a.Id == registeredAccount.Id &&
-                        a.FirstName == registeredAccount.FirstName &&
-                        a.LastName == registeredAccount.LastName &&
-                        a.Email == registeredAccount.Email &&
+                var allUnassignedAccountsAreMappedCorrectly = registerUnassignedAccountsCommands
+                    .All(registeredAccount => accounts.Any(a =>
+                        registeredAccount.Id == a.Id &&
+                        registeredAccount.FirstName == a.FirstName &&
+                        registeredAccount.LastName == a.LastName &&
+                        registeredAccount.Email == a.Email &&
 
                         // Very important as we have not assigned any managers or waiters to these accounts
                         a.IsManager == false &&
