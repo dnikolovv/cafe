@@ -21,6 +21,7 @@ namespace Cafe.Api.Controllers
         /// Retrieves a list of all currently employed waiters in the café.
         /// </summary>
         [HttpGet]
+        [Authorize(Policy = AuthConstants.Policies.IsManager)]
         public async Task<IActionResult> GetEmployedWaiters() =>
             (await _mediator.Send(new GetEmployedWaiters()))
             .Match(Ok, Error);

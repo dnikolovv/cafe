@@ -85,7 +85,7 @@ namespace Cafe.Api
             }
             else
             {
-                app.AddDefaultAdminAccountIfNonExisting(dbContext, userManager).Wait();
+                app.AddDefaultAdminAccountIfNoneExisting(dbContext, userManager).Wait();
             }
 
             loggerFactory.AddLogging(Configuration.GetSection("Logging"));

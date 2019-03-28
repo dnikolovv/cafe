@@ -17,7 +17,7 @@ namespace Cafe.Api.Configuration
         private const string AdminUsername = "admin@cafe.org";
         private const string AdminPassword = "Password123$";
 
-        public static async Task AddDefaultAdminAccountIfNonExisting(this IApplicationBuilder app, ApplicationDbContext dbContext, UserManager<User> userManager)
+        public static async Task AddDefaultAdminAccountIfNoneExisting(this IApplicationBuilder app, ApplicationDbContext dbContext, UserManager<User> userManager)
         {
             if (!await AdminAccountExists(userManager))
             {
