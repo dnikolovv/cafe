@@ -88,18 +88,29 @@ namespace Cafe.Tests.Business.AuthContext
                         a.LastName == registeredAccount.LastName &&
                         a.Email == registeredAccount.Email &&
 
-                        // Very important
+                        // Very important as we have not assigned any managers or waiters to these accounts
                         a.IsManager == false &&
                         a.ManagerId == null &&
                         a.IsWaiter == false &&
                         a.WaiterId == null));
 
-                var managerAccountMappedCorrectly = accounts.SingleOrDefault(a => a.Id == managerAccount.Id && a.IsManager && a.ManagerId == managerToAssign.Id) != null;
-                var waiterAccountMappedCorrectly = accounts.SingleOrDefault(a => a.Id == waiterAccount.Id && a.IsWaiter && a.WaiterId == waiterToAssign.Id) != null;
+                var managerAccountResult = accounts
+                    .SingleOrDefault(a => a.Id == managerAccount.Id &&
+                                          a.IsManager &&
+                                          a.ManagerId == managerToAssign.Id &&
+                                          a.IsWaiter == false &&
+                                          a.WaiterId == null);
+
+                var waiterAccountResult = accounts
+                    .SingleOrDefault(a => a.Id == waiterAccount.Id &&
+                                          a.IsWaiter &&
+                                          a.WaiterId == waiterToAssign.Id &&
+                                          a.IsManager == false &&
+                                          a.ManagerId == null);
 
                 return allUnassignedAccountsAreMappedCorrectly &&
-                    managerAccountMappedCorrectly &&
-                    waiterAccountMappedCorrectly;
+                    managerAccountResult != null &&
+                    waiterAccountResult != null;
             })
             .ShouldBeTrue();
         }
