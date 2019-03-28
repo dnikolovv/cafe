@@ -47,7 +47,7 @@ namespace Cafe.Tests.Business.AuthContext
             await _helper.LoginAndCheckClaim(
                 registerAccountCommand.Email,
                 registerAccountCommand.Password,
-                c => c.Type == AuthConstants.WaiterIdClaimType &&
+                c => c.Type == AuthConstants.ClaimTypes.WaiterId &&
                      c.Value == waiterToAssign.Id.ToString());
         }
 
@@ -87,7 +87,7 @@ namespace Cafe.Tests.Business.AuthContext
             await _helper.LoginAndCheckClaim(
                 registerAccountCommand.Email,
                 registerAccountCommand.Password,
-                c => c.Type == AuthConstants.WaiterIdClaimType &&
+                c => c.Type == AuthConstants.ClaimTypes.WaiterId &&
                      c.Value == waiterToReassign.Id.ToString());
         }
 

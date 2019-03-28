@@ -3,16 +3,16 @@ using Cafe.Api.Configuration;
 using Cafe.Api.Filters;
 using Cafe.Api.ModelBinders;
 using Cafe.Business.AuthContext;
-using Cafe.Business.AuthContext.CommandHandlers;
-using Cafe.Business.TabContext.CommandHandlers;
 using Cafe.Core.AuthContext;
 using Cafe.Core.AuthContext.Commands;
 using Cafe.Core.AuthContext.Configuration;
+using Cafe.Domain.Entities;
 using Cafe.Persistance.EntityFramework;
 using FluentValidation.AspNetCore;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -49,7 +49,24 @@ namespace Cafe.Api
 
             services.AddAutoMapper();
             services.AddSwagger();
-            services.AddJwtIdentity(Configuration.GetSection(nameof(JwtConfiguration)));
+
+            services.AddJwtIdentity(
+                Configuration.GetSection(nameof(JwtConfiguration)),
+                options =>
+                {
+                    options.AddPolicy(AuthConstants.Policies.IsAdmin, pb => pb.RequireClaim(AuthConstants.ClaimTypes.IsAdmin));
+
+                    // TODO: Fix duplication
+                    options.AddPolicy(AuthConstants.Policies.IsAdminOrManager, pb =>
+                        pb.RequireAssertion(ctx =>
+                            ctx.User.HasClaim(AuthConstants.ClaimTypes.IsAdmin, true.ToString()) ||
+                            ctx.User.HasClaim(c => c.Type == AuthConstants.ClaimTypes.ManagerId)));
+
+                    options.AddPolicy(AuthConstants.Policies.IsAdminOrWaiter, pb =>
+                        pb.RequireAssertion(ctx =>
+                            ctx.User.HasClaim(AuthConstants.ClaimTypes.IsAdmin, true.ToString()) ||
+                            ctx.User.HasClaim(c => c.Type == AuthConstants.ClaimTypes.WaiterId)));
+                });
 
             services.AddLogging(logBuilder => logBuilder.AddSerilog(dispose: true));
 
@@ -69,11 +86,15 @@ namespace Cafe.Api
             .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, UserManager<User> userManager)
         {
             if (!env.IsDevelopment())
             {
                 app.UseHsts();
+            }
+            else
+            {
+                app.AddDefaultAdminAccountIfNoneExisting(userManager).Wait();
             }
 
             loggerFactory.AddLogging(Configuration.GetSection("Logging"));

@@ -1,6 +1,8 @@
-﻿using Cafe.Core.MenuContext.Commands;
+﻿using Cafe.Core.AuthContext;
+using Cafe.Core.MenuContext.Commands;
 using Cafe.Core.MenuContext.Queries;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
@@ -28,6 +30,7 @@ namespace Cafe.Api.Controllers
         /// </summary>
         /// <param name="command">The items to add.</param>
         [HttpPost("items")]
+        [Authorize(Policy = AuthConstants.Policies.IsAdminOrManager)]
         public async Task<IActionResult> AddMenuItems([FromBody] AddMenuItems command) =>
             (await _mediator.Send(command))
             .Match(Ok, Error);

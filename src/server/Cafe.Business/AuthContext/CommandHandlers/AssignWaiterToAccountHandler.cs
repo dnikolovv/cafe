@@ -37,7 +37,7 @@ namespace Cafe.Business.AuthContext.CommandHandlers
             ValidateCommand(command).FlatMapAsync(_ =>
             AccountShouldExist(command.AccountId).FlatMapAsync(account =>
             WaiterShouldExist(command.WaiterId).MapAsync(waiter =>
-            AddClaim(account, AuthConstants.WaiterIdClaimType, waiter.Id.ToString()))));
+            AddClaim(account, AuthConstants.ClaimTypes.WaiterId, waiter.Id.ToString()))));
 
         private Task<Option<Waiter, Error>> WaiterShouldExist(Guid waiterId) =>
             DbContext

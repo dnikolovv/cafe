@@ -36,7 +36,7 @@ namespace Cafe.Api.Configuration
                 .AddEntityFrameworkSqlServer();
         }
 
-        public static void AddJwtIdentity(this IServiceCollection services, IConfigurationSection jwtConfiguration)
+        public static void AddJwtIdentity(this IServiceCollection services, IConfigurationSection jwtConfiguration, Action<AuthorizationOptions> config)
         {
             services.AddIdentity<User, IdentityRole<Guid>>()
                     .AddEntityFrameworkStores<ApplicationDbContext>();
@@ -81,6 +81,7 @@ namespace Cafe.Api.Configuration
             services.AddAuthorization(options =>
             {
                 options.DefaultPolicy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+                config(options);
             });
         }
 

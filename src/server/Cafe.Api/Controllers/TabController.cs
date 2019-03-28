@@ -1,10 +1,13 @@
-﻿using Cafe.Core.TabContext.Commands;
+﻿using Cafe.Core.AuthContext;
+using Cafe.Core.TabContext.Commands;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
 namespace Cafe.Api.Controllers
 {
+    [Authorize(Policy = AuthConstants.Policies.IsAdminOrWaiter)]
     public class TabController : ApiController
     {
         private readonly IMediator _mediator;
