@@ -14,9 +14,9 @@ namespace Cafe.Tests.Business.TabContext
         private readonly SliceFixture _fixture;
         private readonly TabTestsHelper _helper;
 
-        public GetAllOpenTabsHandlerTests(SliceFixture fixture)
+        public GetAllOpenTabsHandlerTests()
         {
-            _fixture = fixture;
+            _fixture = new SliceFixture();
             _helper = new TabTestsHelper(_fixture);
         }
 
@@ -34,8 +34,9 @@ namespace Cafe.Tests.Business.TabContext
             var result = await _fixture.SendAsync(new GetAllOpenTabs());
 
             // Assert
-            result.Exists(tabs => tabs.Count == tabIds.Length &&
-                                  tabs.All(t => tabIds.Contains(t.Id)))
+            result.Exists(tabs =>
+                tabs.Count == tabIds.Length &&
+                tabs.All(t => tabIds.Contains(t.Id)))
             .ShouldBeTrue();
         }
     }
