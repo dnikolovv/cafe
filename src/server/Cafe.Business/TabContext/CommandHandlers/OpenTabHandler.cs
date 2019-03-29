@@ -46,7 +46,7 @@ namespace Cafe.Business.TabContext.CommandHandlers
                 .QueryableExtensions
                 .AnyAsync(Session
                     .Query<TabView>()
-                    .Where(t => t.TableNumber == tableNumber));
+                    .Where(t => t.IsOpen && t.TableNumber == tableNumber));
 
             return thereIsATabOnTable
                 .SomeWhen(isTaken => !isTaken, Error.Conflict($"Table {tableNumber} is already taken."))

@@ -120,7 +120,5 @@ namespace Cafe.Tests.Business.TabContext
             // Assert
             result.ShouldHaveErrorOfType(ErrorType.Validation);
         }
-
-        // TODO: After implementing ServeMenuItems, add tests that check whether you can close a tab paying less than the owed amount
     }
 }

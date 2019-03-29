@@ -45,6 +45,31 @@ namespace Cafe.Tests.Business.TabContext
 
         [Theory]
         [CustomizedAutoData]
+        public async Task CanOpenTabOnARecentlyFreedTable(Guid tabId, int tableNumber)
+        {
+            // Arrange
+            await _helper.OpenTabOnTable(tabId, tableNumber);
+            await _helper.CloseTab(tabId, 1);
+
+            var commandToTest = new OpenTab
+            {
+                Id = Guid.NewGuid(),
+                CustomerName = "Customer",
+                TableNumber = tableNumber
+            };
+
+            // Act
+            var result = await _fixture.SendAsync(commandToTest);
+
+            // Assert
+            await _helper.AssertTabExists(
+                commandToTest.Id,
+                t => t.IsOpen == true &&
+                     t.TableNumber == tableNumber);
+        }
+
+        [Theory]
+        [CustomizedAutoData]
         public async Task CannotOpenExistingTab(OpenTab openTabCommand, HireWaiter hireWaiterCommand, AddTable addTableCommand)
         {
             // Arrange

@@ -56,16 +56,13 @@ namespace Cafe.Api
                 {
                     options.AddPolicy(AuthConstants.Policies.IsAdmin, pb => pb.RequireClaim(AuthConstants.ClaimTypes.IsAdmin));
 
-                    // TODO: Fix duplication
-                    options.AddPolicy(AuthConstants.Policies.IsAdminOrManager, pb =>
-                        pb.RequireAssertion(ctx =>
-                            ctx.User.HasClaim(AuthConstants.ClaimTypes.IsAdmin, true.ToString()) ||
-                            ctx.User.HasClaim(c => c.Type == AuthConstants.ClaimTypes.ManagerId)));
+                    options.AddPolicy(
+                        AuthConstants.Policies.IsAdminOrManager,
+                        pb => pb.IsAdminOr(ctx => ctx.User.HasClaim(c => c.Type == AuthConstants.ClaimTypes.ManagerId)));
 
-                    options.AddPolicy(AuthConstants.Policies.IsAdminOrWaiter, pb =>
-                        pb.RequireAssertion(ctx =>
-                            ctx.User.HasClaim(AuthConstants.ClaimTypes.IsAdmin, true.ToString()) ||
-                            ctx.User.HasClaim(c => c.Type == AuthConstants.ClaimTypes.WaiterId)));
+                    options.AddPolicy(
+                        AuthConstants.Policies.IsAdminOrWaiter,
+                        pb => pb.IsAdminOr(ctx => ctx.User.HasClaim(c => c.Type == AuthConstants.ClaimTypes.WaiterId)));
                 });
 
             services.AddLogging(logBuilder => logBuilder.AddSerilog(dispose: true));
@@ -94,7 +91,7 @@ namespace Cafe.Api
             }
             else
             {
-                app.AddDefaultAdminAccountIfNoneExisting(userManager).Wait();
+                app.AddDefaultAdminAccountIfNoneExisting(userManager, Configuration).Wait();
             }
 
             loggerFactory.AddLogging(Configuration.GetSection("Logging"));
