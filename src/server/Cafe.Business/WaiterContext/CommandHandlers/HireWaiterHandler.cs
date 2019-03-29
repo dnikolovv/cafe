@@ -4,18 +4,20 @@ using Cafe.Core.WaiterContext.Commands;
 using Cafe.Domain;
 using Cafe.Domain.Entities;
 using Cafe.Domain.Events;
-using Cafe.Domain.Views;
 using Cafe.Persistance.EntityFramework;
 using FluentValidation;
-using Marten;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Optional;
 using Optional.Async;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
+using IDocumentSession = Marten.IDocumentSession;
 
 namespace Cafe.Business.WaiterContext.CommandHandlers
 {
-    public class HireWaiterHandler : BaseHandler<HireWaiter>, ICommandHandler<HireWaiter, WaiterView>
+    public class HireWaiterHandler : BaseHandler<HireWaiter>, ICommandHandler<HireWaiter>
     {
         public HireWaiterHandler(
             IValidator<HireWaiter> validator,
@@ -27,17 +29,26 @@ namespace Cafe.Business.WaiterContext.CommandHandlers
         {
         }
 
-        public Task<Option<WaiterView, Error>> Handle(HireWaiter command, CancellationToken cancellationToken) =>
+        public Task<Option<Unit, Error>> Handle(HireWaiter command, CancellationToken cancellationToken) =>
             ValidateCommand(command).FlatMapAsync(_ =>
-            PersistWaiter(command).MapAsync(async waiter =>
-            Mapper.Map<WaiterView>(waiter)));
+            WaiterShouldntExist(command.Id).MapAsync(__ =>
+            PersistWaiter(command)));
 
-        private async Task<Option<Waiter, Error>> PersistWaiter(HireWaiter command)
+        private async Task<Option<Unit, Error>> WaiterShouldntExist(Guid waiterId) =>
+            (await DbContext
+                .Waiters
+                .FirstOrDefaultAsync(w => w.Id == waiterId))
+                .SomeWhen(w => w == null, Error.Conflict($"Waiter {waiterId} already exists."))
+                .Map(_ => Unit.Value);
+
+        private async Task<Unit> PersistWaiter(HireWaiter command)
         {
             var waiter = Mapper.Map<Waiter>(command);
+
             await DbContext.AddAsync(waiter);
             await DbContext.SaveChangesAsync();
-            return waiter.Some<Waiter, Error>();
+
+            return Unit.Value;
         }
     }
 }
