@@ -6,12 +6,14 @@ using Cafe.Domain.Entities;
 using Cafe.Domain.Events;
 using Cafe.Persistance.EntityFramework;
 using FluentValidation;
-using Marten;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Optional;
 using Optional.Async;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
+using IDocumentSession = Marten.IDocumentSession;
 
 namespace Cafe.Business.ManagerContext.CommandHandlers
 {
@@ -28,8 +30,16 @@ namespace Cafe.Business.ManagerContext.CommandHandlers
         }
 
         public Task<Option<Unit, Error>> Handle(HireManager command, CancellationToken cancellationToken) =>
-            ValidateCommand(command).MapAsync(_ =>
-            PersistManager(command));
+            ValidateCommand(command).FlatMapAsync(_ =>
+            ManagerShouldntExist(command.Id).MapAsync(__ =>
+            PersistManager(command)));
+
+        private async Task<Option<Unit, Error>> ManagerShouldntExist(Guid managerId) =>
+            (await DbContext
+                .Managers
+                .FirstOrDefaultAsync(m => m.Id == managerId))
+                .SomeWhen(m => m == null, Error.Conflict($"Manager {managerId} already exists."))
+                .Map(_ => Unit.Value);
 
         private async Task<Unit> PersistManager(HireManager command)
         {

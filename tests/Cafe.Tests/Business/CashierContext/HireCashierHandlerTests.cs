@@ -1,12 +1,15 @@
-﻿using Cafe.Domain;
+﻿using Cafe.Core.CashierContext.Commands;
+using Cafe.Domain;
 using Cafe.Tests.Customizations;
+using Cafe.Tests.Extensions;
 using Microsoft.EntityFrameworkCore;
+using Shouldly;
 using System.Threading.Tasks;
 using Xunit;
 
 namespace Cafe.Tests.Business.CashierContext
 {
-    public class HireCashierHandlerTests
+    public class HireCashierHandlerTests : ResetDatabaseLifetime
     {
         private readonly SliceFixture _fixture;
 
