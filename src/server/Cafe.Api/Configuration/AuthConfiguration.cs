@@ -1,10 +1,9 @@
 ﻿using Cafe.Core.AuthContext;
 using Cafe.Domain.Entities;
-using Cafe.Persistance.EntityFramework;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
 using System;
-using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -12,25 +11,25 @@ namespace Cafe.Api.Configuration
 {
     public static class AuthConfiguration
     {
-        // TODO: These should come from appsettings.json
-        private const string AdminEmail = "admin@cafe.org";
-        private const string AdminUsername = "admin@cafe.org";
-        private const string AdminPassword = "Password123$";
-
-        public static async Task AddDefaultAdminAccountIfNoneExisting(this IApplicationBuilder app, UserManager<User> userManager)
+        public static async Task AddDefaultAdminAccountIfNoneExisting(this IApplicationBuilder app, UserManager<User> userManager, IConfiguration configuration)
         {
-            if (!await AdminAccountExists(userManager))
+            var adminSection = configuration.GetSection("DefaultAdminAccount");
+
+            var adminEmail = adminSection["Email"];
+            var adminPassword = adminSection["Password"];
+
+            if (!await AccountExists(adminEmail, userManager))
             {
                 var adminUser = new User
                 {
                     Id = Guid.NewGuid(),
-                    Email = AdminEmail,
-                    UserName = AdminUsername,
+                    Email = adminEmail,
+                    UserName = adminEmail,
                     FirstName = "Café",
                     LastName = "Admin"
                 };
 
-                await userManager.CreateAsync(adminUser, AdminPassword);
+                await userManager.CreateAsync(adminUser, adminPassword);
 
                 var isAdminClaim = new Claim(AuthConstants.ClaimTypes.IsAdmin, true.ToString());
 
@@ -38,7 +37,7 @@ namespace Cafe.Api.Configuration
             }
         }
 
-        private static async Task<bool> AdminAccountExists(UserManager<User> userManager) =>
-            (await userManager.FindByEmailAsync(AdminEmail)) != null;
+        private static async Task<bool> AccountExists(string email, UserManager<User> userManager) =>
+            (await userManager.FindByEmailAsync(email)) != null;
     }
 }
