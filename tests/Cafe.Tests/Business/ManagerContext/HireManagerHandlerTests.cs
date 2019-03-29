@@ -1,5 +1,7 @@
 ﻿using Cafe.Core.ManagerContext.Commands;
+using Cafe.Domain;
 using Cafe.Tests.Customizations;
+using Cafe.Tests.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Shouldly;
 using System.Threading.Tasks;
@@ -35,6 +37,20 @@ namespace Cafe.Tests.Business.ManagerContext
 
             managerInDb.Id.ShouldBe(command.Id);
             managerInDb.ShortName.ShouldBe(command.ShortName);
+        }
+
+        [Theory]
+        [CustomizedAutoData]
+        public async Task CannotHireManagerWithATakenId(HireManager command)
+        {
+            // Arrange
+            await _fixture.SendAsync(command);
+
+            // Act
+            var result = await _fixture.SendAsync(command);
+
+            // Assert
+            result.ShouldHaveErrorOfType(ErrorType.Conflict);
         }
     }
 }
