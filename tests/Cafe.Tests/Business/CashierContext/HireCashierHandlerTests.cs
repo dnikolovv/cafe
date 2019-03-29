@@ -1,4 +1,4 @@
-﻿using Cafe.Core.ManagerContext.Commands;
+﻿using Cafe.Core.CashierContext.Commands;
 using Cafe.Domain;
 using Cafe.Tests.Customizations;
 using Cafe.Tests.Extensions;
@@ -7,41 +7,40 @@ using Shouldly;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Cafe.Tests.Business.ManagerContext
+namespace Cafe.Tests.Business.CashierContext
 {
-    public class HireManagerHandlerTests : ResetDatabaseLifetime
+    public class HireCashierHandlerTests : ResetDatabaseLifetime
     {
         private readonly SliceFixture _fixture;
 
-        public HireManagerHandlerTests()
+        public HireCashierHandlerTests()
         {
             _fixture = new SliceFixture();
         }
 
         [Theory]
         [CustomizedAutoData]
-        public async Task CanHireManager(HireManager command)
+        public async Task CanHireCashier(HireCashier command)
         {
+            // Arrange
             // Act
             var result = await _fixture.SendAsync(command);
 
             // Assert
-            var managerInDb = await _fixture.ExecuteDbContextAsync(dbContext =>
-            {
-                var manager = dbContext
-                    .Managers
-                    .SingleAsync(m => m.Id == command.Id);
+            result.HasValue.ShouldBeTrue();
 
-                return manager;
-            });
+            var cashierInDb = await _fixture.ExecuteDbContextAsync(dbContext =>
+                dbContext
+                    .Cashiers
+                    .FirstOrDefaultAsync(w => w.Id == command.Id));
 
-            managerInDb.Id.ShouldBe(command.Id);
-            managerInDb.ShortName.ShouldBe(command.ShortName);
+            cashierInDb.Id.ShouldBe(command.Id);
+            cashierInDb.ShortName.ShouldBe(command.ShortName);
         }
 
         [Theory]
         [CustomizedAutoData]
-        public async Task CannotHireManagerWithATakenId(HireManager command)
+        public async Task CannotHireCashierWithATakenId(HireCashier command)
         {
             // Arrange
             await _fixture.SendAsync(command);

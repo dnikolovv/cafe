@@ -6,6 +6,7 @@
         {
             public const string WaiterId = "waiterId";
             public const string ManagerId = "managerId";
+            public const string CashierId = "managerId";
             public const string IsAdmin = "isAdmin";
         }
 
@@ -13,6 +14,7 @@
         {
             public const string IsAdminOrWaiter = "IsAdminOrWaiter";
             public const string IsAdminOrManager = "IsAdminOrManager";
+            public const string IsAdminOrCashier = "IsAdminOrCashier";
             public const string IsAdmin = "IsAdmin";
         }
     }
