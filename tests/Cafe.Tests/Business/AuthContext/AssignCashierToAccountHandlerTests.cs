@@ -3,6 +3,7 @@ using Cafe.Core.AuthContext.Commands;
 using Cafe.Domain;
 using Cafe.Domain.Entities;
 using Cafe.Tests.Customizations;
+using Cafe.Tests.Extensions;
 using System;
 using System.Threading.Tasks;
 using Xunit;
