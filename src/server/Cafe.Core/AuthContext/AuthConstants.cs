@@ -14,6 +14,7 @@
         {
             public const string IsAdminOrWaiter = "IsAdminOrWaiter";
             public const string IsAdminOrManager = "IsAdminOrManager";
+            public const string IsAdminOrCashier = "IsAdminOrCashier";
             public const string IsAdmin = "IsAdmin";
         }
     }
