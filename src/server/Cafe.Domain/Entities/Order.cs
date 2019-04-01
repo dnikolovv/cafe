@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Cafe.Domain.Entities
 {
@@ -6,6 +7,6 @@ namespace Cafe.Domain.Entities
     {
         public Guid Id { get; set; }
 
-        public MenuItem[] Items { get; set; }
+        public ICollection<MenuItem> Items { get; set; }
     }
 }

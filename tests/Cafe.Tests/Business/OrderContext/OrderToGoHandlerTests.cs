@@ -49,6 +49,7 @@ namespace Cafe.Tests.Business.OrderContext
             var orderInDb = await _fixture.ExecuteDbContextAsync(dbContext =>
                 dbContext
                     .Orders
+                    .Include(o => o.Items)
                     .FirstOrDefaultAsync(o => o.Id == commandToTest.Id));
 
             orderInDb.ShouldNotBeNull();
