@@ -21,6 +21,8 @@ namespace Cafe.Persistance.EntityFramework
 
         public DbSet<Table> Tables { get; set; }
 
+        public DbSet<Order> Orders { get; set; }
+
         public DbSet<MenuItem> MenuItems { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
