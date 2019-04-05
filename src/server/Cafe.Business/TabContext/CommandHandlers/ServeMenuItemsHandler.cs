@@ -21,15 +21,16 @@ namespace Cafe.Business.TabContext.CommandHandlers
             ApplicationDbContext dbContext,
             IDocumentSession documentSession,
             IEventBus eventBus,
-            IMapper mapper)
-            : base(validator, dbContext, documentSession, eventBus, mapper)
+            IMapper mapper,
+            IMenuItemsService menuItemsService)
+            : base(validator, dbContext, documentSession, eventBus, mapper, menuItemsService)
         {
         }
 
         public Task<Option<Unit, Error>> Handle(ServeMenuItems command, CancellationToken cancellationToken) =>
             ValidateCommand(command).FlatMapAsync(_ =>
             TabShouldNotBeClosed(command.TabId, cancellationToken).FlatMapAsync(tab =>
-            GetMenuItemsIfTheyExist(command.ItemNumbers).MapAsync(items =>
+            MenuItemsShouldExist(command.ItemNumbers).MapAsync(items =>
             PublishEvents(tab.Id, tab.ServeMenuItems(items)))));
     }
 }

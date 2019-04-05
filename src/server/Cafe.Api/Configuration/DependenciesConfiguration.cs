@@ -1,5 +1,7 @@
 ﻿using Cafe.Api.Events;
 using Cafe.Api.OperationFilters;
+using Cafe.Business;
+using Cafe.Core;
 using Cafe.Core.AuthContext.Configuration;
 using Cafe.Domain.Entities;
 using Cafe.Domain.Events;
@@ -106,6 +108,11 @@ namespace Cafe.Api.Configuration
         public static void AddCqrs(this IServiceCollection services)
         {
             services.AddScoped<IEventBus, EventBus>();
+        }
+
+        public static void AddCommonServices(this IServiceCollection services)
+        {
+            services.AddTransient<IMenuItemsService, MenuItemsService>();
         }
 
         public static void AddMarten(this IServiceCollection services, IConfiguration configuration)

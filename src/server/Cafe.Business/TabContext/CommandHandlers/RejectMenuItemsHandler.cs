@@ -10,7 +10,6 @@ using Marten;
 using MediatR;
 using Optional;
 using Optional.Async;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -25,15 +24,16 @@ namespace Cafe.Business.TabContext.CommandHandlers
             ApplicationDbContext dbContext,
             IDocumentSession documentSession,
             IEventBus eventBus,
-            IMapper mapper)
-            : base(validator, dbContext, documentSession, eventBus, mapper)
+            IMapper mapper,
+            IMenuItemsService menuItemsService)
+            : base(validator, dbContext, documentSession, eventBus, mapper, menuItemsService)
         {
         }
 
         public Task<Option<Unit, Error>> Handle(RejectMenuItems command, CancellationToken cancellationToken) =>
             ValidateCommand(command).FlatMapAsync(_ =>
             TabShouldNotBeClosed(command.TabId, cancellationToken).FlatMapAsync(tab =>
-            GetMenuItemsIfTheyExist(command.ItemNumbers).FlatMapAsync(items =>
+            MenuItemsShouldExist(command.ItemNumbers).FlatMapAsync(items =>
             TheItemsShouldHaveBeenOrdered(tab, command.ItemNumbers).MapAsync(__ =>
             PublishEvents(tab.Id, tab.RejectMenuItems(items))))));
 

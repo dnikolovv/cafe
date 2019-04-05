@@ -3,10 +3,10 @@ using System.Collections.Generic;
 
 namespace Cafe.Domain.Entities
 {
-    public class Order
+    public class ToGoOrder
     {
         public Guid Id { get; set; }
 
-        public ICollection<MenuItem> Items { get; set; }
+        public ICollection<MenuItem> OrderedItems { get; set; }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Cafe.Core.OrderContext.Commands;
 using Cafe.Domain.Entities;
+using Cafe.Domain.Views;
 
 namespace Cafe.Core.OrderContext
 {
@@ -8,7 +9,9 @@ namespace Cafe.Core.OrderContext
     {
         public MappingProfile()
         {
-            CreateMap<OrderToGo, Order>(MemberList.Source);
+            CreateMap<OrderToGo, ToGoOrder>(MemberList.Source);
+
+            CreateMap<ToGoOrder, ToGoOrderView>(MemberList.Destination);
         }
     }
 }

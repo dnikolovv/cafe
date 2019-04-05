@@ -1,6 +1,10 @@
 ﻿using Cafe.Core.OrderContext.Commands;
+using Cafe.Core.OrderContext.Queries;
+using Cafe.Domain;
 using Cafe.Domain.Entities;
+using Cafe.Domain.Views;
 using Cafe.Tests.Customizations;
+using Cafe.Tests.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Shouldly;
 using System;
@@ -44,16 +48,60 @@ namespace Cafe.Tests.Business.OrderContext
             var result = await _fixture.SendAsync(commandToTest);
 
             // Assert
-            result.HasValue.ShouldBeTrue();
+            await AssertOrderExists(
+                commandToTest.Id,
+                order => order.OrderedItems.All(i => menuItemNumbers.Contains(i.Number)));
+        }
 
-            var orderInDb = await _fixture.ExecuteDbContextAsync(dbContext =>
-                dbContext
-                    .Orders
-                    .Include(o => o.Items)
-                    .FirstOrDefaultAsync(o => o.Id == commandToTest.Id));
+        [Theory]
+        [CustomizedAutoData]
+        public async Task CannotOrderUnexistingMenuItemsToGo(OrderToGo commandToTest)
+        {
+            // Arrange
+            // Purposefully not adding any menu items
 
-            orderInDb.ShouldNotBeNull();
-            orderInDb.Items.ShouldAllBe(i => menuItemNumbers.Contains(i.Number));
+            // Act
+            var result = await _fixture.SendAsync(commandToTest);
+
+            // Assert
+            result.ShouldHaveErrorOfType(ErrorType.NotFound);
+        }
+
+        [Theory]
+        [CustomizedAutoData]
+        public async Task CannotSubmitToGoOrderWithConflictingId(MenuItem[] menuItems)
+        {
+            // Arrange
+            await _fixture.ExecuteDbContextAsync(async dbContext =>
+            {
+                dbContext.MenuItems.AddRange(menuItems);
+                await dbContext.SaveChangesAsync();
+            });
+
+            var menuItemNumbers = menuItems
+                .Select(i => i.Number)
+                .ToArray();
+
+            var commandToTest = new OrderToGo
+            {
+                Id = Guid.NewGuid(),
+                ItemNumbers = menuItemNumbers
+            };
+
+            // Note that we're sending the command before the Act phase
+            await _fixture.SendAsync(commandToTest);
+
+            // Act
+            var result = await _fixture.SendAsync(commandToTest);
+
+            // Assert
+            result.ShouldHaveErrorOfType(ErrorType.Conflict);
+        }
+
+        private async Task AssertOrderExists(Guid orderId, Func<ToGoOrderView, bool> predicate)
+        {
+            var orderView = await _fixture.SendAsync(new GetToGoOrder { Id = orderId });
+            orderView.Exists(predicate).ShouldBeTrue();
         }
     }
 }

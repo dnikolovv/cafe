@@ -22,7 +22,7 @@
     <Rule Id="SA1503" Action="None" />
     <Rule Id="SA1313" Action="None" />
     <Rule Id="SA1008" Action="None" />
-    <Rule Id="SA1300" Action="None" />
+	<Rule Id="SA1300" Action="Error" />
   </Rules>
   <Rules AnalyzerId="System.Runtime.CSharp.Analyzers" RuleNamespace="System.Runtime.CSharp.Analyzers">
     <Rule Id="CA2213" Action="None" />
