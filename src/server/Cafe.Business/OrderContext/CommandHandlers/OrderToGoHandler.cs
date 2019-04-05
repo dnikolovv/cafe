@@ -45,9 +45,9 @@ namespace Cafe.Business.OrderContext.CommandHandlers
                 .ToGoOrders
                 .FirstOrDefaultAsync(o => o.Id == command.Id);
 
-            return orderInDb
-                .SomeWhen(o => o == null, Error.Conflict($"Order {command.Id} already exists."))
-                .Map(_ => Mapper.Map<ToGoOrder>(command));
+            return command
+                .SomeWhen(_ => orderInDb == null, Error.Conflict($"Order {command.Id} already exists."))
+                .Map(Mapper.Map<ToGoOrder>);
         }
 
         private Task<Option<IList<MenuItem>, Error>> MenuItemsShouldExist(IList<int> numbers) =>

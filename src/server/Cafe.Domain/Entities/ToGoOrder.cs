@@ -8,5 +8,7 @@ namespace Cafe.Domain.Entities
         public Guid Id { get; set; }
 
         public ICollection<MenuItem> OrderedItems { get; set; }
+
+        public ToGoOrderStatus Status { get; set; }
     }
 }

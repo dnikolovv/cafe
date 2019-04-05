@@ -50,7 +50,8 @@ namespace Cafe.Tests.Business.OrderContext
             // Assert
             await AssertOrderExists(
                 commandToTest.Id,
-                order => order.OrderedItems.All(i => menuItemNumbers.Contains(i.Number)));
+                order => order.Status == ToGoOrderStatus.Unconfirmed &&
+                         order.OrderedItems.All(i => menuItemNumbers.Contains(i.Number)));
         }
 
         [Theory]

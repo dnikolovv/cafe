@@ -9,7 +9,8 @@ namespace Cafe.Core.OrderContext
     {
         public MappingProfile()
         {
-            CreateMap<OrderToGo, ToGoOrder>(MemberList.Source);
+            CreateMap<OrderToGo, ToGoOrder>(MemberList.Source)
+                .ForMember(d => d.Status, opts => opts.MapFrom(_ => ToGoOrderStatus.Unconfirmed));
 
             CreateMap<ToGoOrder, ToGoOrderView>(MemberList.Destination);
         }
