@@ -38,7 +38,8 @@ namespace Cafe.Business
 
             var errors = itemsToServeResult
                 .Exceptions()
-                .SelectMany(e => e.Messages);
+                .SelectMany(e => e.Messages)
+                .ToArray();
 
             return errors.Any() ?
                 Option.None<IList<MenuItem>, Error>(Error.NotFound(errors)) :

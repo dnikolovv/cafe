@@ -1,7 +1,9 @@
 ﻿using Cafe.Api.Events;
 using Cafe.Api.OperationFilters;
 using Cafe.Business;
+using Cafe.Business.AuthContext;
 using Cafe.Core;
+using Cafe.Core.AuthContext;
 using Cafe.Core.AuthContext.Configuration;
 using Cafe.Domain.Entities;
 using Cafe.Domain.Events;
@@ -40,6 +42,8 @@ namespace Cafe.Api.Configuration
 
         public static void AddJwtIdentity(this IServiceCollection services, IConfigurationSection jwtConfiguration, Action<AuthorizationOptions> config)
         {
+            services.AddTransient<IJwtFactory, JwtFactory>();
+
             services.AddIdentity<User, IdentityRole<Guid>>()
                     .AddEntityFrameworkStores<ApplicationDbContext>();
 

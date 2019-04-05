@@ -11,5 +11,7 @@ namespace Cafe.Domain.Views
         public IList<MenuItemView> OrderedItems { get; set; }
 
         public ToGoOrderStatus Status { get; set; }
+
+        public string StatusText => Enum.GetName(typeof(ToGoOrderStatus), Status);
     }
 }
