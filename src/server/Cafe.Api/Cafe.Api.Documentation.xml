@@ -53,6 +53,21 @@
             </summary>
             <param name="command">The items to add.</param>
         </member>
+        <member name="M:Cafe.Api.Controllers.OrderController.GetOrder(System.Guid)">
+            <summary>
+            Retrieves a to-go order by id.
+            </summary>
+        </member>
+        <member name="M:Cafe.Api.Controllers.OrderController.OrderToGo(Cafe.Core.OrderContext.Commands.OrderToGo)">
+            <summary>
+            Opens a new to-go order.
+            </summary>
+        </member>
+        <member name="M:Cafe.Api.Controllers.OrderController.ConfirmToGoOrder(Cafe.Core.OrderContext.Commands.ConfirmToGoOrder)">
+            <summary>
+            Confirms a to-go order.
+            </summary>
+        </member>
         <member name="M:Cafe.Api.Controllers.TabController.OpenTab(Cafe.Core.TabContext.Commands.OpenTab)">
             <summary>
             Opens a new tab on a given table.

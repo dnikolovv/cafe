@@ -47,7 +47,11 @@ namespace Cafe.Api
             services.AddDbContext<ApplicationDbContext>(opts =>
                 opts.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddAutoMapper();
+            services.AddAutoMapper(cfg =>
+            {
+                cfg.AddProfiles(typeof(MappingProfile).Assembly);
+            });
+
             services.AddSwagger();
             services.AddCommonServices();
 
@@ -75,8 +79,6 @@ namespace Cafe.Api
             services.AddMarten(Configuration);
             services.AddCqrs();
             services.AddMediatR();
-
-            services.AddTransient<IJwtFactory, JwtFactory>();
 
             services.AddMvc(options =>
             {

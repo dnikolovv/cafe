@@ -52,7 +52,7 @@ namespace Cafe.Business
                     r => r.IsValid,
                     r => Error.Validation(r.Errors.Select(e => e.ErrorMessage)))
 
-                // If the validation result is successfull, disregard it and simply return the command
+                // If the validation result is successful, disregard it and simply return the command
                 .Map(_ => command);
         }
 

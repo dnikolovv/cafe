@@ -14,6 +14,9 @@ namespace Cafe.Api.Controllers
         protected IActionResult Ok(Unit unit) =>
             Ok();
 
+        protected IActionResult NotFound(Error error) =>
+            NotFound((object)error);
+
         protected IActionResult Error(Error error)
         {
             switch (error.Type)
