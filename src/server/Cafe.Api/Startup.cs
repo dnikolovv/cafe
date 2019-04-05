@@ -49,6 +49,7 @@ namespace Cafe.Api
 
             services.AddAutoMapper();
             services.AddSwagger();
+            services.AddCommonServices();
 
             services.AddJwtIdentity(
                 Configuration.GetSection(nameof(JwtConfiguration)),

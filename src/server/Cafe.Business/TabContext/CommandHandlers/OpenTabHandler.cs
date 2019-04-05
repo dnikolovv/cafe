@@ -25,8 +25,9 @@ namespace Cafe.Business.TabContext.CommandHandlers
             ApplicationDbContext dbContext,
             IDocumentSession documentSession,
             IEventBus eventBus,
-            IMapper mapper)
-            : base(validator, dbContext, documentSession, eventBus, mapper)
+            IMapper mapper,
+            IMenuItemsService menuItemsService)
+            : base(validator, dbContext, documentSession, eventBus, mapper, menuItemsService)
         {
         }
 
