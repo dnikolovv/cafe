@@ -56,9 +56,9 @@ namespace Cafe.Business
                 .Map(_ => command);
         }
 
-        protected async Task<Unit> PublishEvents(Guid tabId, params IEvent[] events)
+        protected async Task<Unit> PublishEvents(Guid streamId, params IEvent[] events)
         {
-            Session.Events.Append(tabId, events);
+            Session.Events.Append(streamId, events);
             await Session.SaveChangesAsync();
             await EventBus.Publish(events);
 
