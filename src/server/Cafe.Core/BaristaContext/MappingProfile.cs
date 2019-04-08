@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Cafe.Core.BaristaContext.Commands;
 using Cafe.Domain.Entities;
+using Cafe.Domain.Views;
 
 namespace Cafe.Core.BaristaContext
 {
@@ -9,6 +10,8 @@ namespace Cafe.Core.BaristaContext
         public MappingProfile()
         {
             CreateMap<HireBarista, Barista>(MemberList.Source);
+
+            CreateMap<Barista, BaristaView>(MemberList.Destination);
         }
     }
 }
