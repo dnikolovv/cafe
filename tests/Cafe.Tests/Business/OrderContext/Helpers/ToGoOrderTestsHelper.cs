@@ -27,6 +27,16 @@ namespace Cafe.Tests.Business.OrderContext.Helpers
             });
         }
 
+        public async Task CreateConfirmedOrder(Guid orderId, MenuItem[] items)
+        {
+            await OrderToGo(orderId, items);
+            await _fixture.SendAsync(new ConfirmToGoOrder
+            {
+                OrderId = orderId,
+                PricePaid = items.Sum(i => i.Price)
+            });
+        }
+
         /// <summary>
         /// Creates a new order. Takes care of adding the menu items prior to sending an OrderToGo command.
         /// </summary>

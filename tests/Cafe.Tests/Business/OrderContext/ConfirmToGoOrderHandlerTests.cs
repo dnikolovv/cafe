@@ -11,12 +11,12 @@ using Xunit;
 
 namespace Cafe.Tests.Business.OrderContext
 {
-    public class ConfirmToGoOrderHandler : ResetDatabaseLifetime
+    public class ConfirmToGoOrderHandlerTests : ResetDatabaseLifetime
     {
         private readonly SliceFixture _fixture;
         private readonly ToGoOrderTestsHelper _helper;
 
-        public ConfirmToGoOrderHandler()
+        public ConfirmToGoOrderHandlerTests()
         {
             _fixture = new SliceFixture();
             _helper = new ToGoOrderTestsHelper(_fixture);
