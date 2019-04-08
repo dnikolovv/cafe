@@ -18,6 +18,15 @@ namespace Cafe.Tests.Business.OrderContext.Helpers
             _fixture = fixture;
         }
 
+        public async Task AddBarista(Barista barista)
+        {
+            await _fixture.ExecuteDbContextAsync(async dbContext =>
+            {
+                dbContext.Baristas.Add(barista);
+                await dbContext.SaveChangesAsync();
+            });
+        }
+
         public async Task AddMenuItems(params MenuItem[] items)
         {
             await _fixture.ExecuteDbContextAsync(async dbContext =>

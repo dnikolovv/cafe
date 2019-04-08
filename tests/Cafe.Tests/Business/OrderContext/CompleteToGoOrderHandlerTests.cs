@@ -4,6 +4,8 @@ using Cafe.Domain.Entities;
 using Cafe.Tests.Business.OrderContext.Helpers;
 using Cafe.Tests.Customizations;
 using Cafe.Tests.Extensions;
+using Microsoft.EntityFrameworkCore;
+using Shouldly;
 using System;
 using System.Threading.Tasks;
 using Xunit;
@@ -23,14 +25,16 @@ namespace Cafe.Tests.Business.OrderContext
 
         [Theory]
         [CustomizedAutoData]
-        public async Task CanCompleteToGoOrder(Guid orderId, MenuItem[] items)
+        public async Task CanCompleteToGoOrder(Guid orderId, Barista barista, MenuItem[] items)
         {
             // Arrange
+            await _helper.AddBarista(barista);
             await _helper.CreateConfirmedOrder(orderId, items);
 
             var commandToTest = new CompleteToGoOrder
             {
-                OrderId = orderId
+                OrderId = orderId,
+                BaristaId = barista.Id
             };
 
             // Act
@@ -44,35 +48,43 @@ namespace Cafe.Tests.Business.OrderContext
 
         [Theory]
         [CustomizedAutoData]
-        public async Task CannotCompleteUnconfirmedOrder(Guid orderId, MenuItem[] items)
+        public async Task CompletedOrderIsAssignedToTheCompletingBarista(Guid orderId, Barista barista, MenuItem[] items)
         {
             // Arrange
-            await _helper.OrderToGo(orderId, items);
-
-            // Purposefully not confirming the order
+            await _helper.AddBarista(barista);
+            await _helper.CreateConfirmedOrder(orderId, items);
 
             var commandToTest = new CompleteToGoOrder
             {
-                OrderId = orderId
+                OrderId = orderId,
+                BaristaId = barista.Id
             };
 
             // Act
             var result = await _fixture.SendAsync(commandToTest);
 
             // Assert
-            result.ShouldHaveErrorOfType(ErrorType.Validation);
+            var updatedBarista = await _fixture.ExecuteDbContextAsync(dbContext =>
+                dbContext
+                    .Baristas
+                    .Include(b => b.CompletedOrders)
+                    .FirstOrDefaultAsync(b => b.Id == barista.Id));
+
+            updatedBarista.CompletedOrders.ShouldContain(o => o.Id == orderId);
         }
 
         [Theory]
         [CustomizedAutoData]
-        public async Task CannotCompleteUnexistingOrder(Guid orderId)
+        public async Task CannotCompleteAnOrderWithAnUnexistingBarista(Guid orderId, MenuItem[] items)
         {
             // Arrange
-            // Purposefully not creating any orders
+            // Purposefully not adding a barista
+            await _helper.CreateConfirmedOrder(orderId, items);
 
             var commandToTest = new CompleteToGoOrder
             {
-                OrderId = orderId
+                OrderId = orderId,
+                BaristaId = Guid.NewGuid()
             };
 
             // Act
@@ -84,14 +96,60 @@ namespace Cafe.Tests.Business.OrderContext
 
         [Theory]
         [CustomizedAutoData]
-        public async Task CannotCompleteAnOrderTwice(Guid orderId, MenuItem[] items)
+        public async Task CannotCompleteUnconfirmedOrder(Guid orderId, Barista barista, MenuItem[] items)
         {
             // Arrange
+            await _helper.AddBarista(barista);
+            await _helper.OrderToGo(orderId, items);
+
+            // Purposefully not confirming the order
+
+            var commandToTest = new CompleteToGoOrder
+            {
+                OrderId = orderId,
+                BaristaId = barista.Id
+            };
+
+            // Act
+            var result = await _fixture.SendAsync(commandToTest);
+
+            // Assert
+            result.ShouldHaveErrorOfType(ErrorType.Validation);
+        }
+
+        [Theory]
+        [CustomizedAutoData]
+        public async Task CannotCompleteUnexistingOrder(Guid orderId, Barista barista)
+        {
+            // Arrange
+            await _helper.AddBarista(barista);
+
+            // Purposefully not creating any orders
+            var commandToTest = new CompleteToGoOrder
+            {
+                OrderId = orderId,
+                BaristaId = barista.Id
+            };
+
+            // Act
+            var result = await _fixture.SendAsync(commandToTest);
+
+            // Assert
+            result.ShouldHaveErrorOfType(ErrorType.NotFound);
+        }
+
+        [Theory]
+        [CustomizedAutoData]
+        public async Task CannotCompleteAnOrderTwice(Guid orderId, Barista barista, MenuItem[] items)
+        {
+            // Arrange
+            await _helper.AddBarista(barista);
             await _helper.CreateConfirmedOrder(orderId, items);
 
             var confirmOrderCommand = new CompleteToGoOrder
             {
-                OrderId = orderId
+                OrderId = orderId,
+                BaristaId = barista.Id
             };
 
             await _fixture.SendAsync(confirmOrderCommand);
