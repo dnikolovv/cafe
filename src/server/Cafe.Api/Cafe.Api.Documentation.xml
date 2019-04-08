@@ -32,6 +32,16 @@
             Assigns a manager to an account.
             </summary>
         </member>
+        <member name="M:Cafe.Api.Controllers.BaristaController.HireBarista(Cafe.Core.BaristaContext.Commands.HireBarista)">
+            <summary>
+            Hires a new barista.
+            </summary>
+        </member>
+        <member name="M:Cafe.Api.Controllers.BaristaController.GetEmployedBaristas">
+            <summary>
+            Retrieves currently employed baristas.
+            </summary>
+        </member>
         <member name="M:Cafe.Api.Controllers.CashierController.GetEmployedCashiers">
             <summary>
             Retrieves a list of all currently employed cashiers in the café.

@@ -72,6 +72,10 @@ namespace Cafe.Api
                     options.AddPolicy(
                         AuthConstants.Policies.IsAdminOrCashier,
                         pb => pb.IsAdminOr(ctx => ctx.User.HasClaim(c => c.Type == AuthConstants.ClaimTypes.CashierId)));
+
+                    options.AddPolicy(
+                        AuthConstants.Policies.IsAdminOrBarista,
+                        pb => pb.IsAdminOr(ctx => ctx.User.HasClaim(c => c.Type == AuthConstants.ClaimTypes.BaristaId)));
                 });
 
             services.AddLogging(logBuilder => logBuilder.AddSerilog(dispose: true));

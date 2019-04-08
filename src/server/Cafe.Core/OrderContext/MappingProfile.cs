@@ -10,7 +10,7 @@ namespace Cafe.Core.OrderContext
         public MappingProfile()
         {
             CreateMap<OrderToGo, ToGoOrder>(MemberList.Source)
-                .ForMember(d => d.Status, opts => opts.MapFrom(_ => ToGoOrderStatus.Unconfirmed))
+                .ForMember(d => d.Status, opts => opts.MapFrom(_ => ToGoOrderStatus.Pending))
                 .ForSourceMember(s => s.ItemNumbers, opts => opts.DoNotValidate());
 
             CreateMap<ToGoOrder, ToGoOrderView>(MemberList.Destination);
