@@ -38,7 +38,7 @@ namespace Cafe.Business.OrderContext.CommandHandlers
         private Option<ToGoOrderStatus, Error> OrderMustBeUnconfirmed(ToGoOrderStatus currentStatus) =>
             currentStatus
                 .SomeWhen(
-                    status => status == ToGoOrderStatus.Unconfirmed,
+                    status => status == ToGoOrderStatus.Pending,
                     Error.Validation($"You can only confirm unconfirmed orders."));
 
         private async Task<Option<ToGoOrder, Error>> OrderMustExist(Guid orderId) =>
@@ -57,7 +57,7 @@ namespace Cafe.Business.OrderContext.CommandHandlers
 
         private async Task<Unit> SetStatusToConfirmed(ToGoOrder order)
         {
-            order.Status = ToGoOrderStatus.Confirmed;
+            order.Status = ToGoOrderStatus.Issued;
             DbContext.ToGoOrders.Update(order);
             await DbContext.SaveChangesAsync();
             return Unit.Value;

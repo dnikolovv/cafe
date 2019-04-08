@@ -41,7 +41,7 @@ namespace Cafe.Tests.Business.OrderContext
             // Assert
             await _helper.AssertOrderExists(
                 orderId,
-                order => order.Status == ToGoOrderStatus.Confirmed);
+                order => order.Status == ToGoOrderStatus.Issued);
         }
 
         [Theory]

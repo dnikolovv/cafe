@@ -2,8 +2,8 @@
 {
     public enum ToGoOrderStatus
     {
-        Unconfirmed,
-        Confirmed,
+        Pending,
+        Issued,
         Completed
     }
 }
