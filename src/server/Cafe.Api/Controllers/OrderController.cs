@@ -38,7 +38,7 @@ namespace Cafe.Api.Controllers
         /// <summary>
         /// Confirms a to-go order.
         /// </summary>
-        [HttpPost("confirm")]
+        [HttpPut("confirm")]
         public async Task<IActionResult> ConfirmToGoOrder([FromBody] ConfirmToGoOrder command) =>
             (await _mediator.Send(command))
                 .Match(Ok, Error);
