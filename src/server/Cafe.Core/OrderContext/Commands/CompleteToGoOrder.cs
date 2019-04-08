@@ -8,6 +8,6 @@ namespace Cafe.Core.OrderContext.Commands
         public Guid OrderId { get; set; }
 
         [JsonIgnore]
-        public Guid BaristaId { get; set; }
+        public Guid? BaristaId { get; set; }
     }
 }

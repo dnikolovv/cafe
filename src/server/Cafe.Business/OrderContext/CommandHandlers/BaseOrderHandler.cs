@@ -32,7 +32,7 @@ namespace Cafe.Business.OrderContext.CommandHandlers
                 .Status
                 .SomeWhen(
                     status => status == expectedStatus,
-                    Error.Validation($"The order must have a {Enum.GetName(typeof(ToGoOrderStatus), expectedStatus)} status."));
+                    Error.Validation($"The order must have a status of '{Enum.GetName(typeof(ToGoOrderStatus), expectedStatus)}'."));
 
         protected async Task<Option<ToGoOrder, Error>> OrderMustExist(Guid orderId) =>
             (await DbContext

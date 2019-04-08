@@ -30,7 +30,7 @@ namespace Cafe.Business.OrderContext.CommandHandlers
         public override Task<Option<Unit, Error>> Handle(CompleteToGoOrder command) =>
             OrderMustExist(command.OrderId).FlatMapAsync(order =>
             OrderMustHaveStatus(ToGoOrderStatus.Issued, order).FlatMapAsync(currentStatus =>
-            BaristaMustExist(command.BaristaId).FlatMapAsync(barista =>
+            BaristaMustExist(command.BaristaId ?? Guid.Empty).FlatMapAsync(barista =>
             AssignOrderToBarista(barista, order).MapAsync(_ =>
             SetOrderStatus(ToGoOrderStatus.Completed, order)))));
 
