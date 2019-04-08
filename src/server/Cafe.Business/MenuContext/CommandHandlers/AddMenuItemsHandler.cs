@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Cafe.Core;
 using Cafe.Core.MenuContext.Commands;
 using Cafe.Domain;
 using Cafe.Domain.Entities;
@@ -14,12 +13,11 @@ using Optional;
 using Optional.Async;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Cafe.Business.MenuContext.CommandHandlers
 {
-    public class AddMenuItemsHandler : BaseHandler<AddMenuItems>, ICommandHandler<AddMenuItems>
+    public class AddMenuItemsHandler : BaseHandler<AddMenuItems>
     {
         public AddMenuItemsHandler(
             IValidator<AddMenuItems> validator,
@@ -31,10 +29,9 @@ namespace Cafe.Business.MenuContext.CommandHandlers
         {
         }
 
-        public Task<Option<Unit, Error>> Handle(AddMenuItems command, CancellationToken cancellationToken) =>
-            ValidateCommand(command).FlatMapAsync(_ =>
+        public override Task<Option<Unit, Error>> Handle(AddMenuItems command) =>
             CheckIfNumbersAreNotConflicting(command.MenuItems.Select(i => i.Number)).MapAsync(__ =>
-            PersistMenuItems(command.MenuItems)));
+            PersistMenuItems(command.MenuItems));
 
         private async Task<Option<Unit, Error>> CheckIfNumbersAreNotConflicting(IEnumerable<int> itemNumbersToCheck)
         {

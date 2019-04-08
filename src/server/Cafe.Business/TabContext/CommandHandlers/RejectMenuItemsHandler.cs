@@ -12,12 +12,11 @@ using Optional;
 using Optional.Async;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Cafe.Business.TabContext.CommandHandlers
 {
-    public class RejectMenuItemsHandler : BaseTabHandler<RejectMenuItems>, ICommandHandler<RejectMenuItems>
+    public class RejectMenuItemsHandler : BaseTabHandler<RejectMenuItems>
     {
         public RejectMenuItemsHandler(
             IValidator<RejectMenuItems> validator,
@@ -30,12 +29,11 @@ namespace Cafe.Business.TabContext.CommandHandlers
         {
         }
 
-        public Task<Option<Unit, Error>> Handle(RejectMenuItems command, CancellationToken cancellationToken) =>
-            ValidateCommand(command).FlatMapAsync(_ =>
-            TabShouldNotBeClosed(command.TabId, cancellationToken).FlatMapAsync(tab =>
+        public override Task<Option<Unit, Error>> Handle(RejectMenuItems command) =>
+            TabShouldNotBeClosed(command.TabId).FlatMapAsync(tab =>
             MenuItemsShouldExist(command.ItemNumbers).FlatMapAsync(items =>
             TheItemsShouldHaveBeenOrdered(tab, command.ItemNumbers).MapAsync(__ =>
-            PublishEvents(tab.Id, tab.RejectMenuItems(items))))));
+            PublishEvents(tab.Id, tab.RejectMenuItems(items)))));
 
         private Option<Unit, Error> TheItemsShouldHaveBeenOrdered(Tab tab, IList<int> itemNumbers)
         {

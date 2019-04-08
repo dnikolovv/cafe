@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Cafe.Core;
 using Cafe.Core.AuthContext;
 using Cafe.Core.AuthContext.Commands;
 using Cafe.Domain;
@@ -13,12 +12,11 @@ using Microsoft.AspNetCore.Identity;
 using Optional;
 using Optional.Async;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Cafe.Business.AuthContext.CommandHandlers
 {
-    public class RegisterHandler : BaseAuthHandler<Register>, ICommandHandler<Register>
+    public class RegisterHandler : BaseAuthHandler<Register>
     {
         public RegisterHandler(
             UserManager<User> userManager,
@@ -32,10 +30,9 @@ namespace Cafe.Business.AuthContext.CommandHandlers
         {
         }
 
-        public Task<Option<Unit, Error>> Handle(Register command, CancellationToken cancellationToken = default) =>
-            ValidateCommand(command).FlatMapAsync(_ =>
+        public override Task<Option<Unit, Error>> Handle(Register command) =>
             CheckIfUserDoesntExist(command.Email).FlatMapAsync(__ =>
-            PersistUser(command)));
+            PersistUser(command));
 
         private async Task<Option<Unit, Error>> PersistUser(Register command)
         {

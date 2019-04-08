@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Cafe.Core;
 using Cafe.Core.CashierContext.Commands;
 using Cafe.Domain;
 using Cafe.Domain.Entities;
@@ -11,13 +10,12 @@ using Microsoft.EntityFrameworkCore;
 using Optional;
 using Optional.Async;
 using System;
-using System.Threading;
 using System.Threading.Tasks;
 using IDocumentSession = Marten.IDocumentSession;
 
 namespace Cafe.Business.CashierContext.CommandHandlers
 {
-    public class HireCashierHandler : BaseHandler<HireCashier>, ICommandHandler<HireCashier>
+    public class HireCashierHandler : BaseHandler<HireCashier>
     {
         public HireCashierHandler(
             IValidator<HireCashier> validator,
@@ -29,10 +27,9 @@ namespace Cafe.Business.CashierContext.CommandHandlers
         {
         }
 
-        public Task<Option<Unit, Error>> Handle(HireCashier command, CancellationToken cancellationToken) =>
-            ValidateCommand(command).FlatMapAsync(_ =>
+        public override Task<Option<Unit, Error>> Handle(HireCashier command) =>
             CashierShouldntExist(command.Id).MapAsync(__ =>
-            PersistCashier(command)));
+            PersistCashier(command));
 
         private async Task<Option<Unit, Error>> CashierShouldntExist(Guid cashierId) =>
             (await DbContext

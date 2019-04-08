@@ -12,13 +12,12 @@ using Microsoft.EntityFrameworkCore;
 using Optional;
 using Optional.Async;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using IDocumentSession = Marten.IDocumentSession;
 
 namespace Cafe.Business.TabContext.CommandHandlers
 {
-    public class OpenTabHandler : BaseTabHandler<OpenTab>, ICommandHandler<OpenTab>
+    public class OpenTabHandler : BaseTabHandler<OpenTab>
     {
         public OpenTabHandler(
             IValidator<OpenTab> validator,
@@ -31,12 +30,11 @@ namespace Cafe.Business.TabContext.CommandHandlers
         {
         }
 
-        public Task<Option<Unit, Error>> Handle(OpenTab command, CancellationToken cancellationToken) =>
-            ValidateCommand(command).FlatMapAsync(_ =>
-            TabShouldNotExist(command.Id, cancellationToken).FlatMapAsync(tab =>
+        public override Task<Option<Unit, Error>> Handle(OpenTab command) =>
+            TabShouldNotExist(command.Id).FlatMapAsync(tab =>
             TableShouldNotBeTaken(command.TableNumber).FlatMapAsync(tableNumber =>
             TheTableShouldHaveAWaiterAssigned(tableNumber).MapAsync(waiter =>
-            PublishEvents(tab.Id, tab.OpenTab(command.CustomerName, waiter.ShortName, command.TableNumber))))));
+            PublishEvents(tab.Id, tab.OpenTab(command.CustomerName, waiter.ShortName, command.TableNumber)))));
 
         private async Task<Option<int, Error>> TableShouldNotBeTaken(int tableNumber)
         {

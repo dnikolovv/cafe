@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Cafe.Core;
 using Cafe.Core.TableContext.Commands;
 using Cafe.Domain;
 using Cafe.Domain.Entities;
@@ -10,13 +9,12 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Optional;
 using Optional.Async;
-using System.Threading;
 using System.Threading.Tasks;
 using IDocumentSession = Marten.IDocumentSession;
 
 namespace Cafe.Business.TableContext.CommandHandlers
 {
-    public class AddTableHandler : BaseHandler<AddTable>, ICommandHandler<AddTable>
+    public class AddTableHandler : BaseHandler<AddTable>
     {
         public AddTableHandler(
             IValidator<AddTable> validator,
@@ -28,16 +26,15 @@ namespace Cafe.Business.TableContext.CommandHandlers
         {
         }
 
-        public Task<Option<Unit, Error>> Handle(AddTable command, CancellationToken cancellationToken) =>
-            ValidateCommand(command).FlatMapAsync(_ =>
-            CheckIfNumberIsNotTaken(command).FlatMapAsync(
-            PersistTable));
+        public override Task<Option<Unit, Error>> Handle(AddTable command) =>
+            CheckIfNumberIsNotTaken(command).MapAsync(
+            PersistTable);
 
-        private async Task<Option<Unit, Error>> PersistTable(Table table)
+        private async Task<Unit> PersistTable(Table table)
         {
             DbContext.Add(table);
             await DbContext.SaveChangesAsync();
-            return Unit.Value.Some<Unit, Error>();
+            return Unit.Value;
         }
 
         private async Task<Option<Table, Error>> CheckIfNumberIsNotTaken(AddTable command)

@@ -9,12 +9,11 @@ using Marten;
 using MediatR;
 using Optional;
 using Optional.Async;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Cafe.Business.TabContext.CommandHandlers
 {
-    public class CloseTabHandler : BaseTabHandler<CloseTab>, ICommandHandler<CloseTab>
+    public class CloseTabHandler : BaseTabHandler<CloseTab>
     {
         public CloseTabHandler(
             IValidator<CloseTab> validator,
@@ -27,10 +26,9 @@ namespace Cafe.Business.TabContext.CommandHandlers
         {
         }
 
-        public Task<Option<Unit, Error>> Handle(CloseTab command, CancellationToken cancellationToken) =>
-            ValidateCommand(command).FlatMapAsync(_ =>
-            TabShouldNotBeClosed(command.TabId, cancellationToken).
+        public override Task<Option<Unit, Error>> Handle(CloseTab command) =>
+            TabShouldNotBeClosed(command.TabId).
             FilterAsync(async tab => command.AmountPaid >= tab.ServedItemsValue, Error.Validation("You cannot pay less than the bill amount.")).MapAsync(tab =>
-            PublishEvents(tab.Id, tab.CloseTab(command.AmountPaid))));
+            PublishEvents(tab.Id, tab.CloseTab(command.AmountPaid)));
     }
 }
