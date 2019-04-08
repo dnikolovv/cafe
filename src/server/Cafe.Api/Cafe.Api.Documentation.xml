@@ -42,6 +42,16 @@
             Hires a cashier in the café.
             </summary>
         </member>
+        <member name="M:Cafe.Api.Controllers.ManagerController.GetEmployedManagers">
+            <summary>
+            Retrieves all currently employed managers.
+            </summary>
+        </member>
+        <member name="M:Cafe.Api.Controllers.ManagerController.HireManager(Cafe.Core.ManagerContext.Commands.HireManager)">
+            <summary>
+            Hires a new manager.
+            </summary>
+        </member>
         <member name="M:Cafe.Api.Controllers.MenuController.GetMenuItems">
             <summary>
             Retrieves a list of all items currently in the menu.
