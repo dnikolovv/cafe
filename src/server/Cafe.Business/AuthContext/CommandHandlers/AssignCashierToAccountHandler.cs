@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Cafe.Core;
 using Cafe.Core.AuthContext;
 using Cafe.Core.AuthContext.Commands;
 using Cafe.Domain;
@@ -13,13 +12,12 @@ using Microsoft.EntityFrameworkCore;
 using Optional;
 using Optional.Async;
 using System;
-using System.Threading;
 using System.Threading.Tasks;
 using IDocumentSession = Marten.IDocumentSession;
 
 namespace Cafe.Business.AuthContext.CommandHandlers
 {
-    public class AssignCashierToAccountHandler : BaseAuthHandler<AssignCashierToAccount>, ICommandHandler<AssignCashierToAccount>
+    public class AssignCashierToAccountHandler : BaseAuthHandler<AssignCashierToAccount>
     {
         public AssignCashierToAccountHandler(
             UserManager<User> userCashier,
@@ -33,11 +31,10 @@ namespace Cafe.Business.AuthContext.CommandHandlers
         {
         }
 
-        public Task<Option<Unit, Error>> Handle(AssignCashierToAccount command, CancellationToken cancellationToken) =>
-            ValidateCommand(command).FlatMapAsync(_ =>
+        public override Task<Option<Unit, Error>> Handle(AssignCashierToAccount command) =>
             AccountShouldExist(command.AccountId).FlatMapAsync(account =>
             CashierShouldExist(command.CashierId).MapAsync(cashier =>
-            AddClaim(account, AuthConstants.ClaimTypes.CashierId, cashier.Id.ToString()))));
+            AddClaim(account, AuthConstants.ClaimTypes.CashierId, cashier.Id.ToString())));
 
         private Task<Option<Cashier, Error>> CashierShouldExist(Guid cashierId) =>
             DbContext

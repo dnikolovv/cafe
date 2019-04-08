@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Cafe.Core;
 using Cafe.Core.OrderContext.Commands;
 using Cafe.Domain;
 using Cafe.Domain.Entities;
@@ -13,13 +12,12 @@ using Optional.Async;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using IDocumentSession = Marten.IDocumentSession;
 
 namespace Cafe.Business.OrderContext.CommandHandlers
 {
-    public class ConfirmToGoOrderHandler : BaseHandler<ConfirmToGoOrder>, ICommandHandler<ConfirmToGoOrder>
+    public class ConfirmToGoOrderHandler : BaseHandler<ConfirmToGoOrder>
     {
         public ConfirmToGoOrderHandler(
             IValidator<ConfirmToGoOrder> validator,
@@ -31,12 +29,11 @@ namespace Cafe.Business.OrderContext.CommandHandlers
         {
         }
 
-        public Task<Option<Unit, Error>> Handle(ConfirmToGoOrder command, CancellationToken cancellationToken) =>
-            ValidateCommand(command).FlatMapAsync(_ =>
+        public override Task<Option<Unit, Error>> Handle(ConfirmToGoOrder command) =>
             OrderMustExist(command.OrderId).FlatMapAsync(order =>
             OrderMustBeUnconfirmed(order.Status).FlatMapAsync(currentStatus =>
             PaymentMustBeAtLeastWhatsOwed(order.OrderedItems, command.PricePaid).MapAsync(totalPrice =>
-            SetStatusToConfirmed(order)))));
+            SetStatusToConfirmed(order))));
 
         private Option<ToGoOrderStatus, Error> OrderMustBeUnconfirmed(ToGoOrderStatus currentStatus) =>
             currentStatus

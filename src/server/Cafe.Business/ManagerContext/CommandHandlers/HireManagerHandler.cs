@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Cafe.Core;
 using Cafe.Core.ManagerContext.Commands;
 using Cafe.Domain;
 using Cafe.Domain.Entities;
@@ -11,13 +10,12 @@ using Microsoft.EntityFrameworkCore;
 using Optional;
 using Optional.Async;
 using System;
-using System.Threading;
 using System.Threading.Tasks;
 using IDocumentSession = Marten.IDocumentSession;
 
 namespace Cafe.Business.ManagerContext.CommandHandlers
 {
-    public class HireManagerHandler : BaseHandler<HireManager>, ICommandHandler<HireManager>
+    public class HireManagerHandler : BaseHandler<HireManager>
     {
         public HireManagerHandler(
             IValidator<HireManager> validator,
@@ -29,10 +27,9 @@ namespace Cafe.Business.ManagerContext.CommandHandlers
         {
         }
 
-        public Task<Option<Unit, Error>> Handle(HireManager command, CancellationToken cancellationToken) =>
-            ValidateCommand(command).FlatMapAsync(_ =>
+        public override Task<Option<Unit, Error>> Handle(HireManager command) =>
             ManagerShouldntExist(command.Id).MapAsync(__ =>
-            PersistManager(command)));
+            PersistManager(command));
 
         private async Task<Option<Unit, Error>> ManagerShouldntExist(Guid managerId) =>
             (await DbContext

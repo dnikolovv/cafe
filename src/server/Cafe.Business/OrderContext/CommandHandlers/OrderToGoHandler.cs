@@ -11,13 +11,12 @@ using Microsoft.EntityFrameworkCore;
 using Optional;
 using Optional.Async;
 using System.Collections.Generic;
-using System.Threading;
 using System.Threading.Tasks;
 using IDocumentSession = Marten.IDocumentSession;
 
 namespace Cafe.Business.OrderContext.CommandHandlers
 {
-    public class OrderToGoHandler : BaseHandler<OrderToGo>, ICommandHandler<OrderToGo>
+    public class OrderToGoHandler : BaseHandler<OrderToGo>
     {
         private readonly IMenuItemsService _menuItemsService;
 
@@ -33,11 +32,10 @@ namespace Cafe.Business.OrderContext.CommandHandlers
             _menuItemsService = menuItemsService;
         }
 
-        public Task<Option<Unit, Error>> Handle(OrderToGo command, CancellationToken cancellationToken) =>
-            ValidateCommand(command).FlatMapAsync(_ =>
+        public override Task<Option<Unit, Error>> Handle(OrderToGo command) =>
             CheckIfOrderIsNotExisting(command).FlatMapAsync(order =>
             MenuItemsShouldExist(command.ItemNumbers).MapAsync(items =>
-            PersistOrder(order, items))));
+            PersistOrder(order, items)));
 
         private async Task<Option<ToGoOrder, Error>> CheckIfOrderIsNotExisting(OrderToGo command)
         {

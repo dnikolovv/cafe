@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Cafe.Core;
 using Cafe.Core.AuthContext;
 using Cafe.Domain;
 using Cafe.Domain.Entities;
@@ -17,6 +18,7 @@ using System.Threading.Tasks;
 namespace Cafe.Business.AuthContext.CommandHandlers
 {
     public abstract class BaseAuthHandler<TCommand> : BaseHandler<TCommand>
+        where TCommand : ICommand
     {
         public BaseAuthHandler(
             UserManager<User> userManager,

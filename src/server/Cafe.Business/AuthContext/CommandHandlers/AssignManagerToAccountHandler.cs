@@ -13,7 +13,6 @@ using Microsoft.EntityFrameworkCore;
 using Optional;
 using Optional.Async;
 using System;
-using System.Threading;
 using System.Threading.Tasks;
 using IDocumentSession = Marten.IDocumentSession;
 
@@ -33,11 +32,10 @@ namespace Cafe.Business.AuthContext.CommandHandlers
         {
         }
 
-        public Task<Option<Unit, Error>> Handle(AssignManagerToAccount command, CancellationToken cancellationToken) =>
-            ValidateCommand(command).FlatMapAsync(_ =>
+        public override Task<Option<Unit, Error>> Handle(AssignManagerToAccount command) =>
             AccountShouldExist(command.AccountId).FlatMapAsync(account =>
             ManagerShouldExist(command.ManagerId).MapAsync(manager =>
-            AddClaim(account, AuthConstants.ClaimTypes.ManagerId, manager.Id.ToString()))));
+            AddClaim(account, AuthConstants.ClaimTypes.ManagerId, manager.Id.ToString())));
 
         private Task<Option<Manager, Error>> ManagerShouldExist(Guid managerId) =>
             DbContext

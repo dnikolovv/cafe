@@ -9,12 +9,11 @@ using Marten;
 using MediatR;
 using Optional;
 using Optional.Async;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Cafe.Business.TabContext.CommandHandlers
 {
-    public class ServeMenuItemsHandler : BaseTabHandler<ServeMenuItems>, ICommandHandler<ServeMenuItems>
+    public class ServeMenuItemsHandler : BaseTabHandler<ServeMenuItems>
     {
         public ServeMenuItemsHandler(
             IValidator<ServeMenuItems> validator,
@@ -27,10 +26,9 @@ namespace Cafe.Business.TabContext.CommandHandlers
         {
         }
 
-        public Task<Option<Unit, Error>> Handle(ServeMenuItems command, CancellationToken cancellationToken) =>
-            ValidateCommand(command).FlatMapAsync(_ =>
-            TabShouldNotBeClosed(command.TabId, cancellationToken).FlatMapAsync(tab =>
+        public override Task<Option<Unit, Error>> Handle(ServeMenuItems command) =>
+            TabShouldNotBeClosed(command.TabId).FlatMapAsync(tab =>
             MenuItemsShouldExist(command.ItemNumbers).MapAsync(items =>
-            PublishEvents(tab.Id, tab.ServeMenuItems(items)))));
+            PublishEvents(tab.Id, tab.ServeMenuItems(items))));
     }
 }

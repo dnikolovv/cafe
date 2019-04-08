@@ -1,36 +1,32 @@
-﻿using AutoMapper;
-using Cafe.Core;
+﻿using Cafe.Core;
 using Cafe.Core.AuthContext;
 using Cafe.Core.AuthContext.Commands;
 using Cafe.Domain;
 using Cafe.Domain.Entities;
-using Cafe.Domain.Events;
 using Cafe.Domain.Views;
-using Cafe.Persistance.EntityFramework;
 using FluentValidation;
-using Marten;
 using Microsoft.AspNetCore.Identity;
 using Optional;
 using Optional.Async;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Cafe.Business.AuthContext.CommandHandlers
 {
-    public class LoginHandler : BaseAuthHandler<Login>, ICommandHandler<Login, JwtView>
+    public class LoginHandler : ICommandHandler<Login, JwtView>
     {
-        public LoginHandler(
-            UserManager<User> userManager,
-            IJwtFactory jwtFactory,
-            IMapper mapper,
-            IValidator<Login> validator,
-            ApplicationDbContext dbContext,
-            IDocumentSession documentSession,
-            IEventBus eventBus)
-            : base(userManager, jwtFactory, mapper, validator, dbContext, documentSession, eventBus)
+        private readonly IJwtFactory _jwtFactory;
+        private readonly UserManager<User> _userManager;
+        private readonly IValidator<Login> _validator;
+
+        public LoginHandler(UserManager<User> userManager, IJwtFactory jwtFactory, IValidator<Login> validator)
         {
+            _userManager = userManager;
+            _jwtFactory = jwtFactory;
+            _validator = validator;
         }
 
         public Task<Option<JwtView, Error>> Handle(Login command, CancellationToken cancellationToken = default) =>
@@ -42,7 +38,7 @@ namespace Cafe.Business.AuthContext.CommandHandlers
 
         private async Task<Option<bool, Error>> CheckPassword(User user, string password)
         {
-            var passwordIsValid = await UserManager
+            var passwordIsValid = await _userManager
                 .CheckPasswordAsync(user, password);
 
             var result = passwordIsValid
@@ -52,18 +48,32 @@ namespace Cafe.Business.AuthContext.CommandHandlers
         }
 
         private Task<Option<User, Error>> FindUser(string email) =>
-            UserManager
+            _userManager
                 .FindByEmailAsync(email)
                 .SomeNotNull(Error.NotFound($"No user with email {email} was found."));
-
-        private Task<Option<IList<Claim>, Error>> GetExtraClaims(User user) =>
-            user.SomeNotNull(Error.Validation($"You must provide a non-null user."))
-                .MapAsync(u => UserManager.GetClaimsAsync(u));
 
         private JwtView GenerateJwt(User user, IEnumerable<Claim> extraClaims) =>
             new JwtView
             {
-                TokenString = JwtFactory.GenerateEncodedToken(user.Id.ToString(), user.Email, extraClaims)
+                TokenString = _jwtFactory.GenerateEncodedToken(user.Id.ToString(), user.Email, extraClaims)
             };
+
+        private Task<Option<IList<Claim>, Error>> GetExtraClaims(User user) =>
+                    user.SomeNotNull(Error.Validation($"You must provide a non-null user."))
+                .MapAsync(u => _userManager.GetClaimsAsync(u));
+
+        // TODO: This is duplicated in BaseHandler.cs
+        private Option<Login, Error> ValidateCommand(Login command)
+        {
+            var validationResult = _validator.Validate(command);
+
+            return validationResult
+                .SomeWhen(
+                    r => r.IsValid,
+                    r => Error.Validation(r.Errors.Select(e => e.ErrorMessage)))
+
+                // If the validation result is successful, disregard it and simply return the command
+                .Map(_ => command);
+        }
     }
 }
