@@ -88,6 +88,11 @@
             Confirms a to-go order.
             </summary>
         </member>
+        <member name="M:Cafe.Api.Controllers.OrderController.CompleteToGoOrder(Cafe.Core.OrderContext.Commands.CompleteToGoOrder)">
+            <summary>
+            Completes a to-go order.
+            </summary>
+        </member>
         <member name="M:Cafe.Api.Controllers.TabController.OpenTab(Cafe.Core.TabContext.Commands.OpenTab)">
             <summary>
             Opens a new tab on a given table.

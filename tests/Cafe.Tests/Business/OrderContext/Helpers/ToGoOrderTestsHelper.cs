@@ -18,12 +18,31 @@ namespace Cafe.Tests.Business.OrderContext.Helpers
             _fixture = fixture;
         }
 
+        public async Task AddBarista(Barista barista)
+        {
+            await _fixture.ExecuteDbContextAsync(async dbContext =>
+            {
+                dbContext.Baristas.Add(barista);
+                await dbContext.SaveChangesAsync();
+            });
+        }
+
         public async Task AddMenuItems(params MenuItem[] items)
         {
             await _fixture.ExecuteDbContextAsync(async dbContext =>
             {
                 dbContext.MenuItems.AddRange(items);
                 await dbContext.SaveChangesAsync();
+            });
+        }
+
+        public async Task CreateConfirmedOrder(Guid orderId, MenuItem[] items)
+        {
+            await OrderToGo(orderId, items);
+            await _fixture.SendAsync(new ConfirmToGoOrder
+            {
+                OrderId = orderId,
+                PricePaid = items.Sum(i => i.Price)
             });
         }
 

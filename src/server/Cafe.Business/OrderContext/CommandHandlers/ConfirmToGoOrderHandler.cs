@@ -6,10 +6,8 @@ using Cafe.Domain.Events;
 using Cafe.Persistance.EntityFramework;
 using FluentValidation;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Optional;
 using Optional.Async;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -17,7 +15,7 @@ using IDocumentSession = Marten.IDocumentSession;
 
 namespace Cafe.Business.OrderContext.CommandHandlers
 {
-    public class ConfirmToGoOrderHandler : BaseHandler<ConfirmToGoOrder>
+    public class ConfirmToGoOrderHandler : BaseOrderHandler<ConfirmToGoOrder>
     {
         public ConfirmToGoOrderHandler(
             IValidator<ConfirmToGoOrder> validator,
@@ -31,22 +29,9 @@ namespace Cafe.Business.OrderContext.CommandHandlers
 
         public override Task<Option<Unit, Error>> Handle(ConfirmToGoOrder command) =>
             OrderMustExist(command.OrderId).FlatMapAsync(order =>
-            OrderMustBeUnconfirmed(order.Status).FlatMapAsync(currentStatus =>
+            OrderMustHaveStatus(ToGoOrderStatus.Pending, order).FlatMapAsync(currentStatus =>
             PaymentMustBeAtLeastWhatsOwed(order.OrderedItems, command.PricePaid).MapAsync(totalPrice =>
-            SetStatusToConfirmed(order))));
-
-        private Option<ToGoOrderStatus, Error> OrderMustBeUnconfirmed(ToGoOrderStatus currentStatus) =>
-            currentStatus
-                .SomeWhen(
-                    status => status == ToGoOrderStatus.Pending,
-                    Error.Validation($"You can only confirm unconfirmed orders."));
-
-        private async Task<Option<ToGoOrder, Error>> OrderMustExist(Guid orderId) =>
-            (await DbContext
-                .ToGoOrders
-                .Include(o => o.OrderedItems)
-                .FirstOrDefaultAsync(o => o.Id == orderId))
-            .SomeNotNull(Error.NotFound($"Order {orderId} was not found."));
+            SetOrderStatus(ToGoOrderStatus.Issued, order))));
 
         private Option<decimal, Error> PaymentMustBeAtLeastWhatsOwed(ICollection<MenuItem> orderedItems, decimal paymentAmount) =>
             orderedItems
@@ -54,13 +39,5 @@ namespace Cafe.Business.OrderContext.CommandHandlers
                 .SomeWhen(
                     total => paymentAmount >= total,
                     total => Error.Validation($"Tried to pay {paymentAmount} when the order price is {total}."));
-
-        private async Task<Unit> SetStatusToConfirmed(ToGoOrder order)
-        {
-            order.Status = ToGoOrderStatus.Issued;
-            DbContext.ToGoOrders.Update(order);
-            await DbContext.SaveChangesAsync();
-            return Unit.Value;
-        }
     }
 }

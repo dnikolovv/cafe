@@ -22,7 +22,7 @@ namespace Cafe.Api.Controllers
         /// Hires a new barista.
         /// </summary>
         [HttpPost]
-        public async Task<IActionResult> HireBarista(HireBarista command) =>
+        public async Task<IActionResult> HireBarista([FromBody] HireBarista command) =>
             (await _mediator.Send(command))
                 .Match(Ok, Error);
 

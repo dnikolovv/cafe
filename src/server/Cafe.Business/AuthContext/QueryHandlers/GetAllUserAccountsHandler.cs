@@ -47,8 +47,11 @@ namespace Cafe.Business.AuthContext.QueryHandlers
                 .ToListAsync())
                 .Select(userView =>
                 {
+                    // TODO: This definitely seems like a bad pattern
                     userView.ManagerId = TryGetIdClaim(userView.Id, userClaimsMapping, c => c.ClaimType == AuthConstants.ClaimTypes.ManagerId);
                     userView.WaiterId = TryGetIdClaim(userView.Id, userClaimsMapping, c => c.ClaimType == AuthConstants.ClaimTypes.WaiterId);
+                    userView.CashierId = TryGetIdClaim(userView.Id, userClaimsMapping, c => c.ClaimType == AuthConstants.ClaimTypes.CashierId);
+                    userView.BaristaId = TryGetIdClaim(userView.Id, userClaimsMapping, c => c.ClaimType == AuthConstants.ClaimTypes.BaristaId);
 
                     return userView;
                 })
@@ -73,6 +76,5 @@ namespace Cafe.Business.AuthContext.QueryHandlers
                 Guid.Parse(claimValue) :
                 (Guid?)null;
         }
-
     }
 }

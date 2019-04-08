@@ -31,7 +31,7 @@ namespace Cafe.Api.Controllers
         [ProducesResponseType(typeof(Error), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> Login([FromBody] Login command) =>
             (await _mediator.Send(command))
-            .Match(Ok, Error);
+                .Match(Ok, Error);
 
         /// <summary>
         /// Register.
@@ -44,7 +44,7 @@ namespace Cafe.Api.Controllers
         [ProducesResponseType(typeof(Error), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> Register([FromBody] Register command) =>
             (await _mediator.Send(command))
-            .Match(u => CreatedAtAction(nameof(Register), u), Error);
+                .Match(u => CreatedAtAction(nameof(Register), u), Error);
 
         /// <summary>
         /// Assigns a waiter to an account.
@@ -53,7 +53,7 @@ namespace Cafe.Api.Controllers
         [Authorize(Policy = AuthConstants.Policies.IsAdmin)]
         public async Task<IActionResult> AssignWaiterToAccount([FromBody] AssignWaiterToAccount command) =>
             (await _mediator.Send(command))
-            .Match(Ok, Error);
+                .Match(Ok, Error);
 
         /// <summary>
         /// Assigns a manager to an account.
@@ -62,6 +62,24 @@ namespace Cafe.Api.Controllers
         [Authorize(Policy = AuthConstants.Policies.IsAdmin)]
         public async Task<IActionResult> AssignManagerToAccount([FromBody] AssignManagerToAccount command) =>
             (await _mediator.Send(command))
-            .Match(Ok, Error);
+                .Match(Ok, Error);
+
+        /// <summary>
+        /// Assigns a cashier to an account.
+        /// </summary>
+        [HttpPost("assign/cashier")]
+        [Authorize(Policy = AuthConstants.Policies.IsAdmin)]
+        public async Task<IActionResult> AssignCashierToAccount([FromBody] AssignCashierToAccount command) =>
+            (await _mediator.Send(command))
+                .Match(Ok, Error);
+
+        /// <summary>
+        /// Assigns a barista to an account.
+        /// </summary>
+        [HttpPost("assign/barista")]
+        [Authorize(Policy = AuthConstants.Policies.IsAdmin)]
+        public async Task<IActionResult> AssignBaristaToAccount([FromBody] AssignBaristaToAccount command) =>
+            (await _mediator.Send(command))
+                .Match(Ok, Error);
     }
 }

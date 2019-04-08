@@ -30,7 +30,7 @@ namespace Cafe.Api.Controllers
         /// Hires a new manager.
         /// </summary>
         [HttpPost]
-        public async Task<IActionResult> HireManager(HireManager command) =>
+        public async Task<IActionResult> HireManager([FromBody] HireManager command) =>
             (await _mediator.Send(command))
                 .Match(Ok, Error);
     }
