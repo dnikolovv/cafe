@@ -1,5 +1,9 @@
-﻿using Cafe.Domain;
+﻿using Cafe.Core.BaristaContext.Commands;
+using Cafe.Domain;
 using Cafe.Tests.Customizations;
+using Cafe.Tests.Extensions;
+using Microsoft.EntityFrameworkCore;
+using Shouldly;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -31,7 +35,7 @@ namespace Cafe.Tests.Business.BaristaContext
                     .Include(b => b.CompletedOrders)
                     .FirstOrDefaultAsync(b => b.Id == command.Id &&
                                               b.ShortName == command.ShortName &&
-                                              b.CompletedOrders.Count() == 0));
+                                              b.CompletedOrders.Count == 0));
 
             baristaInDb.Id.ShouldBe(command.Id);
             baristaInDb.ShortName.ShouldBe(command.ShortName);
