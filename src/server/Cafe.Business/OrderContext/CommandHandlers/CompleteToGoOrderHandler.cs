@@ -30,22 +30,33 @@ namespace Cafe.Business.OrderContext.CommandHandlers
         public override Task<Option<Unit, Error>> Handle(CompleteToGoOrder command) =>
             OrderMustExist(command.OrderId).FlatMapAsync(order =>
             OrderMustHaveStatus(ToGoOrderStatus.Issued, order).FlatMapAsync(currentStatus =>
-            BaristaMustExist(command.BaristaId ?? Guid.Empty).FlatMapAsync(barista =>
-            AssignOrderToBarista(barista, order).MapAsync(_ =>
-            SetOrderStatus(ToGoOrderStatus.Completed, order)))));
+            SetOrderStatus(ToGoOrderStatus.Completed, order).MapAsync(_ =>
+            AssignOrderToBaristaIfAny(command.BaristaId, order))));
 
-        private async Task<Option<Barista, Error>> BaristaMustExist(Guid baristaId) =>
-            (await DbContext
-                .Baristas
-                .Include(b => b.CompletedOrders)
-                .FirstOrDefaultAsync(b => b.Id == baristaId))
-            .SomeWhen(b => b != null, Error.NotFound($"Barista {baristaId} was not found."));
-
-        private async Task<Option<Unit, Error>> AssignOrderToBarista(Barista barista, ToGoOrder order)
+        private async Task<Unit> AssignOrderToBaristaIfAny(Option<Guid> baristaIdOption, ToGoOrder order)
         {
-            barista.CompletedOrders.Add(order);
-            await DbContext.SaveChangesAsync();
-            return Unit.Value.Some<Unit, Error>();
+            await baristaIdOption.MapAsync(
+                async baristaId =>
+                {
+                    var barista = await DbContext
+                        .Baristas
+                        .Include(b => b.CompletedOrders)
+                        .FirstOrDefaultAsync(b => b.Id == baristaId);
+
+                    if (barista == null)
+                    {
+                        throw new InvalidOperationException(
+                           $"Tried to assign an order to an unexisting barista. (id: {baristaId})" +
+                           $"It is very likely that the claim assigning logic is broken.");
+                    }
+
+                    barista.CompletedOrders.Add(order);
+                    await DbContext.SaveChangesAsync();
+
+                    return Unit.Value;
+                });
+
+            return Unit.Value;
         }
     }
 }

@@ -41,12 +41,12 @@ namespace Cafe.Business.OrderContext.CommandHandlers
                 .FirstOrDefaultAsync(o => o.Id == orderId))
             .SomeNotNull(Error.NotFound($"Order {orderId} was not found."));
 
-        protected async Task<Unit> SetOrderStatus(ToGoOrderStatus status, ToGoOrder order)
+        protected async Task<Option<Unit, Error>> SetOrderStatus(ToGoOrderStatus status, ToGoOrder order)
         {
             order.Status = status;
             DbContext.ToGoOrders.Update(order);
             await DbContext.SaveChangesAsync();
-            return Unit.Value;
+            return Unit.Value.Some<Unit, Error>();
         }
     }
 }

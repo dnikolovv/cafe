@@ -7,7 +7,6 @@ namespace Cafe.Core.OrderContext.Commands
         public CompleteToGoOrderValidator()
         {
             RuleFor(c => c.OrderId).NotEmpty();
-            RuleFor(c => c.BaristaId).NotEmpty();
         }
     }
 }

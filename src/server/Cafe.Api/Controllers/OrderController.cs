@@ -1,11 +1,11 @@
 ﻿using Cafe.Core.AuthContext;
 using Cafe.Core.OrderContext.Commands;
 using Cafe.Core.OrderContext.Queries;
+using Cafe.Domain.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Cafe.Api.Controllers
@@ -27,6 +27,15 @@ namespace Cafe.Api.Controllers
         public async Task<IActionResult> GetOrder([FromRoute] Guid id) =>
             (await _mediator.Send(new GetToGoOrder { Id = id }))
                 .Match(Ok, NotFound);
+
+        /// <summary>
+        /// Retrieves orders for a given status.
+        /// </summary>
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> GetOrdersByStatus(ToGoOrderStatus status) =>
+            (await _mediator.Send(new GetOrdersByStatus { Status = status }))
+                .Match(Ok, Error);
 
         /// <summary>
         /// Opens a new to-go order.
@@ -53,14 +62,7 @@ namespace Cafe.Api.Controllers
         [Authorize(Policy = AuthConstants.Policies.IsAdminOrBarista)]
         public async Task<IActionResult> CompleteToGoOrder([FromBody] CompleteToGoOrder command)
         {
-            var baristaIdClaim = User
-                .Claims
-                .FirstOrDefault(c => c.Value == AuthConstants.ClaimTypes.BaristaId)?
-                .Value;
-
-            command.BaristaId = baristaIdClaim != null ?
-                new Guid(baristaIdClaim) :
-                Guid.Empty;
+            command.BaristaId = BaristaId;
 
             var result = (await _mediator.Send(command))
                 .Match(Ok, Error);
