@@ -32,6 +32,16 @@
             Assigns a manager to an account.
             </summary>
         </member>
+        <member name="M:Cafe.Api.Controllers.AuthController.AssignCashierToAccount(Cafe.Core.AuthContext.Commands.AssignCashierToAccount)">
+            <summary>
+            Assigns a cashier to an account.
+            </summary>
+        </member>
+        <member name="M:Cafe.Api.Controllers.AuthController.AssignBaristaToAccount(Cafe.Core.AuthContext.Commands.AssignBaristaToAccount)">
+            <summary>
+            Assigns a barista to an account.
+            </summary>
+        </member>
         <member name="M:Cafe.Api.Controllers.BaristaController.HireBarista(Cafe.Core.BaristaContext.Commands.HireBarista)">
             <summary>
             Hires a new barista.
@@ -76,6 +86,11 @@
         <member name="M:Cafe.Api.Controllers.OrderController.GetOrder(System.Guid)">
             <summary>
             Retrieves a to-go order by id.
+            </summary>
+        </member>
+        <member name="M:Cafe.Api.Controllers.OrderController.GetOrdersByStatus(Cafe.Domain.Entities.ToGoOrderStatus)">
+            <summary>
+            Retrieves orders for a given status.
             </summary>
         </member>
         <member name="M:Cafe.Api.Controllers.OrderController.OrderToGo(Cafe.Core.OrderContext.Commands.OrderToGo)">

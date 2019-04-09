@@ -5,6 +5,7 @@ using Cafe.Tests.Business.OrderContext.Helpers;
 using Cafe.Tests.Customizations;
 using Cafe.Tests.Extensions;
 using Microsoft.EntityFrameworkCore;
+using Optional;
 using Shouldly;
 using System;
 using System.Threading.Tasks;
@@ -25,16 +26,15 @@ namespace Cafe.Tests.Business.OrderContext
 
         [Theory]
         [CustomizedAutoData]
-        public async Task CanCompleteToGoOrder(Guid orderId, Barista barista, MenuItem[] items)
+        public async Task CanCompleteToGoOrder(Guid orderId, MenuItem[] items)
         {
             // Arrange
-            await _helper.AddBarista(barista);
             await _helper.CreateConfirmedOrder(orderId, items);
 
             var commandToTest = new CompleteToGoOrder
             {
                 OrderId = orderId,
-                BaristaId = barista.Id
+                BaristaId = Option.None<Guid>()
             };
 
             // Act
@@ -57,7 +57,7 @@ namespace Cafe.Tests.Business.OrderContext
             var commandToTest = new CompleteToGoOrder
             {
                 OrderId = orderId,
-                BaristaId = barista.Id
+                BaristaId = barista.Id.Some<Guid>()
             };
 
             // Act
@@ -75,7 +75,7 @@ namespace Cafe.Tests.Business.OrderContext
 
         [Theory]
         [CustomizedAutoData]
-        public async Task CannotCompleteAnOrderWithAnUnexistingBarista(Guid orderId, MenuItem[] items)
+        public async Task CannotCompleteAnOrderWithAnInvalidBaristaId(Guid orderId, MenuItem[] items)
         {
             // Arrange
             // Purposefully not adding a barista
@@ -84,30 +84,25 @@ namespace Cafe.Tests.Business.OrderContext
             var commandToTest = new CompleteToGoOrder
             {
                 OrderId = orderId,
-                BaristaId = Guid.NewGuid()
+                BaristaId = Guid.NewGuid().Some() // It will not exist
             };
 
-            // Act
-            var result = await _fixture.SendAsync(commandToTest);
-
-            // Assert
-            result.ShouldHaveErrorOfType(ErrorType.NotFound);
+            // Act, Assert
+            await Assert.ThrowsAsync<InvalidOperationException>(() => _fixture.SendAsync(commandToTest));
         }
 
         [Theory]
         [CustomizedAutoData]
-        public async Task CannotCompleteUnconfirmedOrder(Guid orderId, Barista barista, MenuItem[] items)
+        public async Task CannotCompleteUnconfirmedOrder(Guid orderId, MenuItem[] items)
         {
             // Arrange
-            await _helper.AddBarista(barista);
             await _helper.OrderToGo(orderId, items);
 
             // Purposefully not confirming the order
-
             var commandToTest = new CompleteToGoOrder
             {
                 OrderId = orderId,
-                BaristaId = barista.Id
+                BaristaId = Option.None<Guid>()
             };
 
             // Act
@@ -119,16 +114,15 @@ namespace Cafe.Tests.Business.OrderContext
 
         [Theory]
         [CustomizedAutoData]
-        public async Task CannotCompleteUnexistingOrder(Guid orderId, Barista barista)
+        public async Task CannotCompleteUnexistingOrder(Guid orderId)
         {
             // Arrange
-            await _helper.AddBarista(barista);
 
             // Purposefully not creating any orders
             var commandToTest = new CompleteToGoOrder
             {
                 OrderId = orderId,
-                BaristaId = barista.Id
+                BaristaId = Option.None<Guid>()
             };
 
             // Act
@@ -140,16 +134,15 @@ namespace Cafe.Tests.Business.OrderContext
 
         [Theory]
         [CustomizedAutoData]
-        public async Task CannotCompleteAnOrderTwice(Guid orderId, Barista barista, MenuItem[] items)
+        public async Task CannotCompleteAnOrderTwice(Guid orderId, MenuItem[] items)
         {
             // Arrange
-            await _helper.AddBarista(barista);
             await _helper.CreateConfirmedOrder(orderId, items);
 
             var confirmOrderCommand = new CompleteToGoOrder
             {
                 OrderId = orderId,
-                BaristaId = barista.Id
+                BaristaId = Option.None<Guid>()
             };
 
             await _fixture.SendAsync(confirmOrderCommand);

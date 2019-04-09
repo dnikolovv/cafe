@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Optional;
 using System;
 
 namespace Cafe.Core.OrderContext.Commands
@@ -8,6 +9,6 @@ namespace Cafe.Core.OrderContext.Commands
         public Guid OrderId { get; set; }
 
         [JsonIgnore]
-        public Guid? BaristaId { get; set; }
+        public Option<Guid> BaristaId { get; set; }
     }
 }
