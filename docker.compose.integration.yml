@@ -14,7 +14,7 @@ services:
   cafe.tests:
     image: cafetests
     build:
-      context: .
+      context: ./server
       dockerfile: server/tests/Cafe.Tests/Dockerfile
     depends_on:
       - cafe.tests.sql
