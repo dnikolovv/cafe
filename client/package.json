@@ -5,7 +5,17 @@
   "dependencies": {
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
-    "react-scripts": "2.1.8"
+    "react-scripts": "2.1.8",
+    "bootstrap": "4.3.1",
+    "prop-types": "15.7.2",
+    "react-redux": "6.0.1",
+    "react-router-dom": "5.0.0",
+    "react-toastify": "4.5.2",
+    "redux": "4.0.1",
+    "redux-thunk": "2.3.0"
+  },
+  "devDependencies": {
+    "redux-immutable-state-invariant": "2.1.0"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -14,7 +24,38 @@
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
-    "extends": "react-app"
+    "extends": [
+      "eslint:recommended",
+      "plugin:react/recommended",
+      "plugin:import/errors",
+      "plugin:import/warnings"
+    ],
+    "parser": "babel-eslint",
+    "parserOptions": {
+      "ecmaVersion": 2018,
+      "sourceType": "module",
+      "ecmaFeatures": {
+        "jsx": true
+      }
+    },
+    "env": {
+      "browser": true,
+      "node": true,
+      "es6": true,
+      "jest": true
+    },
+    "rules": {
+      "no-debugger": "off",
+      "no-console": "off",
+      "no-unused-vars": "warn",
+      "react/prop-types": "warn"
+    },
+    "settings": {
+      "react": {
+        "version": "detect"
+      }
+    },
+    "root": true
   },
   "browserslist": [
     ">0.2%",
