@@ -11,7 +11,7 @@ const HomePage = () => {
         href="https://github.com/dnikolovv/cafe"
         className="btn btn-primary btn-md"
       >
-        Learn more
+        Check out the source code
       </a>
     </div>
   );
