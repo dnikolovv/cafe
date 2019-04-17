@@ -14,6 +14,7 @@
     "redux": "4.0.1",
     "redux-thunk": "2.3.0"
   },
+  "proxy": "http://localhost:5000/api",
   "devDependencies": {
     "redux-immutable-state-invariant": "2.1.0"
   },
