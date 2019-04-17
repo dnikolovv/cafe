@@ -5,8 +5,6 @@ import PropTypes from "prop-types";
 
 const Logout = ({ logout, history }) => {
   useEffect(() => {
-    console.log(logout);
-    debugger;
     logout();
     history.push("/");
   });

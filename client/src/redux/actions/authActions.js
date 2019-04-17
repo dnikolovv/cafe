@@ -18,6 +18,7 @@ export function login(credentials) {
         dispatch(loginSuccess(token));
       })
       .catch(error => {
+        dispatch(logout());
         throw error;
       });
   };
