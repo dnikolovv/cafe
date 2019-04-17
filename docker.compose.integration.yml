@@ -14,8 +14,8 @@ services:
   cafe.tests:
     image: cafetests
     build:
-      context: .
-      dockerfile: tests/Cafe.Tests/Dockerfile
+      context: ./server
+      dockerfile: /tests/Cafe.Tests/Dockerfile
     depends_on:
       - cafe.tests.sql
       - cafe.tests.eventstore
