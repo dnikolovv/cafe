@@ -4,6 +4,11 @@
         <name>Cafe.Api</name>
     </assembly>
     <members>
+        <member name="M:Cafe.Api.Controllers.AuthController.GetCurrentUser">
+            <summary>
+            Retrieves the currently logged in user.
+            </summary>
+        </member>
         <member name="M:Cafe.Api.Controllers.AuthController.Login(Cafe.Core.AuthContext.Commands.Login)">
             <summary>
             Login.
@@ -21,6 +26,11 @@
             <returns>A user model.</returns>
             <response code="201">A user was created.</response>
             <response code="400">Invalid input.</response>
+        </member>
+        <member name="M:Cafe.Api.Controllers.AuthController.GetAllUserAccounts">
+            <summary>
+            Retrieves all user accounts.
+            </summary>
         </member>
         <member name="M:Cafe.Api.Controllers.AuthController.AssignWaiterToAccount(Cafe.Core.AuthContext.Commands.AssignWaiterToAccount)">
             <summary>

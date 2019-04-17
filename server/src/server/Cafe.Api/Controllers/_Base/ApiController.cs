@@ -6,12 +6,28 @@ using Optional;
 using System;
 using System.Linq;
 using System.Net;
+using System.Security.Claims;
 
 namespace Cafe.Api.Controllers
 {
     [Route("api/[controller]")]
     public class ApiController : Controller
     {
+        public Guid CurrentUserId
+        {
+            get
+            {
+                var idClaim = User?
+                    .Claims?
+                    .FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?
+                    .Value;
+
+                return string.IsNullOrEmpty(idClaim) ?
+                    Guid.Empty :
+                    Guid.Parse(idClaim);
+            }
+        }
+
         public Option<Guid> BaristaId => TryGetGuidClaim(AuthConstants.ClaimTypes.BaristaId);
 
         /// <summary>
