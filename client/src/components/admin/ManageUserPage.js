@@ -142,6 +142,8 @@ ManageUserPage.propTypes = {
   cashiers: PropTypes.array.isRequired,
   managers: PropTypes.array.isRequired,
   loadWaiters: PropTypes.func.isRequired,
+  loadManagers: PropTypes.func.isRequired,
+  loadCashiers: PropTypes.func.isRequired,
   loadBaristas: PropTypes.func.isRequired,
   loadUsers: PropTypes.func.isRequired
 };
