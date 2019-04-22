@@ -5,8 +5,12 @@ export function logoutSuccess() {
   return { type: ActionTypes.LOGOUT_SUCCESS };
 }
 
-export function loginSuccess(token) {
-  return { type: ActionTypes.LOGIN_REQUEST_SUCCESS, token };
+export function loadCurrentUserSuccess(user) {
+  return { type: ActionTypes.LOAD_CURRENT_USER_SUCCESS, user };
+}
+
+export function loadCurrentUserFailure() {
+  return { type: ActionTypes.LOAD_CURRENT_USER_FAILURE };
 }
 
 export function login(credentials) {
@@ -15,7 +19,7 @@ export function login(credentials) {
       .login(credentials)
       .then(token => {
         localStorage.setItem("access_token", token.tokenString);
-        dispatch(loginSuccess(token));
+        dispatch(loadCurrentUser());
       })
       .catch(error => {
         dispatch(logout());
@@ -28,5 +32,18 @@ export function logout() {
   return function(dispatch) {
     localStorage.removeItem("access_token");
     dispatch(logoutSuccess());
+  };
+}
+
+export function loadCurrentUser() {
+  return function(dispatch) {
+    return authApi
+      .getCurrentUser()
+      .then(user => {
+        dispatch(loadCurrentUserSuccess(user));
+      })
+      .catch(() => {
+        dispatch(loadCurrentUserFailure());
+      });
   };
 }

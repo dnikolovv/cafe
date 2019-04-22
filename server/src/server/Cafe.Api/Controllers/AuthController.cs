@@ -1,5 +1,6 @@
 ﻿using Cafe.Core.AuthContext;
 using Cafe.Core.AuthContext.Commands;
+using Cafe.Core.AuthContext.Queries;
 using Cafe.Domain;
 using Cafe.Domain.Views;
 using MediatR;
@@ -18,6 +19,14 @@ namespace Cafe.Api.Controllers
         {
             _mediator = mediator;
         }
+
+        /// <summary>
+        /// Retrieves the currently logged in user.
+        /// </summary>
+        [HttpGet]
+        public async Task<IActionResult> GetCurrentUser() =>
+            (await _mediator.Send(new GetUser { Id = CurrentUserId }))
+                .Match<IActionResult>(Ok, _ => Unauthorized());
 
         /// <summary>
         /// Login.
@@ -45,6 +54,15 @@ namespace Cafe.Api.Controllers
         public async Task<IActionResult> Register([FromBody] Register command) =>
             (await _mediator.Send(command))
                 .Match(u => CreatedAtAction(nameof(Register), u), Error);
+
+        /// <summary>
+        /// Retrieves all user accounts.
+        /// </summary>
+        [HttpGet("users")]
+        [Authorize(Policy = AuthConstants.Policies.IsAdmin)]
+        public async Task<IActionResult> GetAllUserAccounts() =>
+            (await _mediator.Send(new GetAllUserAccounts()))
+                .Match(Ok, Error);
 
         /// <summary>
         /// Assigns a waiter to an account.
