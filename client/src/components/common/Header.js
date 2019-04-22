@@ -13,9 +13,15 @@ const Header = ({ isLoggedIn }) => {
       </NavLink>
       {" | "}
       {isLoggedIn ? (
-        <NavLink to="/logout" activeStyle={activeStyle}>
-          Logout
-        </NavLink>
+        <>
+          <NavLink to="/admin" activeStyle={activeStyle}>
+            Admin
+          </NavLink>
+          {" | "}
+          <NavLink to="/logout" activeStyle={activeStyle}>
+            Logout
+          </NavLink>
+        </>
       ) : (
         <NavLink to="/login" activeStyle={activeStyle}>
           Login

@@ -3,5 +3,9 @@ export default {
     user: {},
     isLoggedIn: false
   },
-  users: []
+  users: [],
+  waiters: [],
+  baristas: [],
+  cashiers: [],
+  managers: []
 };

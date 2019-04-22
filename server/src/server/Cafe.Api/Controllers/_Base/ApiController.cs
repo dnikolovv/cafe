@@ -34,7 +34,8 @@ namespace Cafe.Api.Controllers
         /// Enables using method groups when matching on Unit.
         /// </summary>
         protected IActionResult Ok(Unit unit) =>
-            Ok();
+            // Returning an empty object instead of an empty response to avoid invalid JSON errors
+            Ok(new { });
 
         protected IActionResult NotFound(Error error) =>
             NotFound((object)error);

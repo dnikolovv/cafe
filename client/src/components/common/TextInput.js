@@ -8,7 +8,8 @@ const TextInput = ({
   placeholder,
   value,
   error,
-  isPassword
+  isPassword,
+  isReadonly
 }) => {
   let wrapperClass = "form-group";
   if (error && error.length > 0) {
@@ -28,6 +29,7 @@ const TextInput = ({
           placeholder={placeholder}
           value={value}
           onChange={onChange}
+          readOnly={isReadonly}
         />
         {error && <div className="alert alert-danger">{error}</div>}
       </div>
@@ -42,11 +44,13 @@ TextInput.propTypes = {
   placeholder: PropTypes.string,
   value: PropTypes.string,
   error: PropTypes.string,
-  isPassword: PropTypes.bool.isRequired
+  isPassword: PropTypes.bool.isRequired,
+  isReadonly: PropTypes.bool.isRequired
 };
 
 TextInput.defaultProps = {
-  isPassword: false
+  isPassword: false,
+  isReadonly: false
 };
 
 export default TextInput;
