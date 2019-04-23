@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import ToGoOrderForm from "./ToGoOrderForm";
-import PendingOrdersList from "./PendingOrdersList";
+import OrdersList from "../common/OrdersList";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import * as orderActions from "../../redux/actions/orderActions";
@@ -37,7 +37,8 @@ const CashierPage = ({
         onSelectedItemsChanged={handleMenuItemSelected}
         onSubmit={handleIssueOrder}
       />
-      <PendingOrdersList orders={pendingOrders} />
+      <h3 className="mt-4">Pending Orders</h3>
+      <OrdersList orders={pendingOrders} />
     </div>
   );
 };

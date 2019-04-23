@@ -1,10 +1,9 @@
 import React from "react";
+import PropTypes from "prop-types";
 
-const PendingOrdersList = ({ orders }) => {
+const OrdersList = ({ orders }) => {
   return (
     <>
-      <h3 className="mt-4">Pending Orders</h3>
-
       <table className="table">
         <thead>
           <tr>
@@ -34,4 +33,8 @@ const PendingOrdersList = ({ orders }) => {
   );
 };
 
-export default PendingOrdersList;
+OrdersList.propTypes = {
+  orders: PropTypes.array.isRequired
+};
+
+export default OrdersList;

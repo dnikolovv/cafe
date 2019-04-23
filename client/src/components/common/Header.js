@@ -22,6 +22,10 @@ const Header = ({ isLoggedIn }) => {
             Cashier
           </NavLink>
           {" | "}
+          <NavLink to="/barista" activeStyle={activeStyle}>
+            Barista
+          </NavLink>
+          {" | "}
           <NavLink to="/logout" activeStyle={activeStyle}>
             Logout
           </NavLink>
