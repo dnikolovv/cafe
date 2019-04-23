@@ -29,9 +29,18 @@ namespace Cafe.Api.Controllers
                 .Match(Ok, NotFound);
 
         /// <summary>
-        /// Retrieves orders for a given status.
+        /// Retrieves all orders.
         /// </summary>
         [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> GetAllOrders() =>
+            (await _mediator.Send(new GetAllToGoOrders()))
+                .Match(Ok, Error);
+
+        /// <summary>
+        /// Retrieves orders for a given status.
+        /// </summary>
+        [HttpGet("{status}")]
         [Authorize]
         public async Task<IActionResult> GetOrdersByStatus(ToGoOrderStatus status) =>
             (await _mediator.Send(new GetOrdersByStatus { Status = status }))

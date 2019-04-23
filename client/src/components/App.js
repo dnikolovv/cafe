@@ -4,6 +4,7 @@ import PageNotFound from "./PageNotFound";
 import HomePage from "./home/HomePage";
 import LoginPage from "./auth/LoginPage";
 import AdminPage from "./admin/AdminPage";
+import CashierPage from "./cashier/CashierPage";
 import ManageUserPage from "./admin/ManageUserPage";
 import UserProvider from "./UserProvider";
 import Logout from "./auth/Logout";
@@ -21,6 +22,7 @@ const App = () => {
         <Route path="/logout" component={Logout} />
         <Route path="/admin" component={AdminPage} />
         <Route path="/manageUser/:userId" component={ManageUserPage} />
+        <Route path="/cashier" component={CashierPage} />
         <Route component={PageNotFound} />
       </Switch>
       <UserProvider />

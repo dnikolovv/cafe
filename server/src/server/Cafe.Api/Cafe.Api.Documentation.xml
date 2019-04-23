@@ -98,6 +98,11 @@
             Retrieves a to-go order by id.
             </summary>
         </member>
+        <member name="M:Cafe.Api.Controllers.OrderController.GetAllOrders">
+            <summary>
+            Retrieves all orders.
+            </summary>
+        </member>
         <member name="M:Cafe.Api.Controllers.OrderController.GetOrdersByStatus(Cafe.Domain.Entities.ToGoOrderStatus)">
             <summary>
             Retrieves orders for a given status.

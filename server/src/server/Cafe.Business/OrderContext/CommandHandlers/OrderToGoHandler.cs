@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Optional;
 using Optional.Async;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using IDocumentSession = Marten.IDocumentSession;
 
@@ -53,7 +54,10 @@ namespace Cafe.Business.OrderContext.CommandHandlers
 
         private async Task<Unit> PersistOrder(ToGoOrder order, IList<MenuItem> orderedItems)
         {
-            order.OrderedItems = orderedItems;
+            order.OrderedItems = orderedItems
+                .Select(i => new ToGoOrderMenuItem { MenuItemId = i.Id, OrderId = order.Id })
+                .ToList();
+
             DbContext.ToGoOrders.Add(order);
             await DbContext.SaveChangesAsync();
             return Unit.Value;

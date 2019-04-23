@@ -30,6 +30,16 @@ namespace Cafe.Persistance.EntityFramework
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder
+                .Entity<ToGoOrderMenuItem>()
+                .HasKey(x => new { x.MenuItemId, x.OrderId });
+
+            builder
+                .Entity<ToGoOrderMenuItem>()
+                .HasOne(x => x.Order)
+                .WithMany(o => o.OrderedItems)
+                .HasForeignKey(x => x.OrderId);
+
+            builder
                 .Entity<Table>()
                 .HasIndex(t => t.Number)
                 .IsUnique();

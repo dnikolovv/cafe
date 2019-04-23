@@ -7,5 +7,11 @@ export default {
   waiters: [],
   baristas: [],
   cashiers: [],
-  managers: []
+  managers: [],
+  orders: {
+    pending: [],
+    issued: [],
+    completed: []
+  },
+  menuItems: []
 };
