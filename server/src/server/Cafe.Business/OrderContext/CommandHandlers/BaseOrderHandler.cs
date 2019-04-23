@@ -38,6 +38,7 @@ namespace Cafe.Business.OrderContext.CommandHandlers
             (await DbContext
                 .ToGoOrders
                 .Include(o => o.OrderedItems)
+                    .ThenInclude(i => i.MenuItem)
                 .FirstOrDefaultAsync(o => o.Id == orderId))
             .SomeNotNull(Error.NotFound($"Order {orderId} was not found."));
 

@@ -18,6 +18,10 @@ const Header = ({ isLoggedIn }) => {
             Admin
           </NavLink>
           {" | "}
+          <NavLink to="/cashier" activeStyle={activeStyle}>
+            Cashier
+          </NavLink>
+          {" | "}
           <NavLink to="/logout" activeStyle={activeStyle}>
             Logout
           </NavLink>

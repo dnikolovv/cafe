@@ -14,6 +14,9 @@ namespace Cafe.Core.OrderContext
                 .ForSourceMember(s => s.ItemNumbers, opts => opts.DoNotValidate());
 
             CreateMap<ToGoOrder, ToGoOrderView>(MemberList.Destination);
+
+            CreateMap<ToGoOrderMenuItem, MenuItemView>(MemberList.Destination)
+                .ConvertUsing((s, d, ctx) => ctx.Mapper.Map<MenuItemView>(s.MenuItem));
         }
     }
 }

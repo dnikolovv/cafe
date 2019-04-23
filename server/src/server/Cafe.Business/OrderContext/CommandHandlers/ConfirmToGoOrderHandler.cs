@@ -30,7 +30,7 @@ namespace Cafe.Business.OrderContext.CommandHandlers
         public override Task<Option<Unit, Error>> Handle(ConfirmToGoOrder command) =>
             OrderMustExist(command.OrderId).FlatMapAsync(order =>
             OrderMustHaveStatus(ToGoOrderStatus.Pending, order).FlatMapAsync(currentStatus =>
-            PaymentMustBeAtLeastWhatsOwed(order.OrderedItems, command.PricePaid).FlatMapAsync(totalPrice =>
+            PaymentMustBeAtLeastWhatsOwed(order.OrderedItems.Select(i => i.MenuItem).ToList(), command.PricePaid).FlatMapAsync(totalPrice =>
             SetOrderStatus(ToGoOrderStatus.Issued, order))));
 
         private Option<decimal, Error> PaymentMustBeAtLeastWhatsOwed(ICollection<MenuItem> orderedItems, decimal paymentAmount) =>

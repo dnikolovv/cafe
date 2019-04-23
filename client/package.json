@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@khanacademy/react-multi-select": "^0.3.2",
     "bootstrap": "4.3.1",
     "prop-types": "15.7.2",
     "react": "^16.8.6",
@@ -12,7 +13,8 @@
     "react-scripts": "2.1.8",
     "react-toastify": "^4.5.2",
     "redux": "4.0.1",
-    "redux-thunk": "2.3.0"
+    "redux-thunk": "2.3.0",
+    "uuid": "^3.3.2"
   },
   "proxy": "http://localhost:5000/api",
   "devDependencies": {

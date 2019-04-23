@@ -5,7 +5,9 @@ using Cafe.Tests.Business.OrderContext.Helpers;
 using Cafe.Tests.Customizations;
 using Cafe.Tests.Extensions;
 using Microsoft.EntityFrameworkCore;
+using Shouldly;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
@@ -47,7 +49,57 @@ namespace Cafe.Tests.Business.OrderContext
             await _helper.AssertOrderExists(
                 commandToTest.Id,
                 order => order.Status == ToGoOrderStatus.Pending &&
+                         order.OrderedItems.Count == menuItemNumbers.Length &&
                          order.OrderedItems.All(i => menuItemNumbers.Contains(i.Number)));
+        }
+
+        [Theory]
+        [CustomizedAutoData]
+        public async Task CanOrderToGoInSequence(MenuItem[] menuItems)
+        {
+            // Arrange
+            await _helper.AddMenuItems(menuItems);
+
+            var menuItemNumbers = menuItems
+                .Select(i => i.Number)
+                .ToArray();
+
+            var commandsToTest = new List<OrderToGo>
+            {
+                new OrderToGo
+                {
+                    Id = Guid.NewGuid(),
+                    ItemNumbers = menuItemNumbers
+                },
+                new OrderToGo
+                {
+                    Id = Guid.NewGuid(),
+                    ItemNumbers = menuItemNumbers
+                },
+                new OrderToGo
+                {
+                    Id = Guid.NewGuid(),
+                    ItemNumbers = menuItemNumbers
+                }
+            };
+
+            // Act
+            var results = (await Task
+                .WhenAll(commandsToTest
+                .Select(c => _fixture.SendAsync(c))))
+                .Select(r => r);
+
+            // Assert
+            results.ShouldAllBe(r => r.HasValue);
+
+            foreach (var commandToTest in commandsToTest)
+            {
+                await _helper.AssertOrderExists(
+                    commandToTest.Id,
+                    order => order.Status == ToGoOrderStatus.Pending &&
+                             order.OrderedItems.Count == menuItemNumbers.Length &&
+                             order.OrderedItems.All(i => menuItemNumbers.Contains(i.Number)));
+            }
         }
 
         [Theory]
