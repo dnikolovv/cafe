@@ -36,9 +36,11 @@ namespace Cafe.Tests.Business.OrderContext
             // Assert
             result.Exists(ordersResult =>
                 ordersResult.All(o => ordersToAdd
-                    .Any(addedOrder => o.Id == addedOrder.Id &&
-                                       o.Status == addedOrder.Status &&
-                                       o.OrderedItems.Count == addedOrder.OrderedItems.Count)))
+                    .SingleOrDefault(addedOrder =>
+                        o.Id == addedOrder.Id &&
+                        o.Status == addedOrder.Status &&
+                        o.OrderedItems.Count == addedOrder.OrderedItems.Count &&
+                        o.OrderedItems.Sum(i => i.Price) == addedOrder.OrderedItems.Sum(i => i.MenuItem.Price)) != null))
             .ShouldBeTrue();
         }
 

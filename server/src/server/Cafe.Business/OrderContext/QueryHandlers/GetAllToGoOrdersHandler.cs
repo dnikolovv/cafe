@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using AutoMapper.QueryableExtensions;
 using Cafe.Core;
 using Cafe.Core.OrderContext.Queries;
 using Cafe.Domain;
@@ -8,6 +7,7 @@ using Cafe.Persistance.EntityFramework;
 using Microsoft.EntityFrameworkCore;
 using Optional;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -26,11 +26,15 @@ namespace Cafe.Business.OrderContext.QueryHandlers
 
         public async Task<Option<IList<ToGoOrderView>, Error>> Handle(GetAllToGoOrders request, CancellationToken cancellationToken)
         {
-            var orders = await _dbContext
+            var orders = (await _dbContext
                 .ToGoOrders
                 .Include(o => o.OrderedItems)
-                .ProjectTo<ToGoOrderView>(_mapper.ConfigurationProvider)
-                .ToListAsync();
+                    .ThenInclude(i => i.MenuItem)
+                .ToListAsync())
+
+                // Not using ProjectTo because we've registered a custom converter
+                .Select(_mapper.Map<ToGoOrderView>)
+                .ToList();
 
             return orders
                 .Some<IList<ToGoOrderView>, Error>();

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import ToGoOrderForm from "./ToGoOrderForm";
 import PendingOrdersList from "./PendingOrdersList";
 import { connect } from "react-redux";
+import PropTypes from "prop-types";
 import * as orderActions from "../../redux/actions/orderActions";
 import * as menuItemActions from "../../redux/actions/menuItemActions";
 
@@ -10,8 +11,7 @@ const CashierPage = ({
   loadMenuItems,
   issueToGoOrder,
   menuItems,
-  pendingOrders,
-  ...props
+  pendingOrders
 }) => {
   useEffect(() => {
     loadOrders();
@@ -40,6 +40,14 @@ const CashierPage = ({
       <PendingOrdersList orders={pendingOrders} />
     </div>
   );
+};
+
+CashierPage.propTypes = {
+  loadOrders: PropTypes.func.isRequired,
+  loadMenuItems: PropTypes.func.isRequired,
+  issueToGoOrder: PropTypes.func.isRequired,
+  menuItems: PropTypes.array.isRequired,
+  pendingOrders: PropTypes.array.isRequired
 };
 
 function mapStateToProps(state) {

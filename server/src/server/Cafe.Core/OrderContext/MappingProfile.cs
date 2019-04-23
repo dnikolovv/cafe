@@ -15,6 +15,8 @@ namespace Cafe.Core.OrderContext
 
             CreateMap<ToGoOrder, ToGoOrderView>(MemberList.Destination);
 
+            CreateMap<MenuItem, MenuItemView>(MemberList.Destination);
+
             CreateMap<ToGoOrderMenuItem, MenuItemView>(MemberList.Destination)
                 .ConvertUsing((s, d, ctx) => ctx.Mapper.Map<MenuItemView>(s.MenuItem));
         }

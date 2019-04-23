@@ -1,5 +1,6 @@
 import React from "react";
 import MultiSelect from "@khanacademy/react-multi-select";
+import PropTypes from "prop-types";
 
 const ToGoOrderForm = ({
   menuItems,
@@ -28,6 +29,13 @@ const ToGoOrderForm = ({
       </form>
     </>
   );
+};
+
+ToGoOrderForm.propTypes = {
+  menuItems: PropTypes.array.isRequired,
+  selectedItems: PropTypes.array.isRequired,
+  onSelectedItemsChanged: PropTypes.func.isRequired,
+  onSubmit: PropTypes.func.isRequired
 };
 
 export default ToGoOrderForm;
