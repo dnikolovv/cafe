@@ -38,7 +38,41 @@ const CashierPage = ({
         onSubmit={handleIssueOrder}
       />
       <h3 className="mt-4">Pending Orders</h3>
-      <OrdersList orders={pendingOrders} />
+      <table className="table">
+        <thead>
+          <tr>
+            <th>Id</th>
+            <th>Ordered Items</th>
+            <th>Price</th>
+            <th>Price paid</th>
+            <th>Confirm</th>
+          </tr>
+        </thead>
+        <tbody>
+          {pendingOrders.map(order => (
+            <tr key={order.id}>
+              <td>{order.id}</td>
+              <td>{order.orderedItems.map(i => i.description).join(", ")}</td>
+              <td>
+                {order.orderedItems
+                  .map(i => i.price)
+                  .reduce((x, y) => x + y, 0)
+                  .toFixed(2)}
+              </td>
+              <td>
+                <input
+                  type="number"
+                  className="form-control"
+                  placeholder="Paid..."
+                />
+              </td>
+              <td>
+                <button className="btn btn-success">Confirm</button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 };
