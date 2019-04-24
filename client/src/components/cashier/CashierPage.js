@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import ToGoOrderForm from "./ToGoOrderForm";
 import OrdersList from "../common/OrdersList";
+import { toast } from "react-toastify";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import * as orderActions from "../../redux/actions/orderActions";
@@ -10,6 +11,7 @@ const CashierPage = ({
   loadOrders,
   loadMenuItems,
   issueToGoOrder,
+  confirmToGoOrder,
   menuItems,
   pendingOrders
 }) => {
@@ -19,6 +21,7 @@ const CashierPage = ({
   }, []);
 
   const [selectedItems, setSelectedItems] = useState([]);
+  const [paidPrices, setPaidPrices] = useState({});
 
   const handleMenuItemSelected = itemNumbers => {
     setSelectedItems(itemNumbers);
@@ -26,6 +29,24 @@ const CashierPage = ({
 
   const handleIssueOrder = selectedItems => {
     issueToGoOrder(selectedItems);
+  };
+
+  const handlePricePaidChange = (orderId, event) => {
+    const value = parseFloat(event.target.value);
+    setPaidPrices({ ...paidPrices, [orderId]: value });
+  };
+
+  const handleOrderConfirmation = orderId => {
+    const pricePaid = paidPrices[orderId];
+    const order = pendingOrders.find(o => o.id == orderId);
+
+    if (pricePaid && order && pricePaid >= order.price) {
+      confirmToGoOrder(pricePaid, orderId);
+      // Optimism at its finest :)
+      toast.success(`Successfully confirmed order ${order.id}!`);
+    } else {
+      toast.error("Tried to pay less than owed.");
+    }
   };
 
   return (
@@ -49,28 +70,38 @@ const CashierPage = ({
           </tr>
         </thead>
         <tbody>
-          {pendingOrders.map(order => (
-            <tr key={order.id}>
-              <td>{order.id}</td>
-              <td>{order.orderedItems.map(i => i.description).join(", ")}</td>
-              <td>
-                {order.orderedItems
-                  .map(i => i.price)
-                  .reduce((x, y) => x + y, 0)
-                  .toFixed(2)}
-              </td>
-              <td>
-                <input
-                  type="number"
-                  className="form-control"
-                  placeholder="Paid..."
-                />
-              </td>
-              <td>
-                <button className="btn btn-success">Confirm</button>
-              </td>
-            </tr>
-          ))}
+          {pendingOrders
+            .sort(function(a, b) {
+              return new Date(b.date) - new Date(a.date);
+            })
+            .map(order => (
+              <tr key={order.id}>
+                <td>{order.id}</td>
+                <td>{order.orderedItems.map(i => i.description).join(", ")}</td>
+                <td>
+                  {order.orderedItems
+                    .map(i => i.price)
+                    .reduce((x, y) => x + y, 0)
+                    .toFixed(2)}
+                </td>
+                <td>
+                  <input
+                    type="number"
+                    className="form-control"
+                    placeholder="Paid..."
+                    onChange={event => handlePricePaidChange(order.id, event)}
+                  />
+                </td>
+                <td>
+                  <button
+                    onClick={() => handleOrderConfirmation(order.id)}
+                    className="btn btn-success"
+                  >
+                    Confirm
+                  </button>
+                </td>
+              </tr>
+            ))}
         </tbody>
       </table>
     </div>
@@ -95,7 +126,8 @@ function mapStateToProps(state) {
 const mapDispatchToProps = {
   loadOrders: orderActions.loadOrders,
   loadMenuItems: menuItemActions.loadMenuItems,
-  issueToGoOrder: orderActions.issueToGoOrder
+  issueToGoOrder: orderActions.issueToGoOrder,
+  confirmToGoOrder: orderActions.confirmToGoOrder
 };
 
 export default connect(

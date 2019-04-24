@@ -10,5 +10,7 @@ namespace Cafe.Domain.Entities
         public ICollection<ToGoOrderMenuItem> OrderedItems { get; set; }
 
         public ToGoOrderStatus Status { get; set; }
+
+        public DateTime Date { get; set; } = DateTime.Now;
     }
 }
