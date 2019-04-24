@@ -13,6 +13,22 @@ export function loadOrders() {
   };
 }
 
+export function completeToGoOrder(orderId) {
+  return function(dispatch) {
+    return orderApi.completeToGoOrder(orderId).then(_ => {
+      dispatch(loadOrders());
+    });
+  };
+}
+
+export function confirmToGoOrder(pricePaid, orderId) {
+  return function(dispatch) {
+    return orderApi.confirmToGoOrder(pricePaid, orderId).then(_ => {
+      dispatch(loadOrders());
+    });
+  };
+}
+
 export function issueToGoOrder(itemNumbers) {
   return function(dispatch) {
     return orderApi.issueToGoOrder(itemNumbers).then(_ => {
