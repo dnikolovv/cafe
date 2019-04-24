@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import ToGoOrderForm from "./ToGoOrderForm";
-import OrdersList from "../common/OrdersList";
+import PendingOrdersList from "./PendingOrdersList";
 import { toast } from "react-toastify";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
@@ -38,7 +38,7 @@ const CashierPage = ({
 
   const handleOrderConfirmation = orderId => {
     const pricePaid = paidPrices[orderId];
-    const order = pendingOrders.find(o => o.id == orderId);
+    const order = pendingOrders.find(o => o.id === orderId);
 
     if (pricePaid && order && pricePaid >= order.price) {
       confirmToGoOrder(pricePaid, orderId);
@@ -58,52 +58,11 @@ const CashierPage = ({
         onSelectedItemsChanged={handleMenuItemSelected}
         onSubmit={handleIssueOrder}
       />
-      <h3 className="mt-4">Pending Orders</h3>
-      <table className="table">
-        <thead>
-          <tr>
-            <th>Id</th>
-            <th>Ordered Items</th>
-            <th>Price</th>
-            <th>Price paid</th>
-            <th>Confirm</th>
-          </tr>
-        </thead>
-        <tbody>
-          {pendingOrders
-            .sort(function(a, b) {
-              return new Date(b.date) - new Date(a.date);
-            })
-            .map(order => (
-              <tr key={order.id}>
-                <td>{order.id}</td>
-                <td>{order.orderedItems.map(i => i.description).join(", ")}</td>
-                <td>
-                  {order.orderedItems
-                    .map(i => i.price)
-                    .reduce((x, y) => x + y, 0)
-                    .toFixed(2)}
-                </td>
-                <td>
-                  <input
-                    type="number"
-                    className="form-control"
-                    placeholder="Paid..."
-                    onChange={event => handlePricePaidChange(order.id, event)}
-                  />
-                </td>
-                <td>
-                  <button
-                    onClick={() => handleOrderConfirmation(order.id)}
-                    className="btn btn-success"
-                  >
-                    Confirm
-                  </button>
-                </td>
-              </tr>
-            ))}
-        </tbody>
-      </table>
+      <PendingOrdersList
+        pendingOrders={pendingOrders}
+        onPricePaidChange={handlePricePaidChange}
+        onOrderConfirmation={handleOrderConfirmation}
+      />
     </div>
   );
 };
@@ -112,6 +71,7 @@ CashierPage.propTypes = {
   loadOrders: PropTypes.func.isRequired,
   loadMenuItems: PropTypes.func.isRequired,
   issueToGoOrder: PropTypes.func.isRequired,
+  confirmToGoOrder: PropTypes.func.isRequired,
   menuItems: PropTypes.array.isRequired,
   pendingOrders: PropTypes.array.isRequired
 };
