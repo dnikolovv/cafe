@@ -20,7 +20,7 @@ const PendingOrdersList = ({
           </tr>
         </thead>
         <tbody>
-          {pendingOrders
+          {[...pendingOrders]
             .sort(function(a, b) {
               return new Date(b.date) - new Date(a.date);
             })
@@ -28,12 +28,7 @@ const PendingOrdersList = ({
               <tr key={order.id}>
                 <td>{order.id}</td>
                 <td>{order.orderedItems.map(i => i.description).join(", ")}</td>
-                <td>
-                  {order.orderedItems
-                    .map(i => i.price)
-                    .reduce((x, y) => x + y, 0)
-                    .toFixed(2)}
-                </td>
+                <td>{order.price.toFixed(2)}</td>
                 <td>
                   <input
                     type="number"
