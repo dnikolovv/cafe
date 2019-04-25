@@ -1,5 +1,4 @@
-﻿using Cafe.Api.Events;
-using Cafe.Api.OperationFilters;
+﻿using Cafe.Api.OperationFilters;
 using Cafe.Business;
 using Cafe.Business.AuthContext;
 using Cafe.Core;
@@ -28,6 +27,16 @@ namespace Cafe.Api.Configuration
 {
     public static class DependenciesConfiguration
     {
+        public static void AddCommonServices(this IServiceCollection services)
+        {
+            services.AddTransient<IMenuItemsService, MenuItemsService>();
+        }
+
+        public static void AddCqrs(this IServiceCollection services)
+        {
+            services.AddScoped<IEventBus, EventBus>();
+        }
+
         public static void AddDbContext(this IServiceCollection services, string connectionString)
         {
             if (string.IsNullOrEmpty(connectionString))
@@ -35,9 +44,9 @@ namespace Cafe.Api.Configuration
                 throw new ArgumentException(nameof(connectionString));
             }
 
-			services.AddDbContext<ApplicationDbContext>(opts =>
-				opts.UseNpgsql(connectionString));
-		}
+            services.AddDbContext<ApplicationDbContext>(opts =>
+                opts.UseNpgsql(connectionString));
+        }
 
         public static void AddJwtIdentity(this IServiceCollection services, IConfigurationSection jwtConfiguration, Action<AuthorizationOptions> config)
         {
@@ -90,34 +99,6 @@ namespace Cafe.Api.Configuration
             });
         }
 
-        public static void AddSwagger(this IServiceCollection services)
-        {
-            services.AddSwaggerGen(setup =>
-            {
-                setup.SwaggerDoc("v1", new Info { Title = "Cafe.Api", Version = "v1" });
-                setup.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, "Cafe.Api.Documentation.xml"));
-
-                setup.AddSecurityDefinition("Bearer", new ApiKeyScheme { In = "header", Description = "Enter 'Bearer {token}' (don't forget to add 'bearer') into the field below.", Name = "Authorization", Type = "apiKey" });
-
-                setup.AddSecurityRequirement(new Dictionary<string, IEnumerable<string>>
-                {
-                    { "Bearer", Enumerable.Empty<string>() },
-                });
-
-                setup.OperationFilter<OptionOperationFilter>();
-            });
-        }
-
-        public static void AddCqrs(this IServiceCollection services)
-        {
-            services.AddScoped<IEventBus, EventBus>();
-        }
-
-        public static void AddCommonServices(this IServiceCollection services)
-        {
-            services.AddTransient<IMenuItemsService, MenuItemsService>();
-        }
-
         public static void AddMarten(this IServiceCollection services, IConfiguration configuration)
         {
             var documentStore = DocumentStore.For(options =>
@@ -146,6 +127,24 @@ namespace Cafe.Api.Configuration
             services.AddSingleton<IDocumentStore>(documentStore);
 
             services.AddScoped(sp => sp.GetService<IDocumentStore>().OpenSession());
+        }
+
+        public static void AddSwagger(this IServiceCollection services)
+        {
+            services.AddSwaggerGen(setup =>
+            {
+                setup.SwaggerDoc("v1", new Info { Title = "Cafe.Api", Version = "v1" });
+                setup.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, "Cafe.Api.Documentation.xml"));
+
+                setup.AddSecurityDefinition("Bearer", new ApiKeyScheme { In = "header", Description = "Enter 'Bearer {token}' (don't forget to add 'bearer') into the field below.", Name = "Authorization", Type = "apiKey" });
+
+                setup.AddSecurityRequirement(new Dictionary<string, IEnumerable<string>>
+                {
+                    { "Bearer", Enumerable.Empty<string>() },
+                });
+
+                setup.OperationFilter<OptionOperationFilter>();
+            });
         }
     }
 }

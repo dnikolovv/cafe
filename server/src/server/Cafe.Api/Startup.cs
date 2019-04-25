@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Cafe.Api.Configuration;
 using Cafe.Api.Filters;
+using Cafe.Api.Hubs;
 using Cafe.Api.ModelBinders;
 using Cafe.Core.AuthContext;
 using Cafe.Core.AuthContext.Commands;
@@ -41,9 +42,9 @@ namespace Cafe.Api
 
         public void ConfigureServices(IServiceCollection services)
         {
-			services.AddDbContext(Configuration.GetConnectionString("DefaultConnection"));
+            services.AddDbContext(Configuration.GetConnectionString("DefaultConnection"));
 
-			services.AddAutoMapper(cfg =>
+            services.AddAutoMapper(cfg =>
             {
                 cfg.AddProfiles(typeof(MappingProfile).Assembly);
             });
@@ -79,6 +80,7 @@ namespace Cafe.Api
             services.AddMarten(Configuration);
             services.AddCqrs();
             services.AddMediatR();
+            services.AddSignalR();
 
             services.AddMvc(options =>
             {
@@ -98,10 +100,22 @@ namespace Cafe.Api
             }
             else
             {
+                app.UseCors(builder => builder
+                    .WithOrigins("http://localhost:3000")
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .AllowCredentials());
+
                 app.AddDefaultAdminAccountIfNoneExisting(userManager, Configuration).Wait();
             }
 
             loggerFactory.AddLogging(Configuration.GetSection("Logging"));
+
+            app.UseSignalR(routes =>
+            {
+                // TODO: Routes
+                routes.MapHub<ConfirmedOrdersHub>("/api/confirmedOrders");
+            });
 
             app.UseHttpsRedirection();
             app.UseSwagger("Cafe");

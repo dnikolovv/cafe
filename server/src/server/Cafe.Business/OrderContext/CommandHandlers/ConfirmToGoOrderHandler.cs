@@ -3,6 +3,7 @@ using Cafe.Core.OrderContext.Commands;
 using Cafe.Domain;
 using Cafe.Domain.Entities;
 using Cafe.Domain.Events;
+using Cafe.Domain.Views;
 using Cafe.Persistance.EntityFramework;
 using FluentValidation;
 using MediatR;
@@ -31,7 +32,8 @@ namespace Cafe.Business.OrderContext.CommandHandlers
             OrderMustExist(command.OrderId).FlatMapAsync(order =>
             OrderMustHaveStatus(ToGoOrderStatus.Pending, order).FlatMapAsync(currentStatus =>
             PaymentMustBeAtLeastWhatsOwed(order.OrderedItems.Select(i => i.MenuItem).ToList(), command.PricePaid).FlatMapAsync(totalPrice =>
-            SetOrderStatus(ToGoOrderStatus.Issued, order))));
+            SetOrderStatus(ToGoOrderStatus.Issued, order).MapAsync(_ =>
+            PublishEvents(order.Id, new OrderConfirmed { Order = Mapper.Map<ToGoOrderView>(order) })))));
 
         private Option<decimal, Error> PaymentMustBeAtLeastWhatsOwed(ICollection<MenuItem> orderedItems, decimal paymentAmount) =>
             orderedItems

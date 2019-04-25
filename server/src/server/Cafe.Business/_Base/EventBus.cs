@@ -2,7 +2,7 @@
 using MediatR;
 using System.Threading.Tasks;
 
-namespace Cafe.Api.Events
+namespace Cafe.Business
 {
     public class EventBus : IEventBus
     {
