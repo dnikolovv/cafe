@@ -1,7 +1,9 @@
 import * as apiClient from "./apiClient";
+import * as webSocketClient from "./webSocketClient";
+
 const uuidv4 = require("uuid/v4");
 
-const baseUrl = "/order/";
+const baseUrl = apiClient.BASE_URL + "/order/";
 
 export function getOrders() {
   return apiClient.get(baseUrl);
@@ -19,4 +21,14 @@ export function confirmToGoOrder(pricePaid, orderId) {
 
 export function issueToGoOrder(itemNumbers) {
   return apiClient.post(baseUrl, { id: uuidv4(), itemNumbers });
+}
+
+export function onOrderConfirmed(callback) {
+  return webSocketClient.subscribeTo(
+    "confirmedOrders",
+    "OrderConfirmed",
+    ({ order }) => {
+      callback(order);
+    }
+  );
 }

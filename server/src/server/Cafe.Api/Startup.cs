@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Cafe.Api.Configuration;
 using Cafe.Api.Filters;
+using Cafe.Api.Hubs;
 using Cafe.Api.ModelBinders;
 using Cafe.Core.AuthContext;
 using Cafe.Core.AuthContext.Commands;
@@ -41,9 +42,9 @@ namespace Cafe.Api
 
         public void ConfigureServices(IServiceCollection services)
         {
-			services.AddDbContext(Configuration.GetConnectionString("DefaultConnection"));
+            services.AddDbContext(Configuration.GetConnectionString("DefaultConnection"));
 
-			services.AddAutoMapper(cfg =>
+            services.AddAutoMapper(cfg =>
             {
                 cfg.AddProfiles(typeof(MappingProfile).Assembly);
             });
@@ -79,6 +80,7 @@ namespace Cafe.Api
             services.AddMarten(Configuration);
             services.AddCqrs();
             services.AddMediatR();
+            services.AddSignalR();
 
             services.AddMvc(options =>
             {
@@ -98,6 +100,12 @@ namespace Cafe.Api
             }
             else
             {
+                app.UseCors(builder => builder
+                    .WithOrigins("http://localhost:3000")
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .AllowCredentials());
+
                 app.AddDefaultAdminAccountIfNoneExisting(userManager, Configuration).Wait();
             }
 
@@ -107,6 +115,13 @@ namespace Cafe.Api
             app.UseSwagger("Cafe");
             app.UseStaticFiles();
             app.UseAuthentication();
+
+            // It's very important that UseAuthentication is called before UseSignalR
+            app.UseSignalR(routes =>
+            {
+                routes.MapHub<ConfirmedOrdersHub>("/confirmedOrders");
+            });
+
             app.UseMvc();
         }
     }

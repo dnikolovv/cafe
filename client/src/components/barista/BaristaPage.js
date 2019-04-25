@@ -1,12 +1,15 @@
 import React, { useEffect } from "react";
-import OrdersList from "../common/OrdersList";
 import { connect } from "react-redux";
 import * as orderActions from "../../redux/actions/orderActions";
 import PropTypes from "prop-types";
+import * as orderService from "../../api/orderService";
 
 const BaristaPage = ({ completeOrder, loadOrders, issuedOrders }) => {
   useEffect(() => {
     loadOrders();
+    orderService.onOrderConfirmed(() => {
+      loadOrders();
+    });
   }, []);
 
   const handleOrderCompletion = orderId => {
