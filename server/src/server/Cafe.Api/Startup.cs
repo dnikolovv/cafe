@@ -111,15 +111,17 @@ namespace Cafe.Api
 
             loggerFactory.AddLogging(Configuration.GetSection("Logging"));
 
+            app.UseHttpsRedirection();
+            app.UseSwagger("Cafe");
+            app.UseStaticFiles();
+            app.UseAuthentication();
+
+            // It's very important that UseAuthentication is called before UseSignalR
             app.UseSignalR(routes =>
             {
                 routes.MapHub<ConfirmedOrdersHub>("/confirmedOrders");
             });
 
-            app.UseHttpsRedirection();
-            app.UseSwagger("Cafe");
-            app.UseStaticFiles();
-            app.UseAuthentication();
             app.UseMvc();
         }
     }

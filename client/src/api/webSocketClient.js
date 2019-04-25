@@ -4,7 +4,9 @@ const baseUrl = process.env.REACT_APP_API_URL;
 
 export function subscribeTo(socketRoute, eventName, callback) {
   const connection = new SignalR.HubConnectionBuilder()
-    .withUrl(baseUrl + socketRoute)
+    .withUrl(baseUrl + socketRoute, {
+      accessTokenFactory: () => localStorage.getItem("access_token")
+    })
     .configureLogging(SignalR.LogLevel.Error)
     .build();
 
