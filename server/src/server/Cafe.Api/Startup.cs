@@ -113,8 +113,7 @@ namespace Cafe.Api
 
             app.UseSignalR(routes =>
             {
-                // TODO: Routes
-                routes.MapHub<ConfirmedOrdersHub>("/api/confirmedOrders");
+                routes.MapHub<ConfirmedOrdersHub>("/confirmedOrders");
             });
 
             app.UseHttpsRedirection();

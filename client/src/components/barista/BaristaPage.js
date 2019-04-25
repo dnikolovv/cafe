@@ -1,32 +1,16 @@
 import React, { useEffect } from "react";
-import OrdersList from "../common/OrdersList";
 import { connect } from "react-redux";
 import * as orderActions from "../../redux/actions/orderActions";
 import PropTypes from "prop-types";
-import * as SignalR from "@aspnet/signalr";
+import * as orderService from "../../api/orderService";
 
 const BaristaPage = ({ completeOrder, loadOrders, issuedOrders }) => {
   useEffect(() => {
     loadOrders();
-  }, []);
-
-  const connection = new SignalR.HubConnectionBuilder()
-    .withUrl("http://localhost:5000/api/confirmedOrders")
-    .configureLogging(SignalR.LogLevel.Trace)
-    .build();
-
-  connection
-    .start()
-    .then(() => {
-      debugger;
-    })
-    .catch(error => {
-      debugger;
+    orderService.onOrderConfirmed(() => {
+      loadOrders();
     });
-
-  connection.on("OrderConfirmed", asd => {
-    debugger;
-  });
+  }, []);
 
   const handleOrderCompletion = orderId => {
     completeOrder(orderId);

@@ -1,3 +1,5 @@
+export const BASE_URL = process.env.REACT_APP_API_URL + "api";
+
 export function post(url, body) {
   return fetchWrapper(url, "POST", body);
 }

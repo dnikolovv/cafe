@@ -1,6 +1,6 @@
 import * as apiClient from "./apiClient";
 
-const baseUrl = "/auth/";
+const baseUrl = apiClient.BASE_URL + "/auth/";
 
 export function getUsers() {
   const url = baseUrl + "users";

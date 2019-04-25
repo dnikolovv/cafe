@@ -1,6 +1,6 @@
 import * as apiClient from "./apiClient";
 
-const baseUrl = "/menu/items/";
+const baseUrl = apiClient.BASE_URL + "/menu/items/";
 
 export function getMenuItems() {
   return apiClient.get(baseUrl);

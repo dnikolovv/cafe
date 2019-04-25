@@ -1,12 +1,6 @@
-﻿using Cafe.Domain.Events;
-using Microsoft.AspNetCore.SignalR;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.SignalR;
 
 namespace Cafe.Api.Hubs
 {
-    public class ConfirmedOrdersHub : Hub
-    {
-        public Task OrderConfirmed(OrderConfirmed notification) =>
-            Clients.All.SendAsync(nameof(OrderConfirmed), notification);
-    }
+    public class ConfirmedOrdersHub : Hub { }
 }
