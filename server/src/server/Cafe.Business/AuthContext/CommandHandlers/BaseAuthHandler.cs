@@ -46,11 +46,18 @@ namespace Cafe.Business.AuthContext.CommandHandlers
         protected async Task<Unit> ReplaceClaim(User account, string claimType, string claimValue)
         {
             var claimToReplace = (await UserManager.GetClaimsAsync(account))
-                .First(c => c.Type == claimType);
+                .FirstOrDefault(c => c.Type == claimType);
 
             var claimToAdd = new Claim(claimType, claimValue);
 
-            await UserManager.ReplaceClaimAsync(account, claimToReplace, claimToAdd);
+            if (claimToReplace != null)
+            {
+                await UserManager.ReplaceClaimAsync(account, claimToReplace, claimToAdd);
+            }
+            else
+            {
+                await UserManager.AddClaimAsync(account, claimToAdd);
+            }
 
             return Unit.Value;
         }
