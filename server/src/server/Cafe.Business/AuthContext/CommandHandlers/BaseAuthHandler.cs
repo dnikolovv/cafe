@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Identity;
 using Optional;
 using Optional.Async;
 using System;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -42,11 +43,14 @@ namespace Cafe.Business.AuthContext.CommandHandlers
                 .FindByIdAsync(accountId.ToString())
                 .SomeNotNull(Error.NotFound($"No account with id {accountId} was found."));
 
-        protected async Task<Unit> AddClaim(User account, string claimType, string claimValue)
+        protected async Task<Unit> ReplaceClaim(User account, string claimType, string claimValue)
         {
+            var claimToReplace = (await UserManager.GetClaimsAsync(account))
+                .First(c => c.Type == claimType);
+
             var claimToAdd = new Claim(claimType, claimValue);
 
-            await UserManager.AddClaimAsync(account, claimToAdd);
+            await UserManager.ReplaceClaimAsync(account, claimToReplace, claimToAdd);
 
             return Unit.Value;
         }

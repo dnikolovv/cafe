@@ -34,7 +34,7 @@ namespace Cafe.Business.AuthContext.CommandHandlers
         public override Task<Option<Unit, Error>> Handle(AssignCashierToAccount command) =>
             AccountShouldExist(command.AccountId).FlatMapAsync(account =>
             CashierShouldExist(command.CashierId).MapAsync(cashier =>
-            AddClaim(account, AuthConstants.ClaimTypes.CashierId, cashier.Id.ToString())));
+            ReplaceClaim(account, AuthConstants.ClaimTypes.CashierId, cashier.Id.ToString())));
 
         private Task<Option<Cashier, Error>> CashierShouldExist(Guid cashierId) =>
             DbContext
