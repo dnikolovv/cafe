@@ -7,6 +7,7 @@ using Cafe.Core.AuthContext;
 using Cafe.Core.AuthContext.Commands;
 using Cafe.Core.AuthContext.Configuration;
 using Cafe.Domain.Entities;
+using Cafe.Persistance.EntityFramework;
 using FluentValidation.AspNetCore;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
@@ -92,7 +93,7 @@ namespace Cafe.Api
             .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, UserManager<User> userManager)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, UserManager<User> userManager, ApplicationDbContext dbContext)
         {
             if (!env.IsDevelopment())
             {
@@ -106,6 +107,7 @@ namespace Cafe.Api
                     .AllowAnyHeader()
                     .AllowCredentials());
 
+                app.RevertDatabaseToInitialState(dbContext);
                 app.AddDefaultAdminAccountIfNoneExisting(userManager, Configuration).Wait();
             }
 
