@@ -1,5 +1,4 @@
-﻿using Cafe.Tests.XUnit;
-using Shouldly;
+﻿using Shouldly;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -17,7 +16,6 @@ namespace Cafe.Tests
         }
 
         [Fact]
-        [TestPriority(-100)]
         public async Task CanConnectToTestServer()
         {
             // Arrange
