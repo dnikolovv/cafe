@@ -20,7 +20,6 @@ namespace Cafe.Tests
 
         static SliceFixture()
         {
-            // TODO: Make sure port is not taken
             var url = $"http://localhost:{GetFreeTcpPort()}";
 
             BaseUrl = url;
