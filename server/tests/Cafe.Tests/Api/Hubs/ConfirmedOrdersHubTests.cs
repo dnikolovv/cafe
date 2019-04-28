@@ -7,6 +7,7 @@ using Cafe.Tests.Business.AuthContext;
 using Cafe.Tests.Business.OrderContext.Helpers;
 using Cafe.Tests.Customizations;
 using Microsoft.AspNetCore.SignalR.Client;
+using Moq;
 using Shouldly;
 using System;
 using System.Linq;
@@ -42,12 +43,9 @@ namespace Cafe.Tests.Api.Hubs
 
             var hubConnection = await StartConnectionAsync(baseUrl + "/confirmedOrders", token);
 
-            OrderConfirmed testOrder = null;
+            var handler = new Mock<Action<OrderConfirmed>>();
 
-            hubConnection.On<OrderConfirmed>(nameof(OrderConfirmed), order =>
-            {
-                testOrder = order;
-            });
+            hubConnection.On(nameof(OrderConfirmed), handler.Object);
 
             // Act
             await _helper.CreateConfirmedOrder(orderId, menuItems);
@@ -57,7 +55,7 @@ namespace Cafe.Tests.Api.Hubs
             await Task.Run(() => Thread.Sleep(200));
 
             // Assert
-            testOrder.ShouldNotBeNull();
+            handler.Verify(x => x(It.IsAny<OrderConfirmed>()), Times.Once());
         }
 
         private static async Task<HubConnection> StartConnectionAsync(string url, string accessToken = "")
