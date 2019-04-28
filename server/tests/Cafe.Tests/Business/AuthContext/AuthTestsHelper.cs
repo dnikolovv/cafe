@@ -49,7 +49,7 @@ namespace Cafe.Tests.Business.AuthContext
             }))
             .ValueOr(() => throw new InvalidOperationException("Tried to login with invalid credentials."));
 
-        public Task<(string Email, string Password)> RegisterAdminAccount() =>
+        public Task<(string Email, string Password)> RegisterAdminAccountIfNotExisting() =>
             _fixture.ExecuteScopeAsync(serviceProvider =>
             {
                 var userManager = (UserManager<User>)serviceProvider.GetService(typeof(UserManager<User>));
@@ -57,5 +57,15 @@ namespace Cafe.Tests.Business.AuthContext
 
                 return DatabaseConfiguration.AddDefaultAdminAccountIfNoneExisting(userManager, configuration);
             });
+
+        public async Task<string> GetAdminToken()
+        {
+            var (Email, Password) = await RegisterAdminAccountIfNotExisting();
+
+            var token = (await Login(Email, Password))
+                .TokenString;
+
+            return token;
+        }
     }
 }

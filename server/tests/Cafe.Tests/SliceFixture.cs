@@ -64,6 +64,12 @@ namespace Cafe.Tests
         public static string EventStoreConnectionString => _configuration.GetSection("EventStore")["ConnectionString"];
         public static string RelationalDbConnectionString => _configuration.GetConnectionString("DefaultConnection");
 
+        public string GetFullServerUrl(string route)
+        {
+            route = route.TrimStart('/', '\\');
+            return $"{BaseUrl}/{route}";
+        }
+
         public Task ExecuteDbContextAsync(Func<ApplicationDbContext, Task> action) =>
             ExecuteScopeAsync(sp =>
             {

@@ -1,18 +1,9 @@
-﻿using Cafe.Core.AuthContext.Commands;
-using Cafe.Core.OrderContext.Commands;
-using Cafe.Domain.Entities;
+﻿using Cafe.Domain.Entities;
 using Cafe.Domain.Events;
-using Cafe.Domain.Views;
 using Cafe.Tests.Business.AuthContext;
 using Cafe.Tests.Business.OrderContext.Helpers;
 using Cafe.Tests.Customizations;
-using Microsoft.AspNetCore.SignalR.Client;
-using Moq;
-using Shouldly;
 using System;
-using System.Linq;
-using System.Net.Http;
-using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -36,8 +27,8 @@ namespace Cafe.Tests.Api.Hubs
         public async Task ConfirmedOrdersAreSentToAllAuthenticatedSubscribers(Guid orderId, MenuItem[] menuItems)
         {
             // Arrange
-            var hubUrl = SliceFixture.BaseUrl + "/confirmedOrders";
-            var token = await GetAdminToken();
+            var hubUrl = _fixture.GetFullServerUrl("/confirmedOrders");
+            var token = await _authTestsHelper.GetAdminToken();
 
             var testConnection = await TestHubConnectionFactory
                 .CreateTestConnectionAsync<OrderConfirmed>(hubUrl, nameof(OrderConfirmed), token);
@@ -50,31 +41,6 @@ namespace Cafe.Tests.Api.Hubs
                 .VerifyMessageReceived(e =>
                     e.Order.Id == orderId &&
                     e.Order.OrderedItems.Count == menuItems.Length);
-        }
-
-        private static async Task<HubConnection> StartConnectionAsync(string url, string accessToken = "")
-        {
-            var hubConnection = new HubConnectionBuilder()
-                .WithUrl(url, o =>
-                {
-                    o.AccessTokenProvider = () => Task.FromResult(accessToken);
-                })
-                .Build();
-
-            await hubConnection.StartAsync();
-
-            return hubConnection;
-        }
-
-        private async Task<string> GetAdminToken()
-        {
-            var (Email, Password) = await _authTestsHelper.RegisterAdminAccount();
-
-            var token = (await _authTestsHelper
-                .Login(Email, Password))
-                .TokenString;
-
-            return token;
         }
     }
 }
