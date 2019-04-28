@@ -1,9 +1,9 @@
-﻿using Cafe.Api;
-using Cafe.Core.AuthContext.Commands;
+﻿using Cafe.Core.AuthContext.Commands;
 using Cafe.Core.OrderContext.Commands;
 using Cafe.Domain.Entities;
 using Cafe.Domain.Events;
 using Cafe.Domain.Views;
+using Cafe.Tests.Business.AuthContext;
 using Cafe.Tests.Business.OrderContext.Helpers;
 using Cafe.Tests.Customizations;
 using Microsoft.AspNetCore.SignalR.Client;
@@ -21,11 +21,13 @@ namespace Cafe.Tests.Api.Hubs
     {
         private readonly SliceFixture _fixture;
         private readonly ToGoOrderTestsHelper _helper;
+        private readonly AuthTestsHelper _authTestsHelper;
 
         public ConfirmedOrdersHubTests()
         {
             _fixture = new SliceFixture();
             _helper = new ToGoOrderTestsHelper(_fixture);
+            _authTestsHelper = new AuthTestsHelper(_fixture);
         }
 
         [Theory]
@@ -33,38 +35,13 @@ namespace Cafe.Tests.Api.Hubs
         public async Task ConfirmedOrdersAreSentToAllAuthenticatedSubscribers(Guid orderId, MenuItem[] menuItems)
         {
             // Arrange
-            // TODO: Make sure port is not taken
-
-            // Host the app
-            const string baseUrl = "http://localhost:7777";
-
-            var webhost = Program
-                .CreateWebHostBuilder(new string[] { "--environment", "Development" }, baseUrl)
-                .Build();
-
-            webhost.Start();
-
             // Login
-            var client = new HttpClient();
+            var baseUrl = SliceFixture.BaseUrl;
 
-            // TODO: Get credentials from configuration
-            var loginCommand = new Login
-            {
-                Email = "admin@cafe.org",
-                Password = "Password123$"
-            };
+            var token = await GetAdminToken();
 
-            var loginResponse = await client.PostAsJsonAsync(baseUrl + "/api/auth/login", loginCommand);
-
-            // TODO: Handle errors
-            var token = (await loginResponse.Content.ReadAsAsync<JwtView>()).TokenString;
-
-            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
-
-            // Instantiate the hub connection
             var hubConnection = await StartConnectionAsync(baseUrl + "/confirmedOrders", token);
 
-            // Subscribe to the relevant message
             OrderConfirmed testOrder = null;
 
             hubConnection.On<OrderConfirmed>(nameof(OrderConfirmed), order =>
@@ -72,18 +49,8 @@ namespace Cafe.Tests.Api.Hubs
                 testOrder = order;
             });
 
-            // Prepare the order to be confirmed
-            await _helper.OrderToGo(orderId, menuItems);
-
-            var confirmOrderCommand = new ConfirmToGoOrder
-            {
-                OrderId = orderId,
-                PricePaid = menuItems.Sum(i => i.Price)
-            };
-
             // Act
-            // Confirm the order
-            var result = await client.PutAsJsonAsync(baseUrl + "/api/order/confirm", confirmOrderCommand);
+            await _helper.CreateConfirmedOrder(orderId, menuItems);
 
             // The delay is required because the socket message may be received after the method finishes execution
             // There may be a better way, but this is good enough for now
@@ -105,6 +72,17 @@ namespace Cafe.Tests.Api.Hubs
             await hubConnection.StartAsync();
 
             return hubConnection;
+        }
+
+        private async Task<string> GetAdminToken()
+        {
+            var (Email, Password) = await _authTestsHelper.RegisterAdminAccount();
+
+            var token = (await _authTestsHelper
+                .Login(Email, Password))
+                .TokenString;
+
+            return token;
         }
     }
 }

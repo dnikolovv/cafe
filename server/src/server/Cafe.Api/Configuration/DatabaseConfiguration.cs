@@ -1,7 +1,6 @@
 ﻿using Cafe.Core.AuthContext;
 using Cafe.Domain.Entities;
 using Cafe.Persistance.EntityFramework;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -11,9 +10,9 @@ using System.Threading.Tasks;
 
 namespace Cafe.Api.Configuration
 {
-    public static class AuthConfiguration
+    public static class DatabaseConfiguration
     {
-        public static void RevertDatabaseToInitialState(this IApplicationBuilder app, ApplicationDbContext dbContext)
+        public static void RevertDatabaseToInitialState(ApplicationDbContext dbContext)
         {
             var menuItems = new List<MenuItem>
             {
@@ -93,7 +92,7 @@ namespace Cafe.Api.Configuration
             dbContext.SaveChanges();
         }
 
-        public static async Task AddDefaultAdminAccountIfNoneExisting(this IApplicationBuilder app, UserManager<User> userManager, IConfiguration configuration)
+        public static async Task<(string Email, string Password)> AddDefaultAdminAccountIfNoneExisting(UserManager<User> userManager, IConfiguration configuration)
         {
             var adminSection = configuration.GetSection("DefaultAdminAccount");
 
@@ -117,9 +116,15 @@ namespace Cafe.Api.Configuration
 
                 await userManager.AddClaimAsync(adminUser, isAdminClaim);
             }
+
+            return (adminEmail, adminPassword);
         }
 
-        private static async Task<bool> AccountExists(string email, UserManager<User> userManager) =>
-            (await userManager.FindByEmailAsync(email)) != null;
+        private static async Task<bool> AccountExists(string email, UserManager<User> userManager)
+        {
+            var user = await userManager.FindByEmailAsync(email);
+
+            return user != null;
+        }
     }
 }

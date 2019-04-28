@@ -99,7 +99,7 @@ namespace Cafe.Api
             {
                 app.UseHsts();
             }
-            else
+            else if (env.IsDevelopment())
             {
                 app.UseCors(builder => builder
                     .WithOrigins("http://localhost:3000")
@@ -107,8 +107,8 @@ namespace Cafe.Api
                     .AllowAnyHeader()
                     .AllowCredentials());
 
-                app.RevertDatabaseToInitialState(dbContext);
-                app.AddDefaultAdminAccountIfNoneExisting(userManager, Configuration).Wait();
+                DatabaseConfiguration.RevertDatabaseToInitialState(dbContext);
+                DatabaseConfiguration.AddDefaultAdminAccountIfNoneExisting(userManager, Configuration).Wait();
             }
 
             loggerFactory.AddLogging(Configuration.GetSection("Logging"));

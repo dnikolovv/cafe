@@ -31,13 +31,13 @@ namespace Cafe.Tests
             };
         }
 
-        public Task DisposeAsync() => Task.CompletedTask;
-
-        public async Task InitializeAsync()
+        public async Task DisposeAsync()
         {
             await Reset(_relationalCheckpoint, SliceFixture.RelationalDbConnectionString);
             await Reset(_eventStoreCheckpoint, SliceFixture.EventStoreConnectionString);
         }
+
+        public Task InitializeAsync() => Task.CompletedTask;
 
         private static async Task Reset(Checkpoint checkpoint, string connectionString)
         {
