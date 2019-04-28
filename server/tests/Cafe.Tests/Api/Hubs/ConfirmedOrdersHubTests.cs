@@ -36,26 +36,20 @@ namespace Cafe.Tests.Api.Hubs
         public async Task ConfirmedOrdersAreSentToAllAuthenticatedSubscribers(Guid orderId, MenuItem[] menuItems)
         {
             // Arrange
-            // Login
-            var baseUrl = SliceFixture.BaseUrl;
-
+            var hubUrl = SliceFixture.BaseUrl + "/confirmedOrders";
             var token = await GetAdminToken();
 
-            var hubConnection = await StartConnectionAsync(baseUrl + "/confirmedOrders", token);
-
-            var handler = new Mock<Action<OrderConfirmed>>();
-
-            hubConnection.On(nameof(OrderConfirmed), handler.Object);
+            var testConnection = await TestHubConnectionFactory
+                .CreateTestConnectionAsync<OrderConfirmed>(hubUrl, nameof(OrderConfirmed), token);
 
             // Act
             await _helper.CreateConfirmedOrder(orderId, menuItems);
 
-            // The delay is required because the socket message may be received after the method finishes execution
-            // There may be a better way, but this is good enough for now
-            await Task.Run(() => Thread.Sleep(200));
-
             // Assert
-            handler.Verify(x => x(It.IsAny<OrderConfirmed>()), Times.Once());
+            await testConnection
+                .VerifyMessageReceived(e =>
+                    e.Order.Id == orderId &&
+                    e.Order.OrderedItems.Count == menuItems.Length);
         }
 
         private static async Task<HubConnection> StartConnectionAsync(string url, string accessToken = "")
