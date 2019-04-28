@@ -22,6 +22,7 @@ namespace Cafe.Tests
         {
             // The delay is required because the socket message may be received after the test method finishes execution
             // There may be a better way, but this is good enough for now
+            // TODO: Magic numbers
             await Task.Run(() => Thread.Sleep(350));
 
             _handlerMock.Verify(x => x(It.Is<TEvent>(predicate)));
