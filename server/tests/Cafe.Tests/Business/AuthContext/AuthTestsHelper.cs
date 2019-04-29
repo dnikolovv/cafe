@@ -49,6 +49,15 @@ namespace Cafe.Tests.Business.AuthContext
             }))
             .ValueOr(() => throw new InvalidOperationException("Tried to login with invalid credentials."));
 
+        public async Task<JwtView> RegisterAndLogin(Register command)
+        {
+            await Register(command);
+            return await Login(command.Email, command.Password);
+        }
+
+        public Task Register(Register command) =>
+            _fixture.SendAsync(command);
+
         public Task<(string Email, string Password)> RegisterAdminAccountIfNotExisting() =>
             _fixture.ExecuteScopeAsync(serviceProvider =>
             {

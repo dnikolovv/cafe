@@ -7,7 +7,7 @@ namespace Cafe.Tests
 {
     internal class TestHubConnectionFactory
     {
-        public static async Task<TestHubConnection<TEvent>> CreateTestConnectionAsync<TEvent>(
+        public static async Task<TestHubConnection<TEvent>> OpenTestConnectionAsync<TEvent>(
             string url,
             string expectedEventToReceive,
             string accessToken = "")
@@ -20,16 +20,23 @@ namespace Cafe.Tests
 
         private static async Task<HubConnection> StartConnectionAsync(string url, string accessToken)
         {
-            var hubConnection = new HubConnectionBuilder()
-                .WithUrl(url, o =>
-                {
-                    o.AccessTokenProvider = () => Task.FromResult(accessToken);
-                })
-                .Build();
+            try
+            {
+                var hubConnection = new HubConnectionBuilder()
+                            .WithUrl(url, o =>
+                            {
+                                o.AccessTokenProvider = () => Task.FromResult(accessToken);
+                            })
+                            .Build();
 
-            await hubConnection.StartAsync();
+                await hubConnection.StartAsync();
 
-            return hubConnection;
+                return hubConnection;
+            }
+            catch (Exception e)
+            {
+                throw;
+            }
         }
     }
 }
