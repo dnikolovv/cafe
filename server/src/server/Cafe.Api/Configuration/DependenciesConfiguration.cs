@@ -149,17 +149,22 @@ namespace Cafe.Api.Configuration
         {
             services.AddSwaggerGen(setup =>
             {
-                setup.SwaggerDoc("v1", new Info { Title = "Cafe.Api", Version = "v1" });
-                setup.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, "Cafe.Api.Documentation.xml"));
+                var documentationPath = Path.Combine(AppContext.BaseDirectory, "Cafe.Api.Documentation.xml");
 
-                setup.AddSecurityDefinition("Bearer", new ApiKeyScheme { In = "header", Description = "Enter 'Bearer {token}' (don't forget to add 'bearer') into the field below.", Name = "Authorization", Type = "apiKey" });
-
-                setup.AddSecurityRequirement(new Dictionary<string, IEnumerable<string>>
+                if (File.Exists(documentationPath))
                 {
-                    { "Bearer", Enumerable.Empty<string>() },
-                });
+                    setup.SwaggerDoc("v1", new Info { Title = "Cafe.Api", Version = "v1" });
+                    setup.IncludeXmlComments(documentationPath);
 
-                setup.OperationFilter<OptionOperationFilter>();
+                    setup.AddSecurityDefinition("Bearer", new ApiKeyScheme { In = "header", Description = "Enter 'Bearer {token}' (don't forget to add 'bearer') into the field below.", Name = "Authorization", Type = "apiKey" });
+
+                    setup.AddSecurityRequirement(new Dictionary<string, IEnumerable<string>>
+                    {
+                        { "Bearer", Enumerable.Empty<string>() },
+                    });
+
+                    setup.OperationFilter<OptionOperationFilter>();
+                }
             });
         }
     }

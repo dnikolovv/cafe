@@ -59,7 +59,7 @@ namespace Cafe.Business.AuthContext.CommandHandlers
             };
 
         private Task<Option<IList<Claim>, Error>> GetExtraClaims(User user) =>
-                    user.SomeNotNull(Error.Validation($"You must provide a non-null user."))
+            user.SomeNotNull(Error.Validation($"You must provide a non-null user."))
                 .MapAsync(u => _userManager.GetClaimsAsync(u));
 
         // TODO: This is duplicated in BaseHandler.cs
