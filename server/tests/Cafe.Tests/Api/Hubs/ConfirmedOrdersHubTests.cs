@@ -5,6 +5,7 @@ using Cafe.Domain.Events;
 using Cafe.Tests.Business.AuthContext;
 using Cafe.Tests.Business.OrderContext.Helpers;
 using Cafe.Tests.Customizations;
+using Moq;
 using Shouldly;
 using System;
 using System.Net.Http;
@@ -42,10 +43,11 @@ namespace Cafe.Tests.Api.Hubs
             await _toGoOrdersHelper.CreateConfirmedOrder(orderId, menuItems);
 
             // Assert
-            await testConnection
-                .VerifyMessageReceived(e =>
-                    e.Order.Id == orderId &&
-                    e.Order.OrderedItems.Count == menuItems.Length);
+            testConnection
+                .VerifyMessageReceived(
+                    e => e.Order.Id == orderId &&
+                         e.Order.OrderedItems.Count == menuItems.Length,
+                    Times.Once());
         }
 
         [Theory]
@@ -89,10 +91,11 @@ namespace Cafe.Tests.Api.Hubs
             await _toGoOrdersHelper.CreateConfirmedOrder(orderId, menuItems);
 
             // Assert
-            await testConnection
-                .VerifyMessageReceived(e =>
-                    e.Order.Id == orderId &&
-                    e.Order.OrderedItems.Count == menuItems.Length);
+            testConnection
+                .VerifyMessageReceived(
+                    e => e.Order.Id == orderId &&
+                         e.Order.OrderedItems.Count == menuItems.Length,
+                    Times.Once());
 
         }
 
