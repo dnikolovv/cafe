@@ -122,6 +122,7 @@ namespace Cafe.Api
             app.UseSignalR(routes =>
             {
                 routes.MapHub<ConfirmedOrdersHub>("/confirmedOrders");
+                routes.MapHub<HiredWaitersHub>("/hiredWaiters");
             });
 
             app.UseMvc();

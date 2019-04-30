@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Cafe.Core.AuthContext;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.SignalR;
 
 namespace Cafe.Api.Hubs
 {
-    public class HiredWaitersHub
+    [Authorize(Policy = AuthConstants.Policies.IsAdminOrManager)]
+    public class HiredWaitersHub : Hub
     {
     }
 }

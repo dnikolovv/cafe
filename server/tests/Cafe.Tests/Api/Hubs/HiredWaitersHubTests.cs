@@ -1,6 +1,7 @@
 ﻿using Cafe.Core.AuthContext.Commands;
 using Cafe.Core.ManagerContext.Commands;
 using Cafe.Core.WaiterContext.Commands;
+using Cafe.Domain.Events;
 using Cafe.Tests.Business.AuthContext;
 using Cafe.Tests.Customizations;
 using Moq;
