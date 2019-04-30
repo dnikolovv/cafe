@@ -6,6 +6,7 @@ import LoginPage from "./auth/LoginPage";
 import AdminPage from "./admin/AdminPage";
 import CashierPage from "./cashier/CashierPage";
 import BaristaPage from "./barista/BaristaPage";
+import ManagerPage from "./manager/ManagerPage";
 import ManageUserPage from "./admin/ManageUserPage";
 import UserProvider from "./UserProvider";
 import Logout from "./auth/Logout";
@@ -25,6 +26,7 @@ const App = () => {
         <Route path="/manageUser/:userId" component={ManageUserPage} />
         <Route path="/cashier" component={CashierPage} />
         <Route path="/barista" component={BaristaPage} />
+        <Route path="/manager" component={ManagerPage} />
         <Route component={PageNotFound} />
       </Switch>
       <UserProvider />
