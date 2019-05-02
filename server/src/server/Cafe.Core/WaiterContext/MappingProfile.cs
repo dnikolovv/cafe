@@ -11,6 +11,7 @@ namespace Cafe.Core.WaiterContext
         public MappingProfile()
         {
             CreateMap<HireWaiter, Waiter>(MemberList.Source);
+            CreateMap<HireWaiter, WaiterView>(MemberList.Source);
             CreateMap<Waiter, WaiterView>(MemberList.Destination)
                 .ForMember(d => d.TablesServed, opts => opts.MapFrom(s => s.ServedTables.Select(t => t.Number)));
         }

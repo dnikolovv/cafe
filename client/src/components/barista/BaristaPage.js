@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import * as orderActions from "../../redux/actions/orderActions";
 import PropTypes from "prop-types";
 import * as orderService from "../../api/orderService";
+import WaitingOrdersList from "./WaitingOrdersList";
 
 const BaristaPage = ({ completeOrder, loadOrders, issuedOrders }) => {
   useEffect(() => {
@@ -17,44 +18,13 @@ const BaristaPage = ({ completeOrder, loadOrders, issuedOrders }) => {
   };
 
   return (
-    <div>
+    <>
       <h2>Barista</h2>
-
-      <>
-        <h3>Waiting Orders</h3>
-        <table className="table">
-          <thead>
-            <tr>
-              <th>Id</th>
-              <th>Ordered Items</th>
-              <th>Complete</th>
-            </tr>
-          </thead>
-          <tbody>
-            {[...issuedOrders]
-              .sort(function(a, b) {
-                return new Date(b.date) - new Date(a.date);
-              })
-              .map(order => (
-                <tr key={order.id}>
-                  <td>{order.id}</td>
-                  <td>
-                    {order.orderedItems.map(i => i.description).join(", ")}
-                  </td>
-                  <td>
-                    <button
-                      onClick={() => handleOrderCompletion(order.id)}
-                      className="btn btn-success"
-                    >
-                      Complete
-                    </button>
-                  </td>
-                </tr>
-              ))}
-          </tbody>
-        </table>
-      </>
-    </div>
+      <WaitingOrdersList
+        orders={issuedOrders}
+        onOrderCompleted={handleOrderCompletion}
+      />
+    </>
   );
 };
 

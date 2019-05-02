@@ -30,7 +30,7 @@ namespace Cafe.Tests.Business.WaiterContext
 
             var assignTableCommand = new AssignTable
             {
-                WaiterToAssignToId = hireWaiterCommand.Id,
+                WaiterId = hireWaiterCommand.Id,
                 TableNumber = addTableCommand.Number
             };
 
@@ -63,7 +63,7 @@ namespace Cafe.Tests.Business.WaiterContext
 
             var assignTableCommand = new AssignTable
             {
-                WaiterToAssignToId = hireWaiterCommand.Id,
+                WaiterId = hireWaiterCommand.Id,
                 TableNumber = addTableCommand.Number
             };
 
@@ -85,7 +85,7 @@ namespace Cafe.Tests.Business.WaiterContext
 
             var assignTableCommand = new AssignTable
             {
-                WaiterToAssignToId = hireWaiterCommand.Id,
+                WaiterId = hireWaiterCommand.Id,
                 TableNumber = 1234 // Irrelevant since we haven't added any tables
             };
 
@@ -105,7 +105,7 @@ namespace Cafe.Tests.Business.WaiterContext
 
             var assignTableCommand = new AssignTable
             {
-                WaiterToAssignToId = Guid.NewGuid(), // Irrelevant since we haven't hired any waiters
+                WaiterId = Guid.NewGuid(), // Irrelevant since we haven't hired any waiters
                 TableNumber = addTableCommand.Number
             };
 

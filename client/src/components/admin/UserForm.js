@@ -1,11 +1,11 @@
 import React from "react";
-import TextInput from "../common/TextInput";
+import Input from "../common/Input";
 import PropTypes from "prop-types";
 
 const UserForm = ({ user }) => {
   return (
     <form>
-      <TextInput
+      <Input
         value={user.id}
         label="Id"
         name="id"
@@ -13,7 +13,7 @@ const UserForm = ({ user }) => {
         isReadonly={true}
       />
 
-      <TextInput
+      <Input
         value={`${user.firstName} ${user.lastName}`}
         label="Name"
         name="name"

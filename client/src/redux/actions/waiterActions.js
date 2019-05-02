@@ -12,3 +12,19 @@ export function loadWaiters() {
     });
   };
 }
+
+export function hireWaiter(waiter) {
+  return function(dispatch) {
+    return waitersApi.hireWaiter(waiter).then(_ => {
+      dispatch(loadWaiters());
+    });
+  };
+}
+
+export function assignTable(assignment) {
+  return function(dispatch) {
+    return waitersApi.assignTable(assignment).then(_ => {
+      dispatch(loadWaiters());
+    });
+  };
+}

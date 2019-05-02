@@ -20,9 +20,7 @@ namespace Cafe.Tests
 
         static SliceFixture()
         {
-            var url = $"http://localhost:{GetFreeTcpPort()}";
-
-            BaseUrl = url;
+            BaseUrl = $"http://localhost:{GetFreeTcpPort()}";
 
             var webhost = Program
                 .CreateWebHostBuilder(new string[] { "--environment", "IntegrationTesting" }, BaseUrl)
@@ -36,8 +34,7 @@ namespace Cafe.Tests
 
             using (var scope = scopeFactory.CreateScope())
             {
-                var configuration = scope.ServiceProvider.GetService<IConfiguration>();
-                _configuration = configuration;
+                _configuration = scope.ServiceProvider.GetService<IConfiguration>();
             }
 
             using (var scope = scopeFactory.CreateScope())
@@ -62,12 +59,6 @@ namespace Cafe.Tests
 
         public static string EventStoreConnectionString => _configuration.GetSection("EventStore")["ConnectionString"];
         public static string RelationalDbConnectionString => _configuration.GetConnectionString("DefaultConnection");
-
-        public string GetFullServerUrl(string route)
-        {
-            route = route.TrimStart('/', '\\');
-            return $"{BaseUrl}/{route}";
-        }
 
         public Task ExecuteDbContextAsync(Func<ApplicationDbContext, Task> action) =>
             ExecuteScopeAsync(sp =>
@@ -115,6 +106,12 @@ namespace Cafe.Tests
                     throw;
                 }
             }
+        }
+
+        public string GetFullServerUrl(string route)
+        {
+            route = route.TrimStart('/', '\\');
+            return $"{BaseUrl}/{route}";
         }
 
         public Task<TResponse> SendAsync<TResponse>(IRequest<TResponse> request)
