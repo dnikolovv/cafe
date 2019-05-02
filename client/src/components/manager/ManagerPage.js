@@ -3,10 +3,13 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import * as menuItemActions from "../../redux/actions/menuItemActions";
 import * as tableActions from "../../redux/actions/tableActions";
+import * as waiterActions from "../../redux/actions/waiterActions";
 import MenuItemsList from "./MenuItemsList";
 import AddMenuItemForm from "./AddMenuItemForm";
 import TablesList from "./TablesList";
 import AddTableForm from "./AddTableForm";
+import WaitersList from "./WaitersList";
+import HireWaiterForm from "./HireWaiterForm";
 
 const ManagerPage = ({
   loadMenuItems,
@@ -14,11 +17,15 @@ const ManagerPage = ({
   loadTables,
   addTable,
   tables,
+  loadWaiters,
+  hireWaiter,
+  waiters,
   menuItems
 }) => {
   useEffect(() => {
     loadMenuItems();
     loadTables();
+    loadWaiters();
   }, []);
 
   const [newMenuItem, setNewMenuItem] = useState({
@@ -28,6 +35,8 @@ const ManagerPage = ({
   });
 
   const [newTable, setNewTable] = useState({ number: "" });
+
+  const [newWaiter, setNewWaiter] = useState({});
 
   const handleNewMenuItemChange = event => {
     setNewMenuItem({ ...newMenuItem, [event.target.name]: event.target.value });
@@ -49,6 +58,16 @@ const ManagerPage = ({
     setNewTable({ ...newTable, number: "" });
   };
 
+  const handleNewWaiterChange = event => {
+    setNewWaiter({ ...newWaiter, [event.target.name]: event.target.value });
+  };
+
+  const handleHireWaiter = event => {
+    event.preventDefault();
+    hireWaiter(newWaiter);
+    setNewWaiter({});
+  };
+
   return (
     <>
       <h2>Manager</h2>
@@ -66,6 +85,14 @@ const ManagerPage = ({
         table={newTable}
         onChange={handleNewTableChange}
         onSubmit={handleAddTable}
+      />
+
+      <h3>Waiters</h3>
+      <WaitersList waiters={waiters} />
+      <HireWaiterForm
+        waiter={newWaiter}
+        onChange={handleNewWaiterChange}
+        onSubmit={handleHireWaiter}
       />
 
       <p>
@@ -86,7 +113,8 @@ ManagerPage.propTypes = {
 function mapStateToProps(state) {
   return {
     menuItems: state.menuItems,
-    tables: state.tables
+    tables: state.tables,
+    waiters: state.waiters
   };
 }
 
@@ -94,7 +122,9 @@ const mapDispatchToProps = {
   loadMenuItems: menuItemActions.loadMenuItems,
   addMenuItem: menuItemActions.addMenuItem,
   loadTables: tableActions.loadTables,
-  addTable: tableActions.addTable
+  addTable: tableActions.addTable,
+  loadWaiters: waiterActions.loadWaiters,
+  hireWaiter: waiterActions.hireWaiter
 };
 
 export default connect(

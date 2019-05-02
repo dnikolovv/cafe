@@ -12,3 +12,11 @@ export function loadWaiters() {
     });
   };
 }
+
+export function hireWaiter(waiter) {
+  return function(dispatch) {
+    return waitersApi.hireWaiter(waiter).then(_ => {
+      dispatch(loadWaiters());
+    });
+  };
+}
