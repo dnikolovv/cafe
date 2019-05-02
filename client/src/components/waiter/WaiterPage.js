@@ -19,14 +19,12 @@ const WaiterPage = ({
   }, []);
 
   const [newTab, setNewTab] = useState({
-    id: "",
     customerName: "",
     tableNumber: ""
   });
 
   const handleTabSelected = tabId => {
-    // TODO: Go to tab details
-    history.push("/home");
+    history.push("/tab/" + tabId);
   };
 
   const handleNewTabChange = event => {

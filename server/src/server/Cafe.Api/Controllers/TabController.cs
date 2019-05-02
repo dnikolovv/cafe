@@ -4,6 +4,7 @@ using Cafe.Core.TabContext.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Threading.Tasks;
 
 namespace Cafe.Api.Controllers
@@ -17,6 +18,14 @@ namespace Cafe.Api.Controllers
         {
             _mediator = mediator;
         }
+
+        /// <summary>
+        /// Retrieves a tab by id.
+        /// </summary>
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetTabView(Guid id) =>
+            (await _mediator.Send(new GetTabView { Id = id }))
+            .Match(Ok, Error);
 
         /// <summary>
         /// Retrieves all open tabs.

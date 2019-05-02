@@ -123,6 +123,11 @@
             Completes a to-go order.
             </summary>
         </member>
+        <member name="M:Cafe.Api.Controllers.TabController.GetTabView(System.Guid)">
+            <summary>
+            Retrieves a tab by id.
+            </summary>
+        </member>
         <member name="M:Cafe.Api.Controllers.TabController.GetAllOpenTabs">
             <summary>
             Retrieves all open tabs.

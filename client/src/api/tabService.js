@@ -8,6 +8,11 @@ export function loadAllTabs() {
   return apiClient.get(baseUrl);
 }
 
+export function loadTab(tabId) {
+  const url = baseUrl + tabId;
+  return apiClient.get(url);
+}
+
 export function openTab(tab) {
   const url = baseUrl + "open";
   return apiClient.post(url, { ...tab, id: uuidv4() });

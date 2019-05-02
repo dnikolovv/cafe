@@ -5,6 +5,10 @@ export function loadAllTabsSuccess(tabs) {
   return { type: ActionTypes.LOAD_ALL_TABS_SUCCESS, tabs };
 }
 
+export function loadTabSuccess(tab) {
+  return { type: ActionTypes.LOAD_TAB_SUCCESS, tab };
+}
+
 export function loadAllTabs() {
   return function(dispatch) {
     return tabApi.loadAllTabs().then(tabs => {
@@ -41,6 +45,14 @@ export function openTab(tab) {
   return function(dispatch) {
     return tabApi.openTab(tab).then(_ => {
       dispatch(loadAllTabs());
+    });
+  };
+}
+
+export function loadTab(tabId) {
+  return function(dispatch) {
+    return tabApi.loadTab(tabId).then(tab => {
+      dispatch(loadTabSuccess(tab));
     });
   };
 }
