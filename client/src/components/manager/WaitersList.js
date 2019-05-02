@@ -6,7 +6,10 @@ const WaitersList = ({ waiters }) => {
       {waiters.map(waiter => {
         return (
           <li key={waiter.id} className="list-group-item">
-            {waiter.shortName}
+            {waiter.shortName}{" "}
+            {waiter.tablesServed && waiter.tablesServed.length > 0 && (
+              <>(table numbers: {waiter.tablesServed.join(", ")})</>
+            )}
           </li>
         );
       })}

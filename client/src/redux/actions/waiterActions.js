@@ -20,3 +20,11 @@ export function hireWaiter(waiter) {
     });
   };
 }
+
+export function assignTable(assignment) {
+  return function(dispatch) {
+    return waitersApi.assignTable(assignment).then(_ => {
+      dispatch(loadWaiters());
+    });
+  };
+}

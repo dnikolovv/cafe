@@ -1,18 +1,18 @@
 import React from "react";
-import TextInput from "../common/TextInput";
+import Input from "../common/Input";
 import PropTypes from "prop-types";
 
 const LoginForm = ({ credentials, onSubmit, onChange, isLoggingIn }) => {
   return (
     <form onSubmit={onSubmit}>
-      <TextInput
+      <Input
         value={credentials.email}
         onChange={onChange}
         name="email"
         label="Email"
         placeholder="Enter your email..."
       />
-      <TextInput
+      <Input
         value={credentials.password}
         onChange={onChange}
         name="password"

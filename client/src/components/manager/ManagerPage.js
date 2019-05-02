@@ -10,6 +10,7 @@ import TablesList from "./TablesList";
 import AddTableForm from "./AddTableForm";
 import WaitersList from "./WaitersList";
 import HireWaiterForm from "./HireWaiterForm";
+import AssignWaiterToTableForm from "./AssignWaiterToTableForm";
 
 const ManagerPage = ({
   loadMenuItems,
@@ -20,6 +21,7 @@ const ManagerPage = ({
   loadWaiters,
   hireWaiter,
   waiters,
+  assignWaiterToTable,
   menuItems
 }) => {
   useEffect(() => {
@@ -68,31 +70,64 @@ const ManagerPage = ({
     setNewWaiter({});
   };
 
+  const handleWaiterAssignment = assignment => {
+    assignWaiterToTable(assignment);
+  };
+
   return (
     <>
       <h2>Manager</h2>
-      <h3>Menu</h3>
-      <MenuItemsList menuItems={menuItems} />
-      <AddMenuItemForm
-        menuItem={newMenuItem}
-        onChange={handleNewMenuItemChange}
-        onSubmit={handleAddMenuItem}
-      />
 
-      <h3>Tables</h3>
-      <TablesList tables={tables} />
-      <AddTableForm
-        table={newTable}
-        onChange={handleNewTableChange}
-        onSubmit={handleAddTable}
-      />
+      <div className="row">
+        <div className="col-md-4">
+          <h4>Menu</h4>
+          <MenuItemsList menuItems={menuItems} />
+        </div>
 
-      <h3>Waiters</h3>
-      <WaitersList waiters={waiters} />
-      <HireWaiterForm
-        waiter={newWaiter}
-        onChange={handleNewWaiterChange}
-        onSubmit={handleHireWaiter}
+        <div className="col-md-4">
+          <h4>Tables</h4>
+          <TablesList tables={tables} />
+        </div>
+
+        <div className="col-md-4">
+          <h4>Waiters</h4>
+          <WaitersList waiters={waiters} />
+        </div>
+
+        <hr className="col-md-12" />
+      </div>
+
+      <div className="row">
+        <div className="col-md-4">
+          <AddMenuItemForm
+            menuItem={newMenuItem}
+            onChange={handleNewMenuItemChange}
+            onSubmit={handleAddMenuItem}
+          />
+        </div>
+        <div className="col-md-4">
+          <AddTableForm
+            table={newTable}
+            onChange={handleNewTableChange}
+            onSubmit={handleAddTable}
+          />
+        </div>
+        <div className="col-md-4">
+          <HireWaiterForm
+            waiter={newWaiter}
+            onChange={handleNewWaiterChange}
+            onSubmit={handleHireWaiter}
+          />
+        </div>
+
+        <hr className="col-md-12" />
+      </div>
+
+      <h3>Assign waiter to table</h3>
+      <AssignWaiterToTableForm
+        onSubmit={handleWaiterAssignment}
+        waiters={waiters}
+        tables={tables}
       />
 
       <p>
@@ -124,7 +159,8 @@ const mapDispatchToProps = {
   loadTables: tableActions.loadTables,
   addTable: tableActions.addTable,
   loadWaiters: waiterActions.loadWaiters,
-  hireWaiter: waiterActions.hireWaiter
+  hireWaiter: waiterActions.hireWaiter,
+  assignWaiterToTable: waiterActions.assignTable
 };
 
 export default connect(

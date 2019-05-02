@@ -100,7 +100,7 @@ namespace Cafe.Tests.Business.TabContext.Helpers
             var assignTableCommand = new AssignTable
             {
                 TableNumber = addTableCommand.Number,
-                WaiterToAssignToId = hireWaiterCommand.Id
+                WaiterId = hireWaiterCommand.Id
             };
 
             await _fixture.SendAsync(assignTableCommand);
