@@ -1,3 +1,5 @@
+import { toast } from "react-toastify";
+
 export const BASE_URL = process.env.REACT_APP_API_URL + "api";
 
 export function post(url, body) {
@@ -36,8 +38,8 @@ async function handleResponse(response) {
 }
 
 function handleError(error) {
-  // eslint-disable-next-line no-console
   console.error(JSON.stringify(error));
+  toast.error(error.messages.join(", "));
   throw error;
 }
 
