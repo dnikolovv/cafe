@@ -1,5 +1,6 @@
 ﻿using Cafe.Core.AuthContext;
 using Cafe.Core.TabContext.Commands;
+using Cafe.Core.TabContext.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -18,6 +19,14 @@ namespace Cafe.Api.Controllers
         }
 
         /// <summary>
+        /// Retrieves all open tabs.
+        /// </summary>
+        [HttpGet]
+        public async Task<IActionResult> GetAllOpenTabs() =>
+            (await _mediator.Send(new GetAllOpenTabs()))
+            .Match(Ok, Error);
+
+        /// <summary>
         /// Opens a new tab on a given table.
         /// </summary>
         [HttpPost("open")]
@@ -28,7 +37,7 @@ namespace Cafe.Api.Controllers
         /// <summary>
         /// Closes a tab.
         /// </summary>
-        [HttpPost("close")]
+        [HttpPut("close")]
         public async Task<IActionResult> CloseTab([FromBody] CloseTab command) =>
             (await _mediator.Send(command))
             .Match(Ok, Error);
@@ -36,7 +45,7 @@ namespace Cafe.Api.Controllers
         /// <summary>
         /// Orders a list of menu items for a given tab.
         /// </summary>
-        [HttpPost("order")]
+        [HttpPut("order")]
         public async Task<IActionResult> OrderMenuItems([FromBody] OrderMenuItems command) =>
             (await _mediator.Send(command))
             .Match(Ok, Error);
@@ -44,7 +53,7 @@ namespace Cafe.Api.Controllers
         /// <summary>
         /// Rejects a list of menu items for a given tab.
         /// </summary>
-        [HttpPost("reject")]
+        [HttpPut("reject")]
         public async Task<IActionResult> RejectMenuItems([FromBody] RejectMenuItems command) =>
             (await _mediator.Send(command))
             .Match(Ok, Error);

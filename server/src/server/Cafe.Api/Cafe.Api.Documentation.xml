@@ -123,6 +123,11 @@
             Completes a to-go order.
             </summary>
         </member>
+        <member name="M:Cafe.Api.Controllers.TabController.GetAllOpenTabs">
+            <summary>
+            Retrieves all open tabs.
+            </summary>
+        </member>
         <member name="M:Cafe.Api.Controllers.TabController.OpenTab(Cafe.Core.TabContext.Commands.OpenTab)">
             <summary>
             Opens a new tab on a given table.
