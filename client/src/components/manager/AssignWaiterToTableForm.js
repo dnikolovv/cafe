@@ -7,12 +7,8 @@ const AssignWaiterToTableForm = ({ waiters, tables, onSubmit }) => {
     tableNumber: ""
   });
 
-  const handleWaiterChange = event => {
-    setAssignment({ ...assignment, waiterId: event.target.value });
-  };
-
-  const handleTableChange = event => {
-    setAssignment({ ...assignment, tableNumber: event.target.value });
+  const handleChange = event => {
+    setAssignment({ ...assignment, [event.target.name]: event.target.value });
   };
 
   const handleSubmit = event => {
@@ -30,9 +26,10 @@ const AssignWaiterToTableForm = ({ waiters, tables, onSubmit }) => {
           };
         })}
         label="Waiters"
+        name="waiterId"
         value={assignment.waiterId}
         defaultOption="Select waiter"
-        onChange={handleWaiterChange}
+        onChange={handleChange}
       />
       <SelectInput
         options={tables.map(table => {
@@ -42,9 +39,10 @@ const AssignWaiterToTableForm = ({ waiters, tables, onSubmit }) => {
           };
         })}
         label="Tables"
+        name="tableNumber"
         value={assignment.tableNumber}
         defaultOption="Select table"
-        onChange={handleTableChange}
+        onChange={handleChange}
       />
       <input type="submit" className="btn btn-success" value="Assign table" />
     </form>

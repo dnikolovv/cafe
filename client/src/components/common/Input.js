@@ -47,7 +47,7 @@ Input.propTypes = {
   error: PropTypes.string,
   isPassword: PropTypes.bool.isRequired,
   isReadonly: PropTypes.bool.isRequired,
-  isNumber: PropTypes.bool.isRequired
+  isNumber: PropTypes.bool
 };
 
 Input.defaultProps = {
