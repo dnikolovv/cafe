@@ -6,8 +6,10 @@ using Cafe.Api.ModelBinders;
 using Cafe.Core.AuthContext;
 using Cafe.Core.AuthContext.Commands;
 using Cafe.Core.AuthContext.Configuration;
+using Cafe.Core.TableContext.Commands;
 using Cafe.Domain.Entities;
 using Cafe.Persistance.EntityFramework;
+using FluentValidation;
 using FluentValidation.AspNetCore;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
@@ -89,7 +91,10 @@ namespace Cafe.Api
                 options.Filters.Add<ExceptionFilter>();
                 options.Filters.Add<ModelStateFilter>();
             })
-            .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<RegisterValidator>())
+            .AddFluentValidation(fv =>
+            {
+                fv.RegisterValidatorsFromAssemblyContaining<RegisterValidator>();
+            })
             .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 
