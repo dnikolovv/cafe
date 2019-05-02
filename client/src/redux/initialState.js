@@ -8,6 +8,7 @@ export default {
   baristas: [],
   cashiers: [],
   managers: [],
+  tables: [],
   orders: {
     pending: [],
     issued: [],

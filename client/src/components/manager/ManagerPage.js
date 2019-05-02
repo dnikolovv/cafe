@@ -2,12 +2,23 @@ import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import * as menuItemActions from "../../redux/actions/menuItemActions";
+import * as tableActions from "../../redux/actions/tableActions";
 import MenuItemsList from "./MenuItemsList";
 import AddMenuItemForm from "./AddMenuItemForm";
+import TablesList from "./TablesList";
+import AddTableForm from "./AddTableForm";
 
-const ManagerPage = ({ loadMenuItems, addMenuItem, menuItems }) => {
+const ManagerPage = ({
+  loadMenuItems,
+  addMenuItem,
+  loadTables,
+  addTable,
+  tables,
+  menuItems
+}) => {
   useEffect(() => {
     loadMenuItems();
+    loadTables();
   }, []);
 
   const [newMenuItem, setNewMenuItem] = useState({
@@ -15,6 +26,8 @@ const ManagerPage = ({ loadMenuItems, addMenuItem, menuItems }) => {
     price: "",
     number: ""
   });
+
+  const [newTable, setNewTable] = useState({ number: "" });
 
   const handleNewMenuItemChange = event => {
     setNewMenuItem({ ...newMenuItem, [event.target.name]: event.target.value });
@@ -26,16 +39,33 @@ const ManagerPage = ({ loadMenuItems, addMenuItem, menuItems }) => {
     setNewMenuItem({ ...newMenuItem, description: "", price: "", number: "" });
   };
 
+  const handleNewTableChange = event => {
+    setNewTable({ ...newTable, [event.target.name]: event.target.value });
+  };
+
+  const handleAddTable = event => {
+    event.preventDefault();
+    addTable(newTable);
+    setNewTable({ ...newTable, number: "" });
+  };
+
   return (
     <>
       <h2>Manager</h2>
       <h3>Menu</h3>
       <MenuItemsList menuItems={menuItems} />
-
       <AddMenuItemForm
         menuItem={newMenuItem}
         onChange={handleNewMenuItemChange}
         onSubmit={handleAddMenuItem}
+      />
+
+      <h3>Tables</h3>
+      <TablesList tables={tables} />
+      <AddTableForm
+        table={newTable}
+        onChange={handleNewTableChange}
+        onSubmit={handleAddTable}
       />
 
       <p>
@@ -55,13 +85,16 @@ ManagerPage.propTypes = {
 
 function mapStateToProps(state) {
   return {
-    menuItems: state.menuItems
+    menuItems: state.menuItems,
+    tables: state.tables
   };
 }
 
 const mapDispatchToProps = {
   loadMenuItems: menuItemActions.loadMenuItems,
-  addMenuItem: menuItemActions.addMenuItem
+  addMenuItem: menuItemActions.addMenuItem,
+  loadTables: tableActions.loadTables,
+  addTable: tableActions.addTable
 };
 
 export default connect(
