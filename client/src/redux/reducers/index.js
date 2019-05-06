@@ -6,6 +6,7 @@ import { baristaReducer as baristas } from "../reducers/barista/baristaReducer";
 import { cashierReducer as cashiers } from "../reducers/cashier/cashierReducer";
 import { managerReducer as managers } from "../reducers/manager/managerReducer";
 import { orderReducer as orders } from "../reducers/order/orderReducer";
+import { tableReducer as tables } from "../reducers/table/tableReducer";
 import { menuItemReducer as menuItems } from "../reducers/menuItem/menuItemReducer";
 
 const rootReducer = combineReducers({
@@ -16,6 +17,7 @@ const rootReducer = combineReducers({
   cashiers,
   managers,
   orders,
+  tables,
   menuItems
 });
 

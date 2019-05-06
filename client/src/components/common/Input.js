@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-const TextInput = ({
+const Input = ({
   name,
   label,
   onChange,
@@ -9,6 +9,7 @@ const TextInput = ({
   value,
   error,
   isPassword,
+  isNumber,
   isReadonly
 }) => {
   let wrapperClass = "form-group";
@@ -16,7 +17,7 @@ const TextInput = ({
     wrapperClass += " has-error";
   }
 
-  const type = isPassword ? "password" : "text";
+  const type = isPassword ? "password" : isNumber ? "number" : "text";
 
   return (
     <div className={wrapperClass}>
@@ -37,7 +38,7 @@ const TextInput = ({
   );
 };
 
-TextInput.propTypes = {
+Input.propTypes = {
   name: PropTypes.string.isRequired,
   label: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
@@ -45,12 +46,13 @@ TextInput.propTypes = {
   value: PropTypes.string,
   error: PropTypes.string,
   isPassword: PropTypes.bool.isRequired,
-  isReadonly: PropTypes.bool.isRequired
+  isReadonly: PropTypes.bool.isRequired,
+  isNumber: PropTypes.bool
 };
 
-TextInput.defaultProps = {
+Input.defaultProps = {
   isPassword: false,
   isReadonly: false
 };
 
-export default TextInput;
+export default Input;

@@ -29,8 +29,8 @@ namespace Cafe.Business.WaiterContext.CommandHandlers
 
         public override Task<Option<Unit, Error>> Handle(AssignTable command) =>
             CheckIfTableExists(command.TableNumber).
-            FilterAsync(async t => t.WaiterId != command.WaiterToAssignToId, Error.Conflict($"Waiter {command.WaiterToAssignToId} is already assigned to this table.")).FlatMapAsync(table =>
-            CheckIfWaiterExists(command.WaiterToAssignToId).FlatMapAsync(waiter =>
+            FilterAsync(async t => t.WaiterId != command.WaiterId, Error.Conflict($"Waiter {command.WaiterId} is already assigned to this table.")).FlatMapAsync(table =>
+            CheckIfWaiterExists(command.WaiterId).FlatMapAsync(waiter =>
             AssignTable(table, waiter.Id)));
 
         private async Task<Option<Unit, Error>> AssignTable(Table table, Guid waiterToAssignToId)

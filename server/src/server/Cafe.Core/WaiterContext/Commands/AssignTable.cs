@@ -6,6 +6,6 @@ namespace Cafe.Core.WaiterContext.Commands
     {
         public int TableNumber { get; set; }
 
-        public Guid WaiterToAssignToId { get; set; }
+        public Guid WaiterId { get; set; }
     }
 }

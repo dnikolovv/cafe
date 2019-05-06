@@ -6,6 +6,7 @@ namespace Cafe.Core.TableContext.Commands
     {
         public AddTableValidator()
         {
+            RuleFor(c => c.Number).GreaterThan(0);
         }
     }
 }

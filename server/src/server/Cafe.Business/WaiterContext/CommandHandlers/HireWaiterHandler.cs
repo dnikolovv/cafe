@@ -3,6 +3,7 @@ using Cafe.Core.WaiterContext.Commands;
 using Cafe.Domain;
 using Cafe.Domain.Entities;
 using Cafe.Domain.Events;
+using Cafe.Domain.Views;
 using Cafe.Persistance.EntityFramework;
 using FluentValidation;
 using MediatR;
@@ -28,8 +29,9 @@ namespace Cafe.Business.WaiterContext.CommandHandlers
         }
 
         public override Task<Option<Unit, Error>> Handle(HireWaiter command) =>
-            WaiterShouldntExist(command.Id).MapAsync(__ =>
-            PersistWaiter(command));
+            WaiterShouldntExist(command.Id).FlatMapAsync(_ =>
+            PersistWaiter(command).MapAsync(__ =>
+            PublishEvents(command.Id, new WaiterHired { Waiter = Mapper.Map<WaiterView>(command) })));
 
         private async Task<Option<Unit, Error>> WaiterShouldntExist(Guid waiterId) =>
             (await DbContext
@@ -38,14 +40,15 @@ namespace Cafe.Business.WaiterContext.CommandHandlers
                 .SomeWhen(w => w == null, Error.Conflict($"Waiter {waiterId} already exists."))
                 .Map(_ => Unit.Value);
 
-        private async Task<Unit> PersistWaiter(HireWaiter command)
+        private async Task<Option<Unit, Error>> PersistWaiter(HireWaiter command)
         {
             var waiter = Mapper.Map<Waiter>(command);
 
             await DbContext.AddAsync(waiter);
             await DbContext.SaveChangesAsync();
 
-            return Unit.Value;
+            // Returning optional so we can chain
+            return Unit.Value.Some<Unit, Error>();
         }
     }
 }
