@@ -30,10 +30,11 @@ namespace Cafe.Tests.Api.Hubs
         public async Task AuthenticatedSubscribersAreNotifiedAboutHiredWaiters(HireWaiter hireWaiterCommand)
         {
             // Arrange
-            var accessToken = await _authTestsHelper.GetAdminToken();
+            var adminAccessToken = await _authTestsHelper.GetAdminToken();
 
-            var testConnection = await TestHubConnectionFactory
-                .OpenTestConnectionAsync<WaiterHired>(_hubUrl, nameof(WaiterHired), accessToken);
+            var testConnection = BuildTestConnection(adminAccessToken);
+
+            await testConnection.OpenAsync();
 
             // Act
             await _fixture.SendAsync(hireWaiterCommand);
@@ -56,7 +57,8 @@ namespace Cafe.Tests.Api.Hubs
 
             var exception = await Should.ThrowAsync<HttpRequestException>(async () =>
             {
-                await TestHubConnectionFactory.OpenTestConnectionAsync<WaiterHired>(_hubUrl, nameof(WaiterHired), accessToken);
+                await BuildTestConnection(accessToken)
+                    .OpenAsync();
             });
 
             exception.Message.ShouldContain("403");
@@ -80,8 +82,9 @@ namespace Cafe.Tests.Api.Hubs
 
             var accessToken = (await _authTestsHelper.Login(registerCommand.Email, registerCommand.Password)).TokenString;
 
-            var testConnection = await TestHubConnectionFactory
-                .OpenTestConnectionAsync<WaiterHired>(_hubUrl, nameof(WaiterHired), accessToken);
+            var testConnection = BuildTestConnection(accessToken);
+
+            await testConnection.OpenAsync();
 
             // Act
             await _fixture.SendAsync(hireWaiterCommand);
@@ -104,10 +107,18 @@ namespace Cafe.Tests.Api.Hubs
             // Act, Assert
             var exception = await Should.ThrowAsync<HttpRequestException>(async () =>
             {
-                await TestHubConnectionFactory.OpenTestConnectionAsync<WaiterHired>(_hubUrl, nameof(WaiterHired), accessToken);
+                await BuildTestConnection(accessToken)
+                    .OpenAsync();
             });
 
             exception.Message.ShouldContain("401");
         }
+
+        private TestHubConnection<WaiterHired> BuildTestConnection(string accessToken) =>
+            new TestHubConnectionBuilder<WaiterHired>()
+                .WithHub(_hubUrl)
+                .WithExpectedMessage(nameof(WaiterHired))
+                .WithAccessToken(accessToken)
+                .Build();
     }
 }
