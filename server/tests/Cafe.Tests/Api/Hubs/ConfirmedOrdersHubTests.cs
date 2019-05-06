@@ -34,10 +34,11 @@ namespace Cafe.Tests.Api.Hubs
         public async Task ConfirmedOrdersAreSentToAllAuthenticatedSubscribers(Guid orderId, MenuItem[] menuItems)
         {
             // Arrange
-            var accessToken = await _authTestsHelper.GetAdminToken();
+            var adminAcessToken = await _authTestsHelper.GetAdminToken();
 
-            var testConnection = await TestHubConnectionFactory
-                .OpenTestConnectionAsync<OrderConfirmed>(_hubUrl, nameof(OrderConfirmed), accessToken);
+            var testConnection = BuildTestConnection(adminAcessToken);
+
+            await testConnection.OpenAsync();
 
             // Act
             await _toGoOrdersHelper.CreateConfirmedOrder(orderId, menuItems);
@@ -60,7 +61,9 @@ namespace Cafe.Tests.Api.Hubs
 
             var exception = await Should.ThrowAsync<HttpRequestException>(async () =>
             {
-                await TestHubConnectionFactory.OpenTestConnectionAsync<OrderConfirmed>(_hubUrl, nameof(OrderConfirmed), accessToken);
+                var connection = BuildTestConnection(accessToken);
+
+                await connection.OpenAsync();
             });
 
             exception.Message.ShouldContain("403");
@@ -84,8 +87,9 @@ namespace Cafe.Tests.Api.Hubs
 
             var accessToken = (await _authTestsHelper.Login(registerCommand.Email, registerCommand.Password)).TokenString;
 
-            var testConnection = await TestHubConnectionFactory
-                .OpenTestConnectionAsync<OrderConfirmed>(_hubUrl, nameof(OrderConfirmed), accessToken);
+            var testConnection = BuildTestConnection(accessToken);
+
+            await testConnection.OpenAsync();
 
             // Act
             await _toGoOrdersHelper.CreateConfirmedOrder(orderId, menuItems);
@@ -108,10 +112,19 @@ namespace Cafe.Tests.Api.Hubs
             // Act, Assert
             var exception = await Should.ThrowAsync<HttpRequestException>(async () =>
             {
-                await TestHubConnectionFactory.OpenTestConnectionAsync<OrderConfirmed>(_hubUrl, nameof(OrderConfirmed), accessToken);
+                var connection = BuildTestConnection(accessToken);
+
+                await connection.OpenAsync();
             });
 
             exception.Message.ShouldContain("401");
         }
+
+        private TestHubConnection<OrderConfirmed> BuildTestConnection(string accessToken) =>
+            new TestHubConnectionBuilder<OrderConfirmed>()
+                .WithHub(_hubUrl)
+                .WithExpectedMessage(nameof(OrderConfirmed))
+                .WithAccessToken(accessToken)
+                .Build();
     }
 }
