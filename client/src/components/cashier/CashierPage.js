@@ -31,6 +31,7 @@ const CashierPage = ({
     issueToGoOrder(
       selectedItems.flatMap(i => Array(i.count).fill(i.item.number))
     );
+    setSelectedItems([]);
   };
 
   const handlePricePaidChange = (orderId, event) => {

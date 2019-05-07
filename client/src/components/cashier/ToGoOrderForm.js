@@ -19,6 +19,7 @@ const ToGoOrderForm = ({
 
       <SelectableMenuDisplay
         items={menuItems}
+        selectedItems={selectedItems}
         onSelectedItemsChanged={onSelectedItemsChanged}
       />
       <button onClick={handleSubmit} className="btn btn-success mt-2">

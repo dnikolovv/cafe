@@ -40,7 +40,12 @@ const WaiterPage = ({
     <div>
       <h3>Waiter</h3>
       <h4>Open Tabs</h4>
-      <TabsList tabs={tabs} onTabSelected={handleTabSelected} />
+      <div className="row">
+        <div className="col-md-12">
+          <TabsList tabs={tabs} onTabSelected={handleTabSelected} />
+        </div>
+      </div>
+
       <OpenTabForm
         tab={newTab}
         tables={tables}
