@@ -1,6 +1,6 @@
 import React from "react";
-import MultiSelect from "@khanacademy/react-multi-select";
 import PropTypes from "prop-types";
+import SelectableMenuDisplay from "../common/SelectableMenuDisplay";
 
 const ToGoOrderForm = ({
   menuItems,
@@ -16,17 +16,14 @@ const ToGoOrderForm = ({
   return (
     <>
       <h3 className="mt-3">Issue To-Go Order</h3>
-      <form className="form" onSubmit={handleSubmit}>
-        <MultiSelect
-          options={menuItems.map(item => ({
-            label: item.description,
-            value: item.number
-          }))}
-          selected={selectedItems}
-          onSelectedChanged={onSelectedItemsChanged}
-        />
-        <input type="submit" className="btn btn-success mt-2" value="Issue" />
-      </form>
+
+      <SelectableMenuDisplay
+        items={menuItems}
+        onSelectedItemsChanged={onSelectedItemsChanged}
+      />
+      <button onClick={handleSubmit} className="btn btn-success mt-2">
+        Issue
+      </button>
     </>
   );
 };

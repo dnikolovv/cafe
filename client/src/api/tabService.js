@@ -32,3 +32,8 @@ export function rejectMenuItems(tabId, itemNumbers) {
   const url = baseUrl + "reject";
   return apiClient.put(url, { tabId, itemNumbers });
 }
+
+export function serveMenuItems(tabId, itemNumbers) {
+  const url = baseUrl + "serve";
+  return apiClient.put(url, { tabId, itemNumbers });
+}

@@ -10,6 +10,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Optional;
 using Optional.Async;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -55,7 +56,7 @@ namespace Cafe.Business.OrderContext.CommandHandlers
         private async Task<Unit> PersistOrder(ToGoOrder order, IList<MenuItem> orderedItems)
         {
             order.OrderedItems = orderedItems
-                .Select(i => new ToGoOrderMenuItem { MenuItemId = i.Id, OrderId = order.Id })
+                .Select(i => new ToGoOrderMenuItem { Id = Guid.NewGuid(), MenuItemId = i.Id, OrderId = order.Id })
                 .ToList();
 
             DbContext.ToGoOrders.Add(order);

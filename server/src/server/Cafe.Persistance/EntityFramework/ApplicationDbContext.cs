@@ -25,14 +25,12 @@ namespace Cafe.Persistance.EntityFramework
 
         public DbSet<ToGoOrder> ToGoOrders { get; set; }
 
+        public DbSet<ToGoOrderMenuItem> ToGoOrderMenuItems { get; set; }
+
         public DbSet<MenuItem> MenuItems { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            builder
-                .Entity<ToGoOrderMenuItem>()
-                .HasKey(x => new { x.MenuItemId, x.OrderId });
-
             builder
                 .Entity<ToGoOrderMenuItem>()
                 .HasOne(x => x.Order)

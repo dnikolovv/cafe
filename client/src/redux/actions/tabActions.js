@@ -17,6 +17,14 @@ export function loadAllTabs() {
   };
 }
 
+export function serveMenuItems(tabId, itemNumbers) {
+  return function(dispatch) {
+    return tabApi.serveMenuItems(tabId, itemNumbers).then(_ => {
+      dispatch(loadAllTabs());
+    });
+  };
+}
+
 export function rejectMenuItems(tabId, itemNumbers) {
   return function(dispatch) {
     return tabApi.rejectMenuItems(tabId, itemNumbers).then(_ => {

@@ -1,4 +1,5 @@
 import React from "react";
+import { flattenMenuItems } from "../../utils/menuItemUtils";
 
 const WaitingOrdersList = ({ orders, onOrderCompleted }) => {
   return (
@@ -20,7 +21,11 @@ const WaitingOrdersList = ({ orders, onOrderCompleted }) => {
             .map(order => (
               <tr key={order.id}>
                 <td>{order.id}</td>
-                <td>{order.orderedItems.map(i => i.description).join(", ")}</td>
+                <td>
+                  {flattenMenuItems(order.orderedItems)
+                    .map(x => `${x.count} x ${x.item.description}`)
+                    .join(", ")}
+                </td>
                 <td>
                   <button
                     onClick={() => onOrderCompleted(order.id)}

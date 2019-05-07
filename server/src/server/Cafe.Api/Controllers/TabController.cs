@@ -60,6 +60,14 @@ namespace Cafe.Api.Controllers
             .Match(Ok, Error);
 
         /// <summary>
+        /// Serves a list of menu items.
+        /// </summary>
+        [HttpPut("serve")]
+        public async Task<IActionResult> ServeMenuItems([FromBody] ServeMenuItems command) =>
+            (await _mediator.Send(command))
+            .Match(Ok, Error);
+
+        /// <summary>
         /// Rejects a list of menu items for a given tab.
         /// </summary>
         [HttpPut("reject")]

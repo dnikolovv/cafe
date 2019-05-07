@@ -1,5 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
+import { flattenMenuItems } from "../../utils/menuItemUtils";
 
 const PendingOrdersList = ({
   pendingOrders,
@@ -27,7 +28,11 @@ const PendingOrdersList = ({
             .map(order => (
               <tr key={order.id}>
                 <td>{order.id}</td>
-                <td>{order.orderedItems.map(i => i.description).join(", ")}</td>
+                <td>
+                  {flattenMenuItems(order.orderedItems)
+                    .map(x => `${x.count} x ${x.item.description}`)
+                    .join(", ")}
+                </td>
                 <td>{order.price.toFixed(2)}</td>
                 <td>
                   <input

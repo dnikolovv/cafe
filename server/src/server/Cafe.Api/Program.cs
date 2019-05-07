@@ -23,5 +23,14 @@ namespace Cafe.Api
 
             return builder;
         }
+
+        /// <summary>
+        /// To be used by EF tooling until I implement IDesignTimeDbContextFactory.
+        /// https://wildermuth.com/2017/07/06/Program-cs-in-ASP-NET-Core-2-0
+        /// </summary>
+        public static IWebHost BuildWebHost(string[] args) =>
+            WebHost.CreateDefaultBuilder(args)
+                .UseStartup<Startup>()
+                .Build();
     }
 }
