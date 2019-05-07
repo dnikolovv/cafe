@@ -51,6 +51,30 @@ namespace Cafe.Persistance.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Baristas",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(nullable: false),
+                    ShortName = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Baristas", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Cashiers",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(nullable: false),
+                    ShortName = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Cashiers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Managers",
                 columns: table => new
                 {
@@ -195,6 +219,26 @@ namespace Cafe.Persistance.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ToGoOrders",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(nullable: false),
+                    Status = table.Column<int>(nullable: false),
+                    Date = table.Column<DateTime>(nullable: false),
+                    BaristaId = table.Column<Guid>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ToGoOrders", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ToGoOrders_Baristas_BaristaId",
+                        column: x => x.BaristaId,
+                        principalTable: "Baristas",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Tables",
                 columns: table => new
                 {
@@ -211,6 +255,31 @@ namespace Cafe.Persistance.Migrations
                         principalTable: "Waiters",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ToGoOrderMenuItems",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(nullable: false),
+                    OrderId = table.Column<Guid>(nullable: false),
+                    MenuItemId = table.Column<Guid>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ToGoOrderMenuItems", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ToGoOrderMenuItems_MenuItems_MenuItemId",
+                        column: x => x.MenuItemId,
+                        principalTable: "MenuItems",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ToGoOrderMenuItems_ToGoOrders_OrderId",
+                        column: x => x.OrderId,
+                        principalTable: "ToGoOrders",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -260,6 +329,21 @@ namespace Cafe.Persistance.Migrations
                 name: "IX_Tables_WaiterId",
                 table: "Tables",
                 column: "WaiterId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ToGoOrderMenuItems_MenuItemId",
+                table: "ToGoOrderMenuItems",
+                column: "MenuItemId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ToGoOrderMenuItems_OrderId",
+                table: "ToGoOrderMenuItems",
+                column: "OrderId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ToGoOrders_BaristaId",
+                table: "ToGoOrders",
+                column: "BaristaId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -280,13 +364,16 @@ namespace Cafe.Persistance.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "Cashiers");
+
+            migrationBuilder.DropTable(
                 name: "Managers");
 
             migrationBuilder.DropTable(
-                name: "MenuItems");
+                name: "Tables");
 
             migrationBuilder.DropTable(
-                name: "Tables");
+                name: "ToGoOrderMenuItems");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
@@ -296,6 +383,15 @@ namespace Cafe.Persistance.Migrations
 
             migrationBuilder.DropTable(
                 name: "Waiters");
+
+            migrationBuilder.DropTable(
+                name: "MenuItems");
+
+            migrationBuilder.DropTable(
+                name: "ToGoOrders");
+
+            migrationBuilder.DropTable(
+                name: "Baristas");
         }
     }
 }

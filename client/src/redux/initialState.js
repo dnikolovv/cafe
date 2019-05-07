@@ -9,6 +9,7 @@ export default {
   cashiers: [],
   managers: [],
   tables: [],
+  tabs: [],
   orders: {
     pending: [],
     issued: [],

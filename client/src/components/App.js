@@ -7,12 +7,15 @@ import AdminPage from "./admin/AdminPage";
 import CashierPage from "./cashier/CashierPage";
 import BaristaPage from "./barista/BaristaPage";
 import ManagerPage from "./manager/ManagerPage";
+import WaiterPage from "./waiter/WaiterPage";
 import ManageUserPage from "./admin/ManageUserPage";
 import UserProvider from "./UserProvider";
+import ManageTabPage from "./waiter/ManageTabPage";
 import Logout from "./auth/Logout";
 import { Route, Switch } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import "./font-awesome.css";
 
 const App = () => {
   return (
@@ -27,6 +30,8 @@ const App = () => {
         <Route path="/cashier" component={CashierPage} />
         <Route path="/barista" component={BaristaPage} />
         <Route path="/manager" component={ManagerPage} />
+        <Route path="/waiter" component={WaiterPage} />
+        <Route path="/tab/:tabId" component={ManageTabPage} />
         <Route component={PageNotFound} />
       </Switch>
       <UserProvider />

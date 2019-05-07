@@ -8,6 +8,7 @@ import { managerReducer as managers } from "../reducers/manager/managerReducer";
 import { orderReducer as orders } from "../reducers/order/orderReducer";
 import { tableReducer as tables } from "../reducers/table/tableReducer";
 import { menuItemReducer as menuItems } from "../reducers/menuItem/menuItemReducer";
+import { tabReducer as tabs } from "../reducers/tab/tabReducer";
 
 const rootReducer = combineReducers({
   auth,
@@ -18,6 +19,7 @@ const rootReducer = combineReducers({
   managers,
   orders,
   tables,
+  tabs,
   menuItems
 });
 

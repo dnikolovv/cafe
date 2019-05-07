@@ -30,7 +30,7 @@ function fetchWrapper(url, method, body) {
 }
 
 async function handleResponse(response) {
-  if (response.status === 401) {
+  if (response.status === 401 || response.status === 403) {
     handleUnauthorized();
     return Promise.reject("Unauthorized.");
   }

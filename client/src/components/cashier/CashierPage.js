@@ -23,12 +23,15 @@ const CashierPage = ({
   const [selectedItems, setSelectedItems] = useState([]);
   const [paidPrices, setPaidPrices] = useState({});
 
-  const handleMenuItemSelected = itemNumbers => {
-    setSelectedItems(itemNumbers);
+  const handleMenuItemSelected = items => {
+    setSelectedItems(items);
   };
 
   const handleIssueOrder = selectedItems => {
-    issueToGoOrder(selectedItems);
+    issueToGoOrder(
+      selectedItems.flatMap(i => Array(i.count).fill(i.item.number))
+    );
+    setSelectedItems([]);
   };
 
   const handlePricePaidChange = (orderId, event) => {

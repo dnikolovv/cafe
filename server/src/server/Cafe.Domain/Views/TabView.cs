@@ -43,6 +43,7 @@ namespace Cafe.Domain.Views
         public void Apply(TabClosed @event)
         {
             IsOpen = false;
+            TotalPaid = @event.AmountPaid;
             TipValue = @event.TipValue;
         }
 

@@ -110,15 +110,20 @@ namespace Cafe.Persistance.Migrations
 
             modelBuilder.Entity("Cafe.Domain.Entities.ToGoOrderMenuItem", b =>
                 {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
                     b.Property<Guid>("MenuItemId");
 
                     b.Property<Guid>("OrderId");
 
-                    b.HasKey("MenuItemId", "OrderId");
+                    b.HasKey("Id");
+
+                    b.HasIndex("MenuItemId");
 
                     b.HasIndex("OrderId");
 
-                    b.ToTable("ToGoOrderMenuItem");
+                    b.ToTable("ToGoOrderMenuItems");
                 });
 
             modelBuilder.Entity("Cafe.Domain.Entities.User", b =>

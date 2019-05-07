@@ -123,6 +123,16 @@
             Completes a to-go order.
             </summary>
         </member>
+        <member name="M:Cafe.Api.Controllers.TabController.GetTabView(System.Guid)">
+            <summary>
+            Retrieves a tab by id.
+            </summary>
+        </member>
+        <member name="M:Cafe.Api.Controllers.TabController.GetAllOpenTabs">
+            <summary>
+            Retrieves all open tabs.
+            </summary>
+        </member>
         <member name="M:Cafe.Api.Controllers.TabController.OpenTab(Cafe.Core.TabContext.Commands.OpenTab)">
             <summary>
             Opens a new tab on a given table.
@@ -136,6 +146,11 @@
         <member name="M:Cafe.Api.Controllers.TabController.OrderMenuItems(Cafe.Core.TabContext.Commands.OrderMenuItems)">
             <summary>
             Orders a list of menu items for a given tab.
+            </summary>
+        </member>
+        <member name="M:Cafe.Api.Controllers.TabController.ServeMenuItems(Cafe.Core.TabContext.Commands.ServeMenuItems)">
+            <summary>
+            Serves a list of menu items.
             </summary>
         </member>
         <member name="M:Cafe.Api.Controllers.TabController.RejectMenuItems(Cafe.Core.TabContext.Commands.RejectMenuItems)">
@@ -177,6 +192,12 @@
             <summary>
             This operation filter only works on <see cref="T:Optional.Option"/> types that are contained in a class.
             Optional values that are put as type parameters will not be properly displayed in Swagger, although they will work.
+            </summary>
+        </member>
+        <member name="M:Cafe.Api.Program.BuildWebHost(System.String[])">
+            <summary>
+            To be used by EF tooling until I implement IDesignTimeDbContextFactory.
+            https://wildermuth.com/2017/07/06/Program-cs-in-ASP-NET-Core-2-0
             </summary>
         </member>
     </members>
