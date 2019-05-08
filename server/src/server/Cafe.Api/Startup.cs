@@ -128,6 +128,7 @@ namespace Cafe.Api
             {
                 routes.MapHub<ConfirmedOrdersHub>("/confirmedOrders");
                 routes.MapHub<HiredWaitersHub>("/hiredWaiters");
+                routes.MapHub<TableActionsHub>("/tableActions");
             });
 
             app.UseMvc();

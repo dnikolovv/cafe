@@ -8,6 +8,7 @@ import FiniteSelctableMenu from "../common/FiniteSelectableMenu";
 import { flattenMenuItems } from "../../utils/menuItemUtils";
 import OrderedItemsList from "../common/OrderedItemsList";
 import PropTypes from "prop-types";
+import * as tableActions from "../../redux/actions/tableActions";
 
 const ManageTabPage = ({
   tabId,
@@ -18,7 +19,9 @@ const ManageTabPage = ({
   menuItems,
   loadMenuItems,
   rejectMenuItems,
-  serveMenuItems
+  serveMenuItems,
+  callWaiter,
+  requestBill
 }) => {
   useEffect(() => {
     if (!tab) {
@@ -59,7 +62,6 @@ const ManageTabPage = ({
 
   const handleTabClose = amountPaid => {
     closeTab(tabId, amountPaid);
-    loadTab(tabId);
   };
 
   const extractItemNumbersFromPairs = pairs => {
@@ -80,6 +82,31 @@ const ManageTabPage = ({
               </p>
             </div>
           </div>
+
+          {tab.isOpen && (
+            <>
+              <hr />
+              <h4>Actions:</h4>
+              <div className="row">
+                <div className="col-md-10">
+                  <button
+                    onClick={() => callWaiter(tab.tableNumber)}
+                    className="btn btn-success float-left"
+                  >
+                    Call Waiter
+                  </button>
+                  <button
+                    onClick={() => requestBill(tab.tableNumber)}
+                    className="btn btn-warning float-left ml-1"
+                  >
+                    Request Bill
+                  </button>
+                </div>
+              </div>
+
+              <hr />
+            </>
+          )}
 
           {tab.isOpen ? (
             <div className="row">
@@ -134,32 +161,30 @@ const ManageTabPage = ({
           )}
 
           {tab.servedMenuItems.length > 0 ||
-          tab.rejectedMenuItems.length > 0 ? (
-            <>
-              <hr />
+            (tab.rejectedMenuItems.length > 0 && (
+              <>
+                <hr />
 
-              <div className="row">
-                {tab.servedMenuItems.length > 0 && (
-                  <div className="col-md-6">
-                    <h4>Served Items</h4>
-                    <OrderedItemsList
-                      itemPairs={flattenMenuItems(tab.servedMenuItems)}
-                    />
-                  </div>
-                )}
-                {tab.rejectedMenuItems.length > 0 && (
-                  <div className="col-md-6">
-                    <h4>Rejected Items</h4>
-                    <OrderedItemsList
-                      itemPairs={flattenMenuItems(tab.rejectedMenuItems)}
-                    />
-                  </div>
-                )}
-              </div>
-            </>
-          ) : (
-            <></>
-          )}
+                <div className="row">
+                  {tab.servedMenuItems.length > 0 && (
+                    <div className="col-md-6">
+                      <h4>Served Items</h4>
+                      <OrderedItemsList
+                        itemPairs={flattenMenuItems(tab.servedMenuItems)}
+                      />
+                    </div>
+                  )}
+                  {tab.rejectedMenuItems.length > 0 && (
+                    <div className="col-md-6">
+                      <h4>Rejected Items</h4>
+                      <OrderedItemsList
+                        itemPairs={flattenMenuItems(tab.rejectedMenuItems)}
+                      />
+                    </div>
+                  )}
+                </div>
+              </>
+            ))}
 
           <hr />
 
@@ -177,14 +202,16 @@ const ManageTabPage = ({
 
 ManageTabPage.propTypes = {
   tabId: PropTypes.string.isRequired,
-  tab: PropTypes.object.isRequired,
+  tab: PropTypes.object,
   loadTab: PropTypes.func.isRequired,
   closeTab: PropTypes.func.isRequired,
   orderMenuItems: PropTypes.func.isRequired,
   menuItems: PropTypes.array.isRequired,
   loadMenuItems: PropTypes.func.isRequired,
   rejectMenuItems: PropTypes.func.isRequired,
-  serveMenuItems: PropTypes.func.isRequired
+  serveMenuItems: PropTypes.func.isRequired,
+  callWaiter: PropTypes.func.isRequired,
+  requestBill: PropTypes.func.isRequired
 };
 
 function mapStateToProps(state, ownProps) {
@@ -204,7 +231,9 @@ const mapDispatchToProps = {
   rejectMenuItems: tabActions.rejectMenuItems,
   serveMenuItems: tabActions.serveMenuItems,
   loadMenuItems: menuItemActions.loadMenuItems,
-  loadTab: tabActions.loadTab
+  loadTab: tabActions.loadTab,
+  callWaiter: tableActions.callWaiter,
+  requestBill: tableActions.requestBill
 };
 
 export default connect(

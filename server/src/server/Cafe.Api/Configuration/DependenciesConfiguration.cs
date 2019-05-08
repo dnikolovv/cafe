@@ -31,6 +31,7 @@ namespace Cafe.Api.Configuration
         public static void AddCommonServices(this IServiceCollection services)
         {
             services.AddTransient<IMenuItemsService, MenuItemsService>();
+            services.AddTransient<IUsersService, UsersService>();
         }
 
         public static void AddCqrs(this IServiceCollection services)

@@ -168,6 +168,16 @@
             Adds a table to the café.
             </summary>
         </member>
+        <member name="M:Cafe.Api.Controllers.TableController.CallWaiter(System.Int32)">
+            <summary>
+            Calls the waiter assigned to the table number provided.
+            </summary>
+        </member>
+        <member name="M:Cafe.Api.Controllers.TableController.RequestBill(System.Int32)">
+            <summary>
+            Requests the bill from the waiter assigned to the table number provided.
+            </summary>
+        </member>
         <member name="M:Cafe.Api.Controllers.WaiterController.GetEmployedWaiters">
             <summary>
             Retrieves a list of all currently employed waiters in the café.

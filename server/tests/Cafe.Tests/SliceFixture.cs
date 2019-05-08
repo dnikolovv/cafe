@@ -108,7 +108,7 @@ namespace Cafe.Tests
             }
         }
 
-        public string GetFullServerUrl(string route)
+        public string GetCompleteServerUrl(string route)
         {
             route = route.TrimStart('/', '\\');
             return $"{BaseUrl}/{route}";

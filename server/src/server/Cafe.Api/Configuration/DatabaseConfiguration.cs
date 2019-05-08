@@ -45,6 +45,11 @@ namespace Cafe.Api.Configuration
                 {
                     Id = Guid.NewGuid(),
                     ShortName = "Pete"
+                },
+                new Waiter
+                {
+                    Id = Guid.NewGuid(),
+                    ShortName = "James"
                 }
             };
 
@@ -55,6 +60,12 @@ namespace Cafe.Api.Configuration
                     Id = Guid.NewGuid(),
                     Number = 1,
                     WaiterId = waiters[0].Id
+                },
+                new Table
+                {
+                    Id = Guid.NewGuid(),
+                    Number = 2,
+                    WaiterId = null
                 }
             };
 

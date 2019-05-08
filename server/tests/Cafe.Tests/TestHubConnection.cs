@@ -12,8 +12,9 @@ namespace Cafe.Tests
         private readonly HubConnection _connection;
         private readonly string _expectedEventToReceive;
         private readonly Mock<Action<TEvent>> _handlerMock;
+        private readonly int _verificationTimeout;
 
-        internal TestHubConnection(HubConnection connection, string expectedEventToReceive)
+        internal TestHubConnection(HubConnection connection, string expectedEventToReceive, int verificationTimeout = 10000)
         {
             if (connection.State == HubConnectionState.Connected)
             {
@@ -24,6 +25,7 @@ namespace Cafe.Tests
             _handlerMock = new Mock<Action<TEvent>>();
             _expectedEventToReceive = expectedEventToReceive;
             _connection = connection;
+            _verificationTimeout = verificationTimeout;
         }
 
         public async Task OpenAsync()
@@ -34,7 +36,12 @@ namespace Cafe.Tests
 
         public void VerifyMessageReceived(Expression<Func<TEvent, bool>> predicate, Times times)
         {
-            _handlerMock.VerifyWithTimeout(x => x(It.Is<TEvent>(predicate)), times, 10000);
+            _handlerMock.VerifyWithTimeout(x => x(It.Is<TEvent>(predicate)), times, _verificationTimeout);
+        }
+
+        public void VerifyNoMessagesWereReceived()
+        {
+            _handlerMock.VerifyWithTimeout(x => x(It.IsAny<TEvent>()), Times.Never(), _verificationTimeout);
         }
     }
 }

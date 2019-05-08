@@ -7,7 +7,7 @@
             public const string WaiterId = "waiterId";
             public const string BaristaId = "baristaId";
             public const string ManagerId = "managerId";
-            public const string CashierId = "managerId";
+            public const string CashierId = "cashierId";
             public const string IsAdmin = "isAdmin";
         }
 
