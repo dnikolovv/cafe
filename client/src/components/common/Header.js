@@ -3,7 +3,7 @@ import { NavLink } from "react-router-dom";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 
-const Header = ({ isLoggedIn }) => {
+const Header = ({ isLoggedIn, currentUser }) => {
   const activeStyle = { color: "#000000" };
 
   return (
@@ -14,26 +14,46 @@ const Header = ({ isLoggedIn }) => {
       {" | "}
       {isLoggedIn ? (
         <>
-          <NavLink to="/admin" activeStyle={activeStyle}>
-            Admin
-          </NavLink>
-          {" | "}
-          <NavLink to="/cashier" activeStyle={activeStyle}>
-            Cashier
-          </NavLink>
-          {" | "}
-          <NavLink to="/barista" activeStyle={activeStyle}>
-            Barista
-          </NavLink>
-          {" | "}
-          <NavLink to="/manager" activeStyle={activeStyle}>
-            Manager
-          </NavLink>
-          {" | "}
-          <NavLink to="/waiter" activeStyle={activeStyle}>
-            Waiter
-          </NavLink>
-          {" | "}
+          {currentUser.isAdmin && (
+            <>
+              <NavLink to="/admin" activeStyle={activeStyle}>
+                Admin
+              </NavLink>
+              {" | "}
+            </>
+          )}
+          {(currentUser.isAdmin || currentUser.isCashier) && (
+            <>
+              <NavLink to="/cashier" activeStyle={activeStyle}>
+                Cashier
+              </NavLink>
+              {" | "}
+            </>
+          )}
+          {(currentUser.isAdmin || currentUser.isBarista) && (
+            <>
+              <NavLink to="/barista" activeStyle={activeStyle}>
+                Barista
+              </NavLink>
+              {" | "}
+            </>
+          )}
+          {(currentUser.isAdmin || currentUser.isManager) && (
+            <>
+              <NavLink to="/manager" activeStyle={activeStyle}>
+                Manager
+              </NavLink>
+              {" | "}
+            </>
+          )}
+          {(currentUser.isAdmin || currentUser.isWaiter) && (
+            <>
+              <NavLink to="/waiter" activeStyle={activeStyle}>
+                Waiter
+              </NavLink>
+              {" | "}
+            </>
+          )}
           <NavLink to="/logout" activeStyle={activeStyle}>
             Logout
           </NavLink>
@@ -53,7 +73,8 @@ Header.propTypes = {
 
 function mapStateToProps(state) {
   return {
-    isLoggedIn: state.auth.isLoggedIn
+    isLoggedIn: state.auth.isLoggedIn,
+    currentUser: state.auth.user
   };
 }
 
