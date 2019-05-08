@@ -26,7 +26,7 @@ namespace Cafe.Tests.Api.Hubs
             _fixture = new SliceFixture();
             _toGoOrdersHelper = new ToGoOrderTestsHelper(_fixture);
             _authTestsHelper = new AuthTestsHelper(_fixture);
-            _hubUrl = _fixture.GetFullServerUrl("/confirmedOrders");
+            _hubUrl = _fixture.GetCompleteServerUrl("/confirmedOrders");
         }
 
         [Theory]

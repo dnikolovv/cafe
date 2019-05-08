@@ -22,7 +22,7 @@ namespace Cafe.Tests.Api.Hubs
         {
             _fixture = new SliceFixture();
             _authTestsHelper = new AuthTestsHelper(_fixture);
-            _hubUrl = _fixture.GetFullServerUrl("/hiredWaiters");
+            _hubUrl = _fixture.GetCompleteServerUrl("/hiredWaiters");
         }
 
         [Theory]

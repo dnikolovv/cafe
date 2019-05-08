@@ -25,23 +25,38 @@ namespace Cafe.Api.Dispatchers
         }
 
         public Task Handle(WaiterCalled notification, CancellationToken cancellationToken) =>
-            NotifyWaiters(notification);
+            NotifyWaiterAtTable(notification.TableNumber, notification);
 
         public Task Handle(BillRequested notification, CancellationToken cancellationToken) =>
-            NotifyWaiters(notification);
+            NotifyWaiterAtTable(notification.TableNumber, notification);
 
-        private async Task<string[]> GetWaiterAccountsToNotify() =>
-            (await _dbContext
-                .UserClaims
-                .Where(c => c.ClaimType == AuthConstants.ClaimTypes.WaiterId)
-                .Select(uc => uc.UserId)
-                .ToArrayAsync())
-                .Select(g => g.ToString())
-                .ToArray();
-
-        private async Task NotifyWaiters<TNotification>(TNotification notification)
+        private async Task<string[]> GetWaiterAccountsToNotify(int tableNumber)
         {
-            var accountIdsToNotify = await GetWaiterAccountsToNotify();
+            var table = await _dbContext
+                .Tables
+                .FirstOrDefaultAsync(t => t.Number == tableNumber);
+
+            if (table != null && table.WaiterId.HasValue)
+            {
+                var waiterId = table.WaiterId.ToString();
+
+                var accountsToNotify = (await _dbContext
+                    .UserClaims
+                    .Where(c => c.ClaimType == AuthConstants.ClaimTypes.WaiterId && c.ClaimValue == waiterId)
+                    .Select(uc => uc.UserId)
+                    .ToArrayAsync())
+                    .Select(g => g.ToString())
+                    .ToArray();
+
+                return accountsToNotify;
+            }
+
+            return new string[] { };
+        }
+
+        private async Task NotifyWaiterAtTable<TNotification>(int tableNumber, TNotification notification)
+        {
+            var accountIdsToNotify = await GetWaiterAccountsToNotify(tableNumber);
 
             await _hubContext
                 .Clients
