@@ -59,7 +59,6 @@ const ManageTabPage = ({
 
   const handleTabClose = amountPaid => {
     closeTab(tabId, amountPaid);
-    loadTab(tabId);
   };
 
   const extractItemNumbersFromPairs = pairs => {
@@ -80,6 +79,25 @@ const ManageTabPage = ({
               </p>
             </div>
           </div>
+
+          {tab.isOpen && (
+            <>
+              <hr />
+              <h4>Actions:</h4>
+              <div className="row">
+                <div className="col-md-10">
+                  <button className="btn btn-success float-left">
+                    Call Waiter
+                  </button>
+                  <button className="btn btn-warning float-left ml-1">
+                    Request Bill
+                  </button>
+                </div>
+              </div>
+
+              <hr />
+            </>
+          )}
 
           {tab.isOpen ? (
             <div className="row">
@@ -134,32 +152,30 @@ const ManageTabPage = ({
           )}
 
           {tab.servedMenuItems.length > 0 ||
-          tab.rejectedMenuItems.length > 0 ? (
-            <>
-              <hr />
+            (tab.rejectedMenuItems.length > 0 && (
+              <>
+                <hr />
 
-              <div className="row">
-                {tab.servedMenuItems.length > 0 && (
-                  <div className="col-md-6">
-                    <h4>Served Items</h4>
-                    <OrderedItemsList
-                      itemPairs={flattenMenuItems(tab.servedMenuItems)}
-                    />
-                  </div>
-                )}
-                {tab.rejectedMenuItems.length > 0 && (
-                  <div className="col-md-6">
-                    <h4>Rejected Items</h4>
-                    <OrderedItemsList
-                      itemPairs={flattenMenuItems(tab.rejectedMenuItems)}
-                    />
-                  </div>
-                )}
-              </div>
-            </>
-          ) : (
-            <></>
-          )}
+                <div className="row">
+                  {tab.servedMenuItems.length > 0 && (
+                    <div className="col-md-6">
+                      <h4>Served Items</h4>
+                      <OrderedItemsList
+                        itemPairs={flattenMenuItems(tab.servedMenuItems)}
+                      />
+                    </div>
+                  )}
+                  {tab.rejectedMenuItems.length > 0 && (
+                    <div className="col-md-6">
+                      <h4>Rejected Items</h4>
+                      <OrderedItemsList
+                        itemPairs={flattenMenuItems(tab.rejectedMenuItems)}
+                      />
+                    </div>
+                  )}
+                </div>
+              </>
+            ))}
 
           <hr />
 
@@ -177,7 +193,7 @@ const ManageTabPage = ({
 
 ManageTabPage.propTypes = {
   tabId: PropTypes.string.isRequired,
-  tab: PropTypes.object.isRequired,
+  tab: PropTypes.object,
   loadTab: PropTypes.func.isRequired,
   closeTab: PropTypes.func.isRequired,
   orderMenuItems: PropTypes.func.isRequired,

@@ -1,6 +1,7 @@
 import React from "react";
 import Input from "../common/Input";
 import SelectInput from "../common/SelectInput";
+import PropTypes from "prop-types";
 
 const OpenTabForm = ({ tab, tables, onChange, onSubmit }) => {
   const handleSubmit = event => {
@@ -10,7 +11,7 @@ const OpenTabForm = ({ tab, tables, onChange, onSubmit }) => {
 
   return (
     <>
-      <h4>Open tab</h4>
+      <h4>Open a new tab</h4>
       <form className="form-group" onSubmit={handleSubmit}>
         <Input
           name="customerName"
@@ -36,6 +37,13 @@ const OpenTabForm = ({ tab, tables, onChange, onSubmit }) => {
       </form>
     </>
   );
+};
+
+OpenTabForm.propTypes = {
+  tab: PropTypes.object.isRequired,
+  tables: PropTypes.array.isRequired,
+  onChange: PropTypes.func.isRequired,
+  onSubmit: PropTypes.func.isRequired
 };
 
 export default OpenTabForm;
