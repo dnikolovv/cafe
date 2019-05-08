@@ -15,8 +15,8 @@ namespace Cafe.Api.Dispatchers
         INotificationHandler<WaiterCalled>,
         INotificationHandler<BillRequested>
     {
-        private readonly IHubContext<TableActionsHub> _hubContext;
         private readonly ApplicationDbContext _dbContext;
+        private readonly IHubContext<TableActionsHub> _hubContext;
 
         public TableActionsDispatcher(IHubContext<TableActionsHub> hubContext, ApplicationDbContext dbContext)
         {
@@ -24,9 +24,14 @@ namespace Cafe.Api.Dispatchers
             _dbContext = dbContext;
         }
 
-        public async Task Handle(WaiterCalled notification, CancellationToken cancellationToken)
-        {
-            var accountIdsToNotify = (await _dbContext
+        public Task Handle(WaiterCalled notification, CancellationToken cancellationToken) =>
+            NotifyWaiters(notification);
+
+        public Task Handle(BillRequested notification, CancellationToken cancellationToken) =>
+            NotifyWaiters(notification);
+
+        private async Task<string[]> GetWaiterAccountsToNotify() =>
+            (await _dbContext
                 .UserClaims
                 .Where(c => c.ClaimType == AuthConstants.ClaimTypes.WaiterId)
                 .Select(uc => uc.UserId)
@@ -34,15 +39,14 @@ namespace Cafe.Api.Dispatchers
                 .Select(g => g.ToString())
                 .ToArray();
 
+        private async Task NotifyWaiters<TNotification>(TNotification notification)
+        {
+            var accountIdsToNotify = await GetWaiterAccountsToNotify();
+
             await _hubContext
                 .Clients
                 .Users(accountIdsToNotify)
-                .SendAsync(nameof(WaiterCalled), notification);
-        }
-
-        public Task Handle(BillRequested notification, CancellationToken cancellationToken)
-        {
-            return Task.CompletedTask;
+                .SendAsync(typeof(TNotification).Name, notification);
         }
     }
 }

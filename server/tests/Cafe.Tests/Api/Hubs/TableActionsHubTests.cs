@@ -28,9 +28,60 @@ namespace Cafe.Tests.Api.Hubs
 
         [Theory]
         [CustomizedAutoData]
-        public async Task SubscribedWaiterShouldReceiveMessagesForHisAssignedTable(HireWaiter hireWaiterCommand, AddTable addTableCommand, Register registerCommand)
+        public async Task AssignedWaitersShouldReceiveWaiterCalledMessage(HireWaiter hireWaiterCommand, AddTable addTableCommand, Register registerCommand)
         {
             // Arrange
+            var testConnection = await BuildTestTableActionConnection<WaiterCalled>(
+                hireWaiterCommand,
+                addTableCommand,
+                registerCommand);
+
+            await testConnection.OpenAsync();
+
+            var callWaiterCommand = new CallWaiter
+            {
+                TableNumber = addTableCommand.Number
+            };
+
+            // Act
+            await _fixture.SendAsync(callWaiterCommand);
+
+            // Assert
+            testConnection.VerifyMessageReceived(
+                e => e.TableNumber == addTableCommand.Number &&
+                     e.WaiterId == hireWaiterCommand.Id,
+                Times.Once());
+        }
+
+        [Theory]
+        [CustomizedAutoData]
+        public async Task AssignedWaitersShouldReceiveBillRequestedMessage(HireWaiter hireWaiterCommand, AddTable addTableCommand, Register registerCommand)
+        {
+            // Arrange
+            var testConnection = await BuildTestTableActionConnection<BillRequested>(
+                hireWaiterCommand,
+                addTableCommand,
+                registerCommand);
+
+            await testConnection.OpenAsync();
+
+            var requestBillCommand = new RequestBill
+            {
+                TableNumber = addTableCommand.Number
+            };
+
+            // Act
+            await _fixture.SendAsync(requestBillCommand);
+
+            // Assert
+            testConnection.VerifyMessageReceived(
+                e => e.TableNumber == addTableCommand.Number &&
+                     e.WaiterId == hireWaiterCommand.Id,
+                Times.Once());
+        }
+
+        private async Task<TestHubConnection<TEvent>> BuildTestTableActionConnection<TEvent>(HireWaiter hireWaiterCommand, AddTable addTableCommand, Register registerCommand)
+        {
             await _fixture.SendAsync(addTableCommand);
             await _fixture.SendAsync(hireWaiterCommand);
 
@@ -56,29 +107,7 @@ namespace Cafe.Tests.Api.Hubs
                 .Login(registerCommand.Email, registerCommand.Password))
                 .TokenString;
 
-            var testWaiterCalledConnection = BuildTestConnection<WaiterCalled>(accessToken);
-            var testBillRequestedConnection = BuildTestConnection<BillRequested>(accessToken);
-
-            await testWaiterCalledConnection.OpenAsync();
-            //await testBillRequestedConnection.OpenAsync();
-
-            var callWaiterCommand = new CallWaiter
-            {
-                TableNumber = addTableCommand.Number
-            };
-
-            var requestBillCommand = new RequestBill
-            {
-                TableNumber = addTableCommand.Number
-            };
-
-            // Act
-            await _fixture.SendAsync(callWaiterCommand);
-            //await _fixture.SendAsync(requestBillCommand);
-
-            // Assert
-            testWaiterCalledConnection.VerifyMessageReceived(e => e.WaiterId == hireWaiterCommand.Id, Times.Once());
-            //testBillRequestedConnection.VerifyMessageReceived(e => e.WaiterId == hireWaiterCommand.Id, Times.Once());
+            return BuildTestConnection<TEvent>(accessToken);
         }
 
         private TestHubConnection<TEvent> BuildTestConnection<TEvent>(string accessToken) =>

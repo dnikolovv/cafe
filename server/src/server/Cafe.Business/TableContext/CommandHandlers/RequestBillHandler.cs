@@ -4,18 +4,18 @@ using Cafe.Domain;
 using Cafe.Domain.Events;
 using Cafe.Persistance.EntityFramework;
 using FluentValidation;
+using Marten;
 using MediatR;
 using Optional;
 using Optional.Async;
 using System.Threading.Tasks;
-using IDocumentSession = Marten.IDocumentSession;
 
 namespace Cafe.Business.TableContext.CommandHandlers
 {
-    public class CallWaiterHandler : BaseTableHandler<CallWaiter>
+    public class RequestBillHandler : BaseTableHandler<RequestBill>
     {
-        public CallWaiterHandler(
-            IValidator<CallWaiter> validator,
+        public RequestBillHandler(
+            IValidator<RequestBill> validator,
             ApplicationDbContext dbContext,
             IDocumentSession documentSession,
             IEventBus eventBus,
@@ -24,9 +24,9 @@ namespace Cafe.Business.TableContext.CommandHandlers
         {
         }
 
-        public override Task<Option<Unit, Error>> Handle(CallWaiter command) =>
+        public override Task<Option<Unit, Error>> Handle(RequestBill command) =>
             TableShouldExist(command.TableNumber).FlatMapAsync(table =>
             TableShouldHaveAWaiterAssigned(table).MapAsync(waiter =>
-            PublishEvents(table.Id, new WaiterCalled { TableNumber = table.Number, WaiterId = waiter.Id })));
+            PublishEvents(table.Id, new BillRequested { TableNumber = table.Number, WaiterId = waiter.Id })));
     }
 }
