@@ -8,6 +8,7 @@ import FiniteSelctableMenu from "../common/FiniteSelectableMenu";
 import { flattenMenuItems } from "../../utils/menuItemUtils";
 import OrderedItemsList from "../common/OrderedItemsList";
 import PropTypes from "prop-types";
+import * as tableActions from "../../redux/actions/tableActions";
 
 const ManageTabPage = ({
   tabId,
@@ -18,7 +19,9 @@ const ManageTabPage = ({
   menuItems,
   loadMenuItems,
   rejectMenuItems,
-  serveMenuItems
+  serveMenuItems,
+  callWaiter,
+  requestBill
 }) => {
   useEffect(() => {
     if (!tab) {
@@ -86,10 +89,16 @@ const ManageTabPage = ({
               <h4>Actions:</h4>
               <div className="row">
                 <div className="col-md-10">
-                  <button className="btn btn-success float-left">
+                  <button
+                    onClick={() => callWaiter(tab.tableNumber)}
+                    className="btn btn-success float-left"
+                  >
                     Call Waiter
                   </button>
-                  <button className="btn btn-warning float-left ml-1">
+                  <button
+                    onClick={() => requestBill(tab.tableNumber)}
+                    className="btn btn-warning float-left ml-1"
+                  >
                     Request Bill
                   </button>
                 </div>
@@ -200,7 +209,9 @@ ManageTabPage.propTypes = {
   menuItems: PropTypes.array.isRequired,
   loadMenuItems: PropTypes.func.isRequired,
   rejectMenuItems: PropTypes.func.isRequired,
-  serveMenuItems: PropTypes.func.isRequired
+  serveMenuItems: PropTypes.func.isRequired,
+  callWaiter: PropTypes.func.isRequired,
+  requestBill: PropTypes.func.isRequired
 };
 
 function mapStateToProps(state, ownProps) {
@@ -220,7 +231,9 @@ const mapDispatchToProps = {
   rejectMenuItems: tabActions.rejectMenuItems,
   serveMenuItems: tabActions.serveMenuItems,
   loadMenuItems: menuItemActions.loadMenuItems,
-  loadTab: tabActions.loadTab
+  loadTab: tabActions.loadTab,
+  callWaiter: tableActions.callWaiter,
+  requestBill: tableActions.requestBill
 };
 
 export default connect(

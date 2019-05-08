@@ -33,5 +33,23 @@ namespace Cafe.Api.Controllers
         public async Task<IActionResult> AddTable([FromBody] AddTable command) =>
             (await _mediator.Send(command))
             .Match(Ok, Error);
+
+        /// <summary>
+        /// Calls the waiter assigned to the table number provided.
+        /// </summary>
+        [Authorize]
+        [HttpPost("{tableNumber}/callWaiter")]
+        public async Task<IActionResult> CallWaiter(int tableNumber) =>
+            (await _mediator.Send(new CallWaiter { TableNumber = tableNumber }))
+            .Match(Ok, Error);
+
+        /// <summary>
+        /// Requests the bill from the waiter assigned to the table number provided.
+        /// </summary>
+        [Authorize]
+        [HttpPost("{tableNumber}/requestBill")]
+        public async Task<IActionResult> RequestBill(int tableNumber) =>
+            (await _mediator.Send(new RequestBill { TableNumber = tableNumber }))
+            .Match(Ok, Error);
     }
 }
