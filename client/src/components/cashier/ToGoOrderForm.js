@@ -15,8 +15,7 @@ const ToGoOrderForm = ({
 
   return (
     <>
-      <h3 className="mt-3">Issue To-Go Order</h3>
-
+      <h3>Issue To-Go Order</h3>
       <SelectableMenuDisplay
         items={menuItems}
         selectedItems={selectedItems}

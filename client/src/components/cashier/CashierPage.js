@@ -54,17 +54,18 @@ const CashierPage = ({
 
   return (
     <div>
-      <h2>Cashier</h2>
+      {pendingOrders.length > 0 && (
+        <PendingOrdersList
+          pendingOrders={pendingOrders}
+          onPricePaidChange={handlePricePaidChange}
+          onOrderConfirmation={handleOrderConfirmation}
+        />
+      )}
       <ToGoOrderForm
         menuItems={menuItems}
         selectedItems={selectedItems}
         onSelectedItemsChanged={handleMenuItemSelected}
         onSubmit={handleIssueOrder}
-      />
-      <PendingOrdersList
-        pendingOrders={pendingOrders}
-        onPricePaidChange={handlePricePaidChange}
-        onOrderConfirmation={handleOrderConfirmation}
       />
     </div>
   );

@@ -37,25 +37,21 @@ const WaiterPage = ({
   };
 
   return (
-    <div>
-      <h3>Waiter</h3>
-
-      <div className="row">
-        <div className="col-md-6">
-          <OpenTabForm
-            tab={newTab}
-            tables={tables}
-            onChange={handleNewTabChange}
-            onSubmit={handleOpenTab}
-          />
-        </div>
-        {tabs.length > 0 && (
-          <div className="col-md-6">
-            <h4>Open Tabs</h4>
-            <TabsList tabs={tabs} onTabSelected={handleTabSelected} />
-          </div>
-        )}
+    <div className="row">
+      <div className="col-md-6">
+        <OpenTabForm
+          tab={newTab}
+          tables={tables}
+          onChange={handleNewTabChange}
+          onSubmit={handleOpenTab}
+        />
       </div>
+      {tabs.length > 0 && (
+        <div className="col-md-6">
+          <h4>Open Tabs</h4>
+          <TabsList tabs={tabs} onTabSelected={handleTabSelected} />
+        </div>
+      )}
     </div>
   );
 };
