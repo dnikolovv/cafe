@@ -2,6 +2,8 @@ import * as SignalR from "@aspnet/signalr";
 
 const baseUrl = process.env.REACT_APP_API_URL;
 
+const openConnections = [];
+
 export function subscribeTo(socketRoute, eventCallbackPairs) {
   const connection = new SignalR.HubConnectionBuilder()
     .withUrl(baseUrl + socketRoute, {
@@ -13,6 +15,8 @@ export function subscribeTo(socketRoute, eventCallbackPairs) {
   return connection
     .start()
     .then(() => {
+      openConnections.push(connection);
+
       eventCallbackPairs.forEach(pair => {
         connection.on(pair.eventName, pair.callback);
       });
@@ -20,4 +24,10 @@ export function subscribeTo(socketRoute, eventCallbackPairs) {
     .catch(error => {
       throw error;
     });
+}
+
+export function closeAllOpenConnections() {
+  openConnections.forEach(connection => {
+    connection.stop();
+  });
 }
