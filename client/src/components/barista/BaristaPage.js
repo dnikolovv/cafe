@@ -19,7 +19,6 @@ const BaristaPage = ({ completeOrder, loadOrders, issuedOrders }) => {
 
   return (
     <>
-      <h2>Barista</h2>
       <WaitingOrdersList
         orders={issuedOrders}
         onOrderCompleted={handleOrderCompletion}
