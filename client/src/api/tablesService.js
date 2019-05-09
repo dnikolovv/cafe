@@ -13,15 +13,20 @@ export function loadTables() {
 }
 
 export function subscribeToTableActions() {
-  webSocketClient.subscribeTo("tableActions", "WaiterCalled", e => {
-    debugger;
-    toast.success(`You've been called at table ${e.tableNumber}.`);
-  });
-
-  webSocketClient.subscribeTo("tableActions", "BillRequested", e => {
-    debugger;
-    toast.success(`Table ${e.tableNumber} has requested their bill.`);
-  });
+  return webSocketClient.subscribeTo("tableActions", [
+    {
+      eventName: "WaiterCalled",
+      callback: e => {
+        toast.success(`You've been called at table ${e.tableNumber}.`);
+      }
+    },
+    {
+      eventName: "BillRequested",
+      callback: e => {
+        toast.success(`Table ${e.tableNumber} has requested their bill.`);
+      }
+    }
+  ]);
 }
 
 export function callWaiter(tableNumber) {
