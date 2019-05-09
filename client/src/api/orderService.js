@@ -24,11 +24,12 @@ export function issueToGoOrder(itemNumbers) {
 }
 
 export function onOrderConfirmed(callback) {
-  return webSocketClient.subscribeTo(
-    "confirmedOrders",
-    "OrderConfirmed",
-    ({ order }) => {
-      callback(order);
+  return webSocketClient.subscribeTo("confirmedOrders", [
+    {
+      eventName: "OrderConfirmed",
+      callback: ({ order }) => {
+        callback(order);
+      }
     }
-  );
+  ]);
 }
