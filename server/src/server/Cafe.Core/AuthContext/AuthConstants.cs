@@ -19,5 +19,15 @@
             public const string IsAdminOrCashier = "IsAdminOrCashier";
             public const string IsAdmin = "IsAdmin";
         }
+
+        public static class Cookies
+        {
+            public const string AuthCookieName = "access_token";
+        }
+
+        public static class Queries
+        {
+            public const string QueryParamAccessToken = "access_token";
+        }
     }
 }

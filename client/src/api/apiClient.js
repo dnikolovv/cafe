@@ -15,12 +15,16 @@ export function get(url) {
   return fetchWrapper(url, "GET");
 }
 
+export function httpDelete(url) {
+  return fetchWrapper(url, "DELETE");
+}
+
 function fetchWrapper(url, method, body) {
   return fetch(url, {
     method,
+    credentials: "include",
     headers: {
       Accept: "application/json",
-      Authorization: getAccessToken(),
       "Content-Type": "application/json"
     },
     body: body && JSON.stringify(body)
@@ -35,12 +39,16 @@ async function handleResponse(response) {
     return Promise.reject("Unauthorized.");
   }
 
-  const responseToJson = await response.json();
+  const contentType = response.headers.get("content-type");
 
-  if (response.ok) {
-    return responseToJson;
-  } else {
-    throw responseToJson;
+  if (contentType && contentType.indexOf("application/json") !== -1) {
+    const responseToJson = await response.json();
+
+    if (response.ok) {
+      return responseToJson;
+    } else {
+      throw responseToJson;
+    }
   }
 }
 
@@ -58,9 +66,4 @@ function handleError(error) {
   }
 
   throw error;
-}
-
-function getAccessToken() {
-  const token = localStorage.getItem("access_token");
-  return token && `Bearer ${token}`;
 }

@@ -7,6 +7,11 @@ export function login(credentials) {
   return apiClient.post(url, credentials);
 }
 
+export function logout() {
+  const url = baseUrl + "logout";
+  return apiClient.httpDelete(url);
+}
+
 export function getCurrentUser() {
   return apiClient.get(baseUrl);
 }

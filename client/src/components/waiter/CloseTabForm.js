@@ -23,7 +23,7 @@ const CloseTabForm = ({ owedAmount, onSubmit }) => {
           name="amountPaid"
           onChange={handleChange}
           placeholder="Amount paid..."
-          value={amountPaid}
+          value={amountPaid.toString()}
         />
         <input type="submit" className="btn btn-danger" value="Close tab" />
       </form>

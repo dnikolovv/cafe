@@ -40,7 +40,23 @@ namespace Cafe.Api.Controllers
         [ProducesResponseType(typeof(Error), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> Login([FromBody] Login command) =>
             (await _mediator.Send(command))
-                .Match(Ok, Error);
+                .Match(
+                jwt =>
+                {
+                    SetAuthCookie(jwt.TokenString);
+                    return Ok(jwt);
+                },
+                Error);
+
+        /// <summary>
+        /// Logout. (unsets the auth cookie)
+        /// </summary>
+        [HttpDelete("logout")]
+        public IActionResult Logout()
+        {
+            HttpContext.Response.Cookies.Delete(AuthConstants.Cookies.AuthCookieName);
+            return NoContent();
+        }
 
         /// <summary>
         /// Register.
@@ -99,5 +115,8 @@ namespace Cafe.Api.Controllers
         public async Task<IActionResult> AssignBaristaToAccount([FromBody] AssignBaristaToAccount command) =>
             (await _mediator.Send(command))
                 .Match(Ok, Error);
+
+        private void SetAuthCookie(string token) =>
+            HttpContext.Response.Cookies.Append(AuthConstants.Cookies.AuthCookieName, token);
     }
 }

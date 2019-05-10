@@ -30,8 +30,9 @@ export function login(credentials) {
 
 export function logout() {
   return function(dispatch) {
-    localStorage.removeItem("access_token");
-    dispatch(logoutSuccess());
+    authApi.logout().then(_ => {
+      dispatch(logoutSuccess());
+    });
   };
 }
 

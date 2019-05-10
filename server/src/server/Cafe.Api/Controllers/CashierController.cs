@@ -29,7 +29,7 @@ namespace Cafe.Api.Controllers
         /// <summary>
         /// Hires a cashier in the café.
         /// </summary>
-        [HttpPost("hire")]
+        [HttpPost]
         [Authorize(Policy = AuthConstants.Policies.IsAdminOrManager)]
         public async Task<IActionResult> HireCashier([FromBody] HireCashier command) =>
             (await _mediator.Send(command))
