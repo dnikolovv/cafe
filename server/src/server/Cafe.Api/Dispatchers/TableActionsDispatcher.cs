@@ -40,14 +40,6 @@ namespace Cafe.Api.Dispatchers
             {
                 var waiterId = table.WaiterId.ToString();
 
-                var test = await _dbContext
-                    .UserClaims
-                    .ToListAsync();
-
-                var test2 = await _dbContext
-                    .Users
-                    .ToListAsync();
-
                 var accountsToNotify = (await _dbContext
                     .UserClaims
                     .Where(c => c.ClaimType == AuthConstants.ClaimTypes.WaiterId && c.ClaimValue == waiterId)

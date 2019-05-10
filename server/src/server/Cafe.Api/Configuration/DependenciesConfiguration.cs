@@ -9,6 +9,7 @@ using Cafe.Domain.Events;
 using Cafe.Domain.Views;
 using Cafe.Persistance.EntityFramework;
 using Marten;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -97,11 +98,16 @@ namespace Cafe.Api.Configuration
                 {
                     OnMessageReceived = context =>
                     {
-                        var accessToken = context.Request.Query["access_token"];
+                        var queryAccessToken = context.Request.Query[AuthConstants.Queries.QueryParamAccessToken];
+                        var cookieAccessToken = context.Request.Cookies[AuthConstants.Cookies.AuthCookieName];
 
-                        if (!string.IsNullOrEmpty(accessToken))
+                        if (!string.IsNullOrEmpty(queryAccessToken))
                         {
-                            context.Token = accessToken;
+                            context.Token = queryAccessToken;
+                        }
+                        else if (!string.IsNullOrEmpty(cookieAccessToken))
+                        {
+                            context.Token = cookieAccessToken;
                         }
 
                         return Task.CompletedTask;

@@ -18,6 +18,11 @@
             <response code="200">If the credentials have a match.</response>
             <response code="400">If the credentials don't match/don't meet the requirements.</response>
         </member>
+        <member name="M:Cafe.Api.Controllers.AuthController.Logout">
+            <summary>
+            Logout. (unsets the auth cookie)
+            </summary>
+        </member>
         <member name="M:Cafe.Api.Controllers.AuthController.Register(Cafe.Core.AuthContext.Commands.Register)">
             <summary>
             Register.
