@@ -1,4 +1,5 @@
-﻿using Cafe.Core.AuthContext;
+﻿using Cafe.Api.Resources;
+using Cafe.Core.AuthContext;
 using Cafe.Domain;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -7,6 +8,7 @@ using System;
 using System.Linq;
 using System.Net;
 using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace Cafe.Api.Controllers
 {
@@ -34,8 +36,7 @@ namespace Cafe.Api.Controllers
         /// Enables using method groups when matching on Unit.
         /// </summary>
         protected IActionResult Ok(Unit unit) =>
-            // Returning an empty object instead of an empty response to avoid invalid JSON errors
-            Ok(new { });
+            Ok();
 
         protected IActionResult NotFound(Error error) =>
             NotFound((object)error);

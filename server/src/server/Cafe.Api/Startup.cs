@@ -1,13 +1,17 @@
 ﻿using AutoMapper;
 using Cafe.Api.Configuration;
+using Cafe.Api.Controllers;
 using Cafe.Api.Filters;
 using Cafe.Api.Hubs;
 using Cafe.Api.ModelBinders;
+using Cafe.Api.Resources;
+using Cafe.Api.Resources.Mappings;
 using Cafe.Core.AuthContext;
 using Cafe.Core.AuthContext.Commands;
 using Cafe.Core.AuthContext.Configuration;
 using Cafe.Core.TableContext.Commands;
 using Cafe.Domain.Entities;
+using Cafe.Domain.Views;
 using Cafe.Persistance.EntityFramework;
 using FluentValidation;
 using FluentValidation.AspNetCore;
@@ -19,6 +23,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using RiskFirst.Hateoas;
 using Serilog;
 
 namespace Cafe.Api
@@ -50,10 +55,27 @@ namespace Cafe.Api
             services.AddAutoMapper(cfg =>
             {
                 cfg.AddProfiles(typeof(MappingProfile).Assembly);
+                cfg.AddProfiles(typeof(TabMappingProfile).Assembly);
             });
 
             services.AddSwagger();
             services.AddCommonServices();
+
+            services.AddTransient<IResourceMapper, ResourceMapper>();
+            services.AddLinks(config =>
+            {
+                config.AddPolicy<TabResource>(policy =>
+                {
+                    policy.RequireRoutedLink("self", nameof(TabController.GetTabView), x => new { id = x.Id });
+                    policy.RequireRoutedLink("close", nameof(TabController.CloseTab), x => new { tabId = x.Id }, cond => cond.Assert(x => x.IsOpen));
+                    policy.RequireRoutedLink("order-items", nameof(TabController.OrderMenuItems), x => new { tabId = x.Id }, cond => cond.Assert(x => x.IsOpen));
+                });
+
+                config.AddPolicy<TabsResource>(policy =>
+                {
+                    policy.RequireRoutedLink("self", nameof(TabController.GetAllOpenTabs));
+                });
+            });
 
             services.AddJwtIdentity(
                 Configuration.GetSection(nameof(JwtConfiguration)),
