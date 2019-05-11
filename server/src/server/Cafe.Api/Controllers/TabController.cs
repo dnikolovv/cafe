@@ -62,7 +62,7 @@ namespace Cafe.Api.Controllers
         [HttpPut("order", Name = nameof(OrderMenuItems))]
         public async Task<IActionResult> OrderMenuItems([FromBody] OrderMenuItems command) =>
             (await Mediator.Send(command)
-                .MapAsync(ToEmptyResourceAsync<OrderMenuItemsResource>))
+                .MapAsync(_ => ToEmptyResourceAsync<OrderMenuItemsResource>(x => x.TabId = command.TabId)))
                 .Match(Ok, Error);
 
         /// <summary>
@@ -70,7 +70,8 @@ namespace Cafe.Api.Controllers
         /// </summary>
         [HttpPut("reject", Name = nameof(RejectMenuItems))]
         public async Task<IActionResult> RejectMenuItems([FromBody] RejectMenuItems command) =>
-            (await Mediator.Send(command))
+            (await Mediator.Send(command)
+                .MapAsync(_ => ToEmptyResourceAsync<RejectMenuItemsResource>(x => x.TabId = command.TabId)))
                 .Match(Ok, Error);
 
         /// <summary>
@@ -78,7 +79,8 @@ namespace Cafe.Api.Controllers
         /// </summary>
         [HttpPut("serve", Name = nameof(ServeMenuItems))]
         public async Task<IActionResult> ServeMenuItems([FromBody] ServeMenuItems command) =>
-            (await Mediator.Send(command))
+            (await Mediator.Send(command)
+                .MapAsync(_ => ToEmptyResourceAsync<ServeMenuItemsResource>(x => x.TabId = command.TabId)))
                 .Match(Ok, Error);
     }
 }
