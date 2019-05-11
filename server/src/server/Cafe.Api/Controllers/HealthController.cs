@@ -2,7 +2,7 @@
 
 namespace Cafe.Api.Controllers
 {
-    public class HealthController : ApiController
+    public class HealthController : Controller
     {
         [HttpGet]
         public IActionResult Get() =>

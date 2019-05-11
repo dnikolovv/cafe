@@ -1,4 +1,5 @@
-﻿using Cafe.Core.AuthContext;
+﻿using Cafe.Api.Resources;
+using Cafe.Core.AuthContext;
 using Cafe.Core.OrderContext.Commands;
 using Cafe.Core.OrderContext.Queries;
 using Cafe.Domain.Entities;
@@ -12,11 +13,9 @@ namespace Cafe.Api.Controllers
 {
     public class OrderController : ApiController
     {
-        private readonly IMediator _mediator;
-
-        public OrderController(IMediator mediator)
+        public OrderController(IResourceMapper resourceMapper, IMediator mediator)
+            : base(resourceMapper, mediator)
         {
-            _mediator = mediator;
         }
 
         /// <summary>
@@ -25,7 +24,7 @@ namespace Cafe.Api.Controllers
         [HttpGet("{id}")]
         [Authorize]
         public async Task<IActionResult> GetOrder([FromRoute] Guid id) =>
-            (await _mediator.Send(new GetToGoOrder { Id = id }))
+            (await Mediator.Send(new GetToGoOrder { Id = id }))
                 .Match(Ok, NotFound);
 
         /// <summary>
@@ -34,7 +33,7 @@ namespace Cafe.Api.Controllers
         [HttpGet]
         [Authorize]
         public async Task<IActionResult> GetAllOrders() =>
-            (await _mediator.Send(new GetAllToGoOrders()))
+            (await Mediator.Send(new GetAllToGoOrders()))
                 .Match(Ok, Error);
 
         /// <summary>
@@ -43,7 +42,7 @@ namespace Cafe.Api.Controllers
         [HttpGet("{status}")]
         [Authorize]
         public async Task<IActionResult> GetOrdersByStatus(ToGoOrderStatus status) =>
-            (await _mediator.Send(new GetOrdersByStatus { Status = status }))
+            (await Mediator.Send(new GetOrdersByStatus { Status = status }))
                 .Match(Ok, Error);
 
         /// <summary>
@@ -52,7 +51,7 @@ namespace Cafe.Api.Controllers
         [HttpPost]
         [Authorize(Policy = AuthConstants.Policies.IsAdminOrCashier)]
         public async Task<IActionResult> OrderToGo([FromBody] OrderToGo command) =>
-            (await _mediator.Send(command))
+            (await Mediator.Send(command))
                 .Match(Ok, Error);
 
         /// <summary>
@@ -61,7 +60,7 @@ namespace Cafe.Api.Controllers
         [HttpPut("confirm")]
         [Authorize(Policy = AuthConstants.Policies.IsAdminOrCashier)]
         public async Task<IActionResult> ConfirmToGoOrder([FromBody] ConfirmToGoOrder command) =>
-            (await _mediator.Send(command))
+            (await Mediator.Send(command))
                 .Match(Ok, Error);
 
         /// <summary>
@@ -73,7 +72,7 @@ namespace Cafe.Api.Controllers
         {
             command.BaristaId = BaristaId;
 
-            var result = (await _mediator.Send(command))
+            var result = (await Mediator.Send(command))
                 .Match(Ok, Error);
 
             return result;

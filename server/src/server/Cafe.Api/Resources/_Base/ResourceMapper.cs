@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using RiskFirst.Hateoas;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -20,24 +21,33 @@ namespace Cafe.Api.Resources
         public async Task<TResource> MapAsync<T, TResource>(T source)
             where TResource : Resource
         {
-            var resource = _mapper.Map<TResource>(source);
-            await _linksService.AddLinksAsync(resource);
-            return resource;
+            try
+            {
+                var resource = _mapper.Map<TResource>(source);
+                await _linksService.AddLinksAsync(resource);
+                return resource;
+            }
+            catch (Exception e)
+            {
+                throw new InvalidOperationException(
+                    "A problem occured while trying to convert a type to a resource. " +
+                    "Make sure that you have set up AutoMapper properly and your link policies don't " +
+                    "contain any unexisting routes.",
+                    e);
+            }
         }
 
-        public async Task<TContainerResource> MapContainerAsync<TModel, TNestedResource, TContainerResource>(IEnumerable<TModel> models)
-            where TContainerResource : Resource
-            where TNestedResource : Resource
+        public async Task<TContainer> MapContainerAsync<T, TResource, TContainer>(IEnumerable<T> models)
+            where TContainer : ContainerResource<TResource>, new()
+            where TResource : Resource
         {
             var nestedResources = await Task.WhenAll(models
-                .Select(async m =>
-                {
-                    var nestedResource = _mapper.Map<TNestedResource>(m);
-                    await _linksService.AddLinksAsync(nestedResource);
-                    return nestedResource;
-                }));
+                .Select(MapAsync<T, TResource>));
 
-            var container = _mapper.Map<TContainerResource>(nestedResources);
+            var container = new TContainer
+            {
+                Items = nestedResources
+            };
 
             await _linksService.AddLinksAsync(container);
 

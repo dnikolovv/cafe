@@ -1,4 +1,5 @@
-﻿using Cafe.Core.AuthContext;
+﻿using Cafe.Api.Resources;
+using Cafe.Core.AuthContext;
 using Cafe.Core.TableContext.Commands;
 using Cafe.Core.TableContext.Queries;
 using MediatR;
@@ -10,11 +11,9 @@ namespace Cafe.Api.Controllers
 {
     public class TableController : ApiController
     {
-        private readonly IMediator _mediator;
-
-        public TableController(IMediator mediator)
+        public TableController(IResourceMapper resourceMapper, IMediator mediator)
+            : base(resourceMapper, mediator)
         {
-            _mediator = mediator;
         }
 
         /// <summary>
@@ -22,7 +21,7 @@ namespace Cafe.Api.Controllers
         /// </summary>
         [HttpGet]
         public async Task<IActionResult> GetAllTables() =>
-            (await _mediator.Send(new GetAllTables()))
+            (await Mediator.Send(new GetAllTables()))
             .Match(Ok, Error);
 
         /// <summary>
@@ -31,7 +30,7 @@ namespace Cafe.Api.Controllers
         [HttpPost]
         [Authorize(Policy = AuthConstants.Policies.IsAdminOrManager)]
         public async Task<IActionResult> AddTable([FromBody] AddTable command) =>
-            (await _mediator.Send(command))
+            (await Mediator.Send(command))
             .Match(Ok, Error);
 
         /// <summary>
@@ -40,7 +39,7 @@ namespace Cafe.Api.Controllers
         [Authorize]
         [HttpPost("{tableNumber}/callWaiter")]
         public async Task<IActionResult> CallWaiter(int tableNumber) =>
-            (await _mediator.Send(new CallWaiter { TableNumber = tableNumber }))
+            (await Mediator.Send(new CallWaiter { TableNumber = tableNumber }))
             .Match(Ok, Error);
 
         /// <summary>
@@ -49,7 +48,7 @@ namespace Cafe.Api.Controllers
         [Authorize]
         [HttpPost("{tableNumber}/requestBill")]
         public async Task<IActionResult> RequestBill(int tableNumber) =>
-            (await _mediator.Send(new RequestBill { TableNumber = tableNumber }))
+            (await Mediator.Send(new RequestBill { TableNumber = tableNumber }))
             .Match(Ok, Error);
     }
 }

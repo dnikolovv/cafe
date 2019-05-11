@@ -1,4 +1,5 @@
-﻿using Cafe.Core.AuthContext;
+﻿using Cafe.Api.Resources;
+using Cafe.Core.AuthContext;
 using Cafe.Core.BaristaContext.Commands;
 using Cafe.Core.BaristaContext.Queries;
 using MediatR;
@@ -11,11 +12,9 @@ namespace Cafe.Api.Controllers
     [Authorize(Policy = AuthConstants.Policies.IsAdminOrBarista)]
     public class BaristaController : ApiController
     {
-        private readonly IMediator _mediator;
-
-        public BaristaController(IMediator mediator)
+        public BaristaController(IResourceMapper resourceMapper, IMediator mediator)
+            : base(resourceMapper, mediator)
         {
-            _mediator = mediator;
         }
 
         /// <summary>
@@ -23,7 +22,7 @@ namespace Cafe.Api.Controllers
         /// </summary>
         [HttpPost]
         public async Task<IActionResult> HireBarista([FromBody] HireBarista command) =>
-            (await _mediator.Send(command))
+            (await Mediator.Send(command))
                 .Match(Ok, Error);
 
         /// <summary>
@@ -31,7 +30,7 @@ namespace Cafe.Api.Controllers
         /// </summary>
         [HttpGet]
         public async Task<IActionResult> GetEmployedBaristas() =>
-            (await _mediator.Send(new GetEmployedBaristas()))
+            (await Mediator.Send(new GetEmployedBaristas()))
                 .Match(Ok, Error);
     }
 }

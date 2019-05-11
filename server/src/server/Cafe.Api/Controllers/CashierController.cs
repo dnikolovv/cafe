@@ -1,4 +1,5 @@
-﻿using Cafe.Core.AuthContext;
+﻿using Cafe.Api.Resources;
+using Cafe.Core.AuthContext;
 using Cafe.Core.CashierContext.Commands;
 using Cafe.Core.CashierContext.Queries;
 using MediatR;
@@ -10,11 +11,9 @@ namespace Cafe.Api.Controllers
 {
     public class CashierController : ApiController
     {
-        private readonly IMediator _mediator;
-
-        public CashierController(IMediator mediator)
+        public CashierController(IResourceMapper resourceMapper, IMediator mediator)
+            : base(resourceMapper, mediator)
         {
-            _mediator = mediator;
         }
 
         /// <summary>
@@ -23,7 +22,7 @@ namespace Cafe.Api.Controllers
         [HttpGet]
         [Authorize(Policy = AuthConstants.Policies.IsAdminOrManager)]
         public async Task<IActionResult> GetEmployedCashiers() =>
-            (await _mediator.Send(new GetEmployedCashiers()))
+            (await Mediator.Send(new GetEmployedCashiers()))
             .Match(Ok, Error);
 
         /// <summary>
@@ -32,7 +31,7 @@ namespace Cafe.Api.Controllers
         [HttpPost]
         [Authorize(Policy = AuthConstants.Policies.IsAdminOrManager)]
         public async Task<IActionResult> HireCashier([FromBody] HireCashier command) =>
-            (await _mediator.Send(command))
+            (await Mediator.Send(command))
             .Match(Ok, Error);
     }
 }

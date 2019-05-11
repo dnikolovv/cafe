@@ -5,6 +5,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Optional;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Security.Claims;
@@ -15,31 +16,17 @@ namespace Cafe.Api.Controllers
     [Route("api/[controller]")]
     public class ApiController : Controller
     {
-        public Guid CurrentUserId
+        public ApiController(IResourceMapper resourceMapper, IMediator mediator)
         {
-            get
-            {
-                var idClaim = User?
-                    .Claims?
-                    .FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?
-                    .Value;
-
-                return string.IsNullOrEmpty(idClaim) ?
-                    Guid.Empty :
-                    Guid.Parse(idClaim);
-            }
+            ResourceMapper = resourceMapper;
+            Mediator = mediator;
         }
 
-        public Option<Guid> BaristaId => TryGetGuidClaim(AuthConstants.ClaimTypes.BaristaId);
+        protected Option<Guid> BaristaId => TryGetGuidClaim(AuthConstants.ClaimTypes.BaristaId);
+        protected Guid CurrentUserId => TryGetGuidClaim(ClaimTypes.NameIdentifier).ValueOr(Guid.Empty);
 
-        /// <summary>
-        /// Enables using method groups when matching on Unit.
-        /// </summary>
-        protected IActionResult Ok(Unit unit) =>
-            Ok();
-
-        protected IActionResult NotFound(Error error) =>
-            NotFound((object)error);
+        protected IMediator Mediator { get; }
+        protected IResourceMapper ResourceMapper { get; }
 
         protected IActionResult Error(Error error)
         {
@@ -47,22 +34,45 @@ namespace Cafe.Api.Controllers
             {
                 case ErrorType.Validation:
                     return BadRequest(error);
+
                 case ErrorType.NotFound:
                     return NotFound(error);
+
                 case ErrorType.Unauthorized:
                     return Unauthorized(error);
+
                 case ErrorType.Conflict:
                     return Conflict(error);
+
                 case ErrorType.Critical:
                     // This shouldn't really happen as critical errors are there to be used by the generic exception filter
                     return new ObjectResult(error)
                     {
                         StatusCode = (int)HttpStatusCode.InternalServerError
                     };
+
                 default:
                     return BadRequest(error);
             }
         }
+
+        protected IActionResult NotFound(Error error) =>
+                    NotFound((object)error);
+
+        /// <summary>
+        /// Enables using method groups when matching on Unit.
+        /// </summary>
+        protected IActionResult Ok(Unit unit) =>
+            Ok();
+
+        protected Task<TContainer> ToResourceContainerAsync<T, TResource, TContainer>(IEnumerable<T> models)
+            where TContainer : ContainerResource<TResource>, new()
+            where TResource : Resource =>
+            ResourceMapper.MapContainerAsync<T, TResource, TContainer>(models);
+
+        protected Task<TResource> ToResourceAsync<T, TResource>(T obj)
+            where TResource : Resource =>
+            ResourceMapper.MapAsync<T, TResource>(obj);
 
         private Option<Guid> TryGetGuidClaim(string claimType)
         {

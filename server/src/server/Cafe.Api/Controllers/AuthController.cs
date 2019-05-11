@@ -1,4 +1,5 @@
-﻿using Cafe.Core.AuthContext;
+﻿using Cafe.Api.Resources;
+using Cafe.Core.AuthContext;
 using Cafe.Core.AuthContext.Commands;
 using Cafe.Core.AuthContext.Queries;
 using Cafe.Domain;
@@ -13,11 +14,9 @@ namespace Cafe.Api.Controllers
 {
     public class AuthController : ApiController
     {
-        private readonly IMediator _mediator;
-
-        public AuthController(IMediator mediator)
+        public AuthController(IResourceMapper resourceMapper, IMediator mediator)
+            : base(resourceMapper, mediator)
         {
-            _mediator = mediator;
         }
 
         /// <summary>
@@ -25,7 +24,7 @@ namespace Cafe.Api.Controllers
         /// </summary>
         [HttpGet]
         public async Task<IActionResult> GetCurrentUser() =>
-            (await _mediator.Send(new GetUser { Id = CurrentUserId }))
+            (await Mediator.Send(new GetUser { Id = CurrentUserId }))
                 .Match<IActionResult>(Ok, _ => Unauthorized());
 
         /// <summary>
@@ -39,7 +38,7 @@ namespace Cafe.Api.Controllers
         [ProducesResponseType(typeof(JwtView), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Error), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> Login([FromBody] Login command) =>
-            (await _mediator.Send(command))
+            (await Mediator.Send(command))
                 .Match(
                 jwt =>
                 {
@@ -68,7 +67,7 @@ namespace Cafe.Api.Controllers
         [HttpPost("register")]
         [ProducesResponseType(typeof(Error), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> Register([FromBody] Register command) =>
-            (await _mediator.Send(command))
+            (await Mediator.Send(command))
                 .Match(u => CreatedAtAction(nameof(Register), u), Error);
 
         /// <summary>
@@ -77,7 +76,7 @@ namespace Cafe.Api.Controllers
         [HttpGet("users")]
         [Authorize(Policy = AuthConstants.Policies.IsAdmin)]
         public async Task<IActionResult> GetAllUserAccounts() =>
-            (await _mediator.Send(new GetAllUserAccounts()))
+            (await Mediator.Send(new GetAllUserAccounts()))
                 .Match(Ok, Error);
 
         /// <summary>
@@ -86,7 +85,7 @@ namespace Cafe.Api.Controllers
         [HttpPost("assign/waiter")]
         [Authorize(Policy = AuthConstants.Policies.IsAdmin)]
         public async Task<IActionResult> AssignWaiterToAccount([FromBody] AssignWaiterToAccount command) =>
-            (await _mediator.Send(command))
+            (await Mediator.Send(command))
                 .Match(Ok, Error);
 
         /// <summary>
@@ -95,7 +94,7 @@ namespace Cafe.Api.Controllers
         [HttpPost("assign/manager")]
         [Authorize(Policy = AuthConstants.Policies.IsAdmin)]
         public async Task<IActionResult> AssignManagerToAccount([FromBody] AssignManagerToAccount command) =>
-            (await _mediator.Send(command))
+            (await Mediator.Send(command))
                 .Match(Ok, Error);
 
         /// <summary>
@@ -104,7 +103,7 @@ namespace Cafe.Api.Controllers
         [HttpPost("assign/cashier")]
         [Authorize(Policy = AuthConstants.Policies.IsAdmin)]
         public async Task<IActionResult> AssignCashierToAccount([FromBody] AssignCashierToAccount command) =>
-            (await _mediator.Send(command))
+            (await Mediator.Send(command))
                 .Match(Ok, Error);
 
         /// <summary>
@@ -113,7 +112,7 @@ namespace Cafe.Api.Controllers
         [HttpPost("assign/barista")]
         [Authorize(Policy = AuthConstants.Policies.IsAdmin)]
         public async Task<IActionResult> AssignBaristaToAccount([FromBody] AssignBaristaToAccount command) =>
-            (await _mediator.Send(command))
+            (await Mediator.Send(command))
                 .Match(Ok, Error);
 
         private void SetAuthCookie(string token) =>

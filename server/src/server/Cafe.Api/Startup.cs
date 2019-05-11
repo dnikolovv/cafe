@@ -71,7 +71,7 @@ namespace Cafe.Api
                     policy.RequireRoutedLink("order-items", nameof(TabController.OrderMenuItems), x => new { tabId = x.Id }, cond => cond.Assert(x => x.IsOpen));
                 });
 
-                config.AddPolicy<TabsResource>(policy =>
+                config.AddPolicy<TabsContainerResource>(policy =>
                 {
                     policy.RequireRoutedLink("self", nameof(TabController.GetAllOpenTabs));
                 });

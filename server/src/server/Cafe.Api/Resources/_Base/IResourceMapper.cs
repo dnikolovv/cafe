@@ -8,8 +8,8 @@ namespace Cafe.Api.Resources
         Task<TResource> MapAsync<T, TResource>(T source)
             where TResource : Resource;
 
-        Task<TContainerResource> MapContainerAsync<TModel, TNestedResource, TContainerResource>(IEnumerable<TModel> models)
-            where TContainerResource : Resource
-            where TNestedResource : Resource;
+        Task<TContainer> MapContainerAsync<T, TResource, TContainer>(IEnumerable<T> models)
+            where TContainer : ContainerResource<TResource>, new()
+            where TResource : Resource;
     }
 }

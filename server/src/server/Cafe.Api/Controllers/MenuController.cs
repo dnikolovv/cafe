@@ -1,4 +1,5 @@
-﻿using Cafe.Core.AuthContext;
+﻿using Cafe.Api.Resources;
+using Cafe.Core.AuthContext;
 using Cafe.Core.MenuContext.Commands;
 using Cafe.Core.MenuContext.Queries;
 using MediatR;
@@ -10,11 +11,9 @@ namespace Cafe.Api.Controllers
 {
     public class MenuController : ApiController
     {
-        private readonly IMediator _mediator;
-
-        public MenuController(IMediator mediator)
+        public MenuController(IResourceMapper resourceMapper, IMediator mediator)
+            : base(resourceMapper, mediator)
         {
-            _mediator = mediator;
         }
 
         /// <summary>
@@ -22,7 +21,7 @@ namespace Cafe.Api.Controllers
         /// </summary>
         [HttpGet("items")]
         public async Task<IActionResult> GetMenuItems() =>
-            (await _mediator.Send(new GetAllMenuItems()))
+            (await Mediator.Send(new GetAllMenuItems()))
             .Match(Ok, Error);
 
         /// <summary>
@@ -32,7 +31,7 @@ namespace Cafe.Api.Controllers
         [HttpPost("items")]
         [Authorize(Policy = AuthConstants.Policies.IsAdminOrManager)]
         public async Task<IActionResult> AddMenuItems([FromBody] AddMenuItems command) =>
-            (await _mediator.Send(command))
+            (await Mediator.Send(command))
             .Match(Ok, Error);
     }
 }
