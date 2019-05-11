@@ -74,6 +74,14 @@ namespace Cafe.Api.Controllers
             where TResource : Resource =>
             ResourceMapper.MapAsync<T, TResource>(obj);
 
+        protected Task<TResource> ToEmptyResourceAsync<TResource>(Unit unit)
+            where TResource : Resource, new() =>
+            ResourceMapper.CreateEmptyResourceAsync<TResource>();
+
+        protected Task<TResource> ToEmptyResourceAsync<TResource>(Action<TResource> beforeMap)
+            where TResource : Resource, new() =>
+            ResourceMapper.CreateEmptyResourceAsync(beforeMap);
+
         private Option<Guid> TryGetGuidClaim(string claimType)
         {
             var claimValue = User

@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Cafe.Api.Resources
+namespace Cafe.Api.Resources.Tab
 {
     public class TabResource : Resource
     {

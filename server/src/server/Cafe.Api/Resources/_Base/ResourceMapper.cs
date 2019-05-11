@@ -18,6 +18,15 @@ namespace Cafe.Api.Resources
             _linksService = linksService;
         }
 
+        public async Task<TResource> CreateEmptyResourceAsync<TResource>(Action<TResource> beforeMap = null)
+            where TResource : Resource, new()
+        {
+            var resource = new TResource();
+            beforeMap?.Invoke(resource);
+            await _linksService.AddLinksAsync(resource);
+            return resource;
+        }
+
         public async Task<TResource> MapAsync<T, TResource>(T source)
             where TResource : Resource
         {

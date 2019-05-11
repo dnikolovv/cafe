@@ -37,8 +37,11 @@ namespace Cafe.Api.Configuration
 
             services.AddLinks(config =>
             {
+                // TODO: Perhaps use reflection to register all IPolicy implementations dynamically
                 config.AddPolicy(new TabResourcePolicy().PolicyConfiguration);
                 config.AddPolicy(new TabsContainerResourcePolicy().PolicyConfiguration);
+                config.AddPolicy(new OpenTabResourcePolicy().PolicyConfiguration);
+                config.AddPolicy(new OrderMenuItemsResourcePolicy().PolicyConfiguration);
             });
         }
 

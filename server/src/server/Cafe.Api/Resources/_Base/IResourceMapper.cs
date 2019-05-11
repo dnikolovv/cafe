@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Cafe.Api.Resources
@@ -11,5 +12,8 @@ namespace Cafe.Api.Resources
         Task<TContainer> MapContainerAsync<T, TResource, TContainer>(IEnumerable<T> models)
             where TContainer : ContainerResource<TResource>, new()
             where TResource : Resource;
+
+        Task<TResource> CreateEmptyResourceAsync<TResource>(Action<TResource> beforeMap = null)
+            where TResource : Resource, new();
     }
 }

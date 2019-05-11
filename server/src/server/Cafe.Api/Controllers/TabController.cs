@@ -1,4 +1,5 @@
 ﻿using Cafe.Api.Resources;
+using Cafe.Api.Resources.Tab;
 using Cafe.Core.AuthContext;
 using Cafe.Core.TabContext.Commands;
 using Cafe.Core.TabContext.Queries;
@@ -51,7 +52,8 @@ namespace Cafe.Api.Controllers
         /// </summary>
         [HttpPost("open", Name = nameof(OpenTab))]
         public async Task<IActionResult> OpenTab([FromBody] OpenTab command) =>
-            (await Mediator.Send(command))
+            (await Mediator.Send(command)
+                .MapAsync(_ => ToEmptyResourceAsync<OpenTabResource>(x => x.Id = command.Id)))
                 .Match(Ok, Error);
 
         /// <summary>
@@ -59,7 +61,8 @@ namespace Cafe.Api.Controllers
         /// </summary>
         [HttpPut("order", Name = nameof(OrderMenuItems))]
         public async Task<IActionResult> OrderMenuItems([FromBody] OrderMenuItems command) =>
-            (await Mediator.Send(command))
+            (await Mediator.Send(command)
+                .MapAsync(ToEmptyResourceAsync<OrderMenuItemsResource>))
                 .Match(Ok, Error);
 
         /// <summary>

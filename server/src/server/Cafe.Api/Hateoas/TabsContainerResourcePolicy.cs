@@ -1,5 +1,5 @@
 ﻿using Cafe.Api.Controllers;
-using Cafe.Api.Resources;
+using Cafe.Api.Resources.Tab;
 using RiskFirst.Hateoas;
 using System;
 
