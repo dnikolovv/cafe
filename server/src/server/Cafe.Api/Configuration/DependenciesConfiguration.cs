@@ -1,4 +1,6 @@
-﻿using Cafe.Api.OperationFilters;
+﻿using Cafe.Api.Hateoas;
+using Cafe.Api.OperationFilters;
+using Cafe.Api.Resources;
 using Cafe.Business;
 using Cafe.Business.AuthContext;
 using Cafe.Core;
@@ -9,7 +11,6 @@ using Cafe.Domain.Events;
 using Cafe.Domain.Views;
 using Cafe.Persistance.EntityFramework;
 using Marten;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -17,6 +18,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using RiskFirst.Hateoas;
 using Swashbuckle.AspNetCore.Swagger;
 using System;
 using System.Collections.Generic;
@@ -29,6 +31,17 @@ namespace Cafe.Api.Configuration
 {
     public static class DependenciesConfiguration
     {
+        public static void AddHateoas(this IServiceCollection services)
+        {
+            services.AddTransient<IResourceMapper, ResourceMapper>();
+
+            services.AddLinks(config =>
+            {
+                config.AddPolicy(new TabResourcePolicy().PolicyConfiguration);
+                config.AddPolicy(new TabsContainerResourcePolicy().PolicyConfiguration);
+            });
+        }
+
         public static void AddCommonServices(this IServiceCollection services)
         {
             services.AddTransient<IMenuItemsService, MenuItemsService>();

@@ -128,9 +128,9 @@
             Completes a to-go order.
             </summary>
         </member>
-        <member name="M:Cafe.Api.Controllers.TabController.GetTabView(System.Guid)">
+        <member name="M:Cafe.Api.Controllers.TabController.CloseTab(Cafe.Core.TabContext.Commands.CloseTab)">
             <summary>
-            Retrieves a tab by id.
+            Closes a tab.
             </summary>
         </member>
         <member name="M:Cafe.Api.Controllers.TabController.GetAllOpenTabs">
@@ -138,14 +138,14 @@
             Retrieves all open tabs.
             </summary>
         </member>
+        <member name="M:Cafe.Api.Controllers.TabController.GetTabView(System.Guid)">
+            <summary>
+            Retrieves a tab by id.
+            </summary>
+        </member>
         <member name="M:Cafe.Api.Controllers.TabController.OpenTab(Cafe.Core.TabContext.Commands.OpenTab)">
             <summary>
             Opens a new tab on a given table.
-            </summary>
-        </member>
-        <member name="M:Cafe.Api.Controllers.TabController.CloseTab(Cafe.Core.TabContext.Commands.CloseTab)">
-            <summary>
-            Closes a tab.
             </summary>
         </member>
         <member name="M:Cafe.Api.Controllers.TabController.OrderMenuItems(Cafe.Core.TabContext.Commands.OrderMenuItems)">
@@ -153,14 +153,14 @@
             Orders a list of menu items for a given tab.
             </summary>
         </member>
-        <member name="M:Cafe.Api.Controllers.TabController.ServeMenuItems(Cafe.Core.TabContext.Commands.ServeMenuItems)">
-            <summary>
-            Serves a list of menu items.
-            </summary>
-        </member>
         <member name="M:Cafe.Api.Controllers.TabController.RejectMenuItems(Cafe.Core.TabContext.Commands.RejectMenuItems)">
             <summary>
             Rejects a list of menu items for a given tab.
+            </summary>
+        </member>
+        <member name="M:Cafe.Api.Controllers.TabController.ServeMenuItems(Cafe.Core.TabContext.Commands.ServeMenuItems)">
+            <summary>
+            Serves a list of menu items.
             </summary>
         </member>
         <member name="M:Cafe.Api.Controllers.TableController.GetAllTables">

@@ -21,12 +21,11 @@ namespace Cafe.Api.Controllers
         }
 
         /// <summary>
-        /// Retrieves a tab by id.
+        /// Closes a tab.
         /// </summary>
-        [HttpGet("{id}", Name = nameof(GetTabView))]
-        public async Task<IActionResult> GetTabView(Guid id) =>
-            (await Mediator.Send(new GetTabView { Id = id })
-                .MapAsync(ToResourceAsync<TabView, TabResource>))
+        [HttpPut("close", Name = nameof(CloseTab))]
+        public async Task<IActionResult> CloseTab([FromBody] CloseTab command) =>
+            (await Mediator.Send(command))
                 .Match(Ok, Error);
 
         /// <summary>
@@ -39,20 +38,21 @@ namespace Cafe.Api.Controllers
                 .Match(Ok, Error);
 
         /// <summary>
+        /// Retrieves a tab by id.
+        /// </summary>
+        [HttpGet("{id}", Name = nameof(GetTabView))]
+        public async Task<IActionResult> GetTabView(Guid id) =>
+            (await Mediator.Send(new GetTabView { Id = id })
+                .MapAsync(ToResourceAsync<TabView, TabResource>))
+                .Match(Ok, Error);
+
+        /// <summary>
         /// Opens a new tab on a given table.
         /// </summary>
         [HttpPost("open", Name = nameof(OpenTab))]
         public async Task<IActionResult> OpenTab([FromBody] OpenTab command) =>
             (await Mediator.Send(command))
-            .Match(Ok, Error);
-
-        /// <summary>
-        /// Closes a tab.
-        /// </summary>
-        [HttpPut("close", Name = nameof(CloseTab))]
-        public async Task<IActionResult> CloseTab([FromBody] CloseTab command) =>
-            (await Mediator.Send(command))
-            .Match(Ok, Error);
+                .Match(Ok, Error);
 
         /// <summary>
         /// Orders a list of menu items for a given tab.
@@ -60,15 +60,7 @@ namespace Cafe.Api.Controllers
         [HttpPut("order", Name = nameof(OrderMenuItems))]
         public async Task<IActionResult> OrderMenuItems([FromBody] OrderMenuItems command) =>
             (await Mediator.Send(command))
-            .Match(Ok, Error);
-
-        /// <summary>
-        /// Serves a list of menu items.
-        /// </summary>
-        [HttpPut("serve", Name = nameof(ServeMenuItems))]
-        public async Task<IActionResult> ServeMenuItems([FromBody] ServeMenuItems command) =>
-            (await Mediator.Send(command))
-            .Match(Ok, Error);
+                .Match(Ok, Error);
 
         /// <summary>
         /// Rejects a list of menu items for a given tab.
@@ -76,6 +68,14 @@ namespace Cafe.Api.Controllers
         [HttpPut("reject", Name = nameof(RejectMenuItems))]
         public async Task<IActionResult> RejectMenuItems([FromBody] RejectMenuItems command) =>
             (await Mediator.Send(command))
-            .Match(Ok, Error);
+                .Match(Ok, Error);
+
+        /// <summary>
+        /// Serves a list of menu items.
+        /// </summary>
+        [HttpPut("serve", Name = nameof(ServeMenuItems))]
+        public async Task<IActionResult> ServeMenuItems([FromBody] ServeMenuItems command) =>
+            (await Mediator.Send(command))
+                .Match(Ok, Error);
     }
 }
