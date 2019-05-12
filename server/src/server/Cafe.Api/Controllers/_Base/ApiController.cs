@@ -66,7 +66,7 @@ namespace Cafe.Api.Controllers
             Ok();
 
         protected Task<TContainer> ToResourceContainerAsync<T, TResource, TContainer>(IEnumerable<T> models)
-            where TContainer : ContainerResource<TResource>, new()
+            where TContainer : ResourceContainer<TResource>, new()
             where TResource : Resource =>
             ResourceMapper.MapContainerAsync<T, TResource, TContainer>(models);
 

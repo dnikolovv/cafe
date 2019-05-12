@@ -10,7 +10,7 @@ namespace Cafe.Api.Resources
             where TResource : Resource;
 
         Task<TContainer> MapContainerAsync<T, TResource, TContainer>(IEnumerable<T> models)
-            where TContainer : ContainerResource<TResource>, new()
+            where TContainer : ResourceContainer<TResource>, new()
             where TResource : Resource;
 
         Task<TResource> CreateEmptyResourceAsync<TResource>(Action<TResource> beforeMap = null)

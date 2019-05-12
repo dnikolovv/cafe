@@ -42,6 +42,8 @@ namespace Cafe.Api.Configuration
                 config.AddPolicy(new TabsContainerResourcePolicy().PolicyConfiguration);
                 config.AddPolicy(new OpenTabResourcePolicy().PolicyConfiguration);
                 config.AddPolicy(new OrderMenuItemsResourcePolicy().PolicyConfiguration);
+                config.AddPolicy(new LoginResourcePolicy().PolicyConfiguration);
+                config.AddPolicy(new UserResourcePolicy().PolicyConfiguration);
             });
         }
 

@@ -47,7 +47,7 @@ namespace Cafe.Api.Resources
         }
 
         public async Task<TContainer> MapContainerAsync<T, TResource, TContainer>(IEnumerable<T> models)
-            where TContainer : ContainerResource<TResource>, new()
+            where TContainer : ResourceContainer<TResource>, new()
             where TResource : Resource
         {
             var nestedResources = await Task.WhenAll(models
