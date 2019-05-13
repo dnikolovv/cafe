@@ -1,8 +1,7 @@
-﻿using Cafe.Api.Hateoas.Resources;
-using RiskFirst.Hateoas;
+﻿using RiskFirst.Hateoas;
 using System;
 
-namespace Cafe.Api.Hateoas
+namespace Cafe.Api.Hateoas.Resources
 {
     public interface IPolicy<TResource>
         where TResource : Resource

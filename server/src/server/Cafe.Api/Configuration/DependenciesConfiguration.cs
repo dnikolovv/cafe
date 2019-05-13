@@ -1,6 +1,4 @@
 ﻿using Cafe.Api.Hateoas.Resources;
-using Cafe.Api.Hateoas.Resources.Auth;
-using Cafe.Api.Hateoas.Resources.Tab;
 using Cafe.Api.OperationFilters;
 using Cafe.Business;
 using Cafe.Business.AuthContext;
@@ -25,6 +23,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -38,13 +37,18 @@ namespace Cafe.Api.Configuration
 
             services.AddLinks(config =>
             {
-                // TODO: Perhaps use reflection to register all IPolicy implementations dynamically
-                config.AddPolicy(new TabResourcePolicy().PolicyConfiguration);
-                config.AddPolicy(new TabsContainerResourcePolicy().PolicyConfiguration);
-                config.AddPolicy(new OpenTabResourcePolicy().PolicyConfiguration);
-                config.AddPolicy(new OrderMenuItemsResourcePolicy().PolicyConfiguration);
-                config.AddPolicy(new LoginResourcePolicy().PolicyConfiguration);
-                config.AddPolicy(new UserResourcePolicy().PolicyConfiguration);
+                var policies = Assembly
+                    .GetAssembly(typeof(DependenciesConfiguration))
+                    .GetTypes()
+                    .Where(t => !t.IsInterface && !t.IsAbstract && t.GetInterfaces().Any(i => i.Name == typeof(IPolicy<>).Name))
+                    .Select(Activator.CreateInstance)
+                    .Cast<dynamic>()
+                    .ToArray();
+
+                foreach (var policy in policies)
+                {
+                    config.AddPolicy(policy.PolicyConfiguration);
+                }
             });
         }
 
