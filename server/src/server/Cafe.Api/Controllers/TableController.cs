@@ -19,7 +19,7 @@ namespace Cafe.Api.Controllers
         /// <summary>
         /// Retrieves a list of the tables in the café.
         /// </summary>
-        [HttpGet]
+        [HttpGet(Name = nameof(GetAllTables))]
         public async Task<IActionResult> GetAllTables() =>
             (await Mediator.Send(new GetAllTables()))
             .Match(Ok, Error);
@@ -27,7 +27,7 @@ namespace Cafe.Api.Controllers
         /// <summary>
         /// Adds a table to the café.
         /// </summary>
-        [HttpPost]
+        [HttpPost(Name = nameof(AddTable))]
         [Authorize(Policy = AuthConstants.Policies.IsAdminOrManager)]
         public async Task<IActionResult> AddTable([FromBody] AddTable command) =>
             (await Mediator.Send(command))
@@ -37,7 +37,7 @@ namespace Cafe.Api.Controllers
         /// Calls the waiter assigned to the table number provided.
         /// </summary>
         [Authorize]
-        [HttpPost("{tableNumber}/callWaiter")]
+        [HttpPost("{tableNumber}/callWaiter", Name = nameof(CallWaiter))]
         public async Task<IActionResult> CallWaiter(int tableNumber) =>
             (await Mediator.Send(new CallWaiter { TableNumber = tableNumber }))
             .Match(Ok, Error);
@@ -46,7 +46,7 @@ namespace Cafe.Api.Controllers
         /// Requests the bill from the waiter assigned to the table number provided.
         /// </summary>
         [Authorize]
-        [HttpPost("{tableNumber}/requestBill")]
+        [HttpPost("{tableNumber}/requestBill", Name = nameof(RequestBill))]
         public async Task<IActionResult> RequestBill(int tableNumber) =>
             (await Mediator.Send(new RequestBill { TableNumber = tableNumber }))
             .Match(Ok, Error);
