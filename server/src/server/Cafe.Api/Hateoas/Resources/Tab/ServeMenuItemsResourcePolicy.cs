@@ -1,9 +1,8 @@
 ﻿using Cafe.Api.Controllers;
-using Cafe.Api.Resources.Tab;
 using RiskFirst.Hateoas;
 using System;
 
-namespace Cafe.Api.Hateoas
+namespace Cafe.Api.Hateoas.Resources.Tab
 {
     public class ServeMenuItemsResourcePolicy : IPolicy<ServeMenuItemsResource>
     {

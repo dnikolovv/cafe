@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Cafe.Domain.Views;
 
-namespace Cafe.Api.Resources.Auth
+namespace Cafe.Api.Hateoas.Resources.Auth
 {
     public class UserMappingProfile : Profile
     {

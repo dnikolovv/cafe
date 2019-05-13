@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using Cafe.Api.Configuration;
 using Cafe.Api.Filters;
+using Cafe.Api.Hateoas.Resources.Tab;
 using Cafe.Api.Hubs;
 using Cafe.Api.ModelBinders;
-using Cafe.Api.Resources.Tab;
 using Cafe.Core.AuthContext;
 using Cafe.Core.AuthContext.Commands;
 using Cafe.Core.AuthContext.Configuration;

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Cafe.Api.Resources
+namespace Cafe.Api.Hateoas.Resources
 {
     public interface IResourceMapper
     {

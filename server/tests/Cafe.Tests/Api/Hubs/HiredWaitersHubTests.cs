@@ -95,7 +95,6 @@ namespace Cafe.Tests.Api.Hubs
                     e => e.Waiter.Id == hireWaiterCommand.Id &&
                          e.Waiter.ShortName == hireWaiterCommand.ShortName,
                     Times.Once());
-
         }
 
         [Fact]

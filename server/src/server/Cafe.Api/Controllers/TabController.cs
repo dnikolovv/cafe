@@ -1,5 +1,5 @@
-﻿using Cafe.Api.Resources;
-using Cafe.Api.Resources.Tab;
+﻿using Cafe.Api.Hateoas.Resources;
+using Cafe.Api.Hateoas.Resources.Tab;
 using Cafe.Core.AuthContext;
 using Cafe.Core.TabContext.Commands;
 using Cafe.Core.TabContext.Queries;

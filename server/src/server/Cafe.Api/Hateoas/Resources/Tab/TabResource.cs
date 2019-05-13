@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Cafe.Api.Resources.Tab
+namespace Cafe.Api.Hateoas.Resources.Tab
 {
     public class TabResource : Resource
     {

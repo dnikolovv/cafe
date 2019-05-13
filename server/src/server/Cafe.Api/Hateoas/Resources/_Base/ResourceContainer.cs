@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Cafe.Api.Resources
+namespace Cafe.Api.Hateoas.Resources
 {
     public class ResourceContainer<TResouce> : Resource
         where TResouce : Resource

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Cafe.Api.Resources.Tab
+namespace Cafe.Api.Hateoas.Resources.Tab
 {
     public class OrderMenuItemsResource : Resource
     {

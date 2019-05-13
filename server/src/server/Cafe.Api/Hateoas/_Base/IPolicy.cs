@@ -1,4 +1,4 @@
-﻿using Cafe.Api.Resources;
+﻿using Cafe.Api.Hateoas.Resources;
 using RiskFirst.Hateoas;
 using System;
 

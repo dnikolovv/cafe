@@ -1,4 +1,4 @@
-﻿namespace Cafe.Api.Resources.Auth
+﻿namespace Cafe.Api.Hateoas.Resources.Auth
 {
     public class LoginResource : Resource
     {

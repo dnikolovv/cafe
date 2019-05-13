@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Cafe.Api.Resources
+namespace Cafe.Api.Hateoas.Resources
 {
     public class ResourceMapper : IResourceMapper
     {

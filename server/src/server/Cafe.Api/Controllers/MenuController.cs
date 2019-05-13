@@ -1,4 +1,4 @@
-﻿using Cafe.Api.Resources;
+﻿using Cafe.Api.Hateoas.Resources;
 using Cafe.Core.AuthContext;
 using Cafe.Core.MenuContext.Commands;
 using Cafe.Core.MenuContext.Queries;

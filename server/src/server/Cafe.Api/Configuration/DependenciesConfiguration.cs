@@ -1,6 +1,7 @@
-﻿using Cafe.Api.Hateoas;
+﻿using Cafe.Api.Hateoas.Resources;
+using Cafe.Api.Hateoas.Resources.Auth;
+using Cafe.Api.Hateoas.Resources.Tab;
 using Cafe.Api.OperationFilters;
-using Cafe.Api.Resources;
 using Cafe.Business;
 using Cafe.Business.AuthContext;
 using Cafe.Core;

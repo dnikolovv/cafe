@@ -100,7 +100,6 @@ namespace Cafe.Tests.Api.Hubs
                     e => e.Order.Id == orderId &&
                          e.Order.OrderedItems.Count == menuItems.Length,
                     Times.Once());
-
         }
 
         [Fact]

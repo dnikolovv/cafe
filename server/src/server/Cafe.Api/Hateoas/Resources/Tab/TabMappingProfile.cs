@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Cafe.Domain.Views;
 
-namespace Cafe.Api.Resources.Tab
+namespace Cafe.Api.Hateoas.Resources.Tab
 {
     public class TabMappingProfile : Profile
     {

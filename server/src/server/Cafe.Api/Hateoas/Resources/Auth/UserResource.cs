@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Cafe.Api.Resources.Auth
+namespace Cafe.Api.Hateoas.Resources.Auth
 {
     public class UserResource : Resource
     {

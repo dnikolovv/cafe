@@ -1,9 +1,8 @@
 ﻿using Cafe.Api.Controllers;
-using Cafe.Api.Resources.Auth;
 using RiskFirst.Hateoas;
 using System;
 
-namespace Cafe.Api.Hateoas
+namespace Cafe.Api.Hateoas.Resources.Auth
 {
     public class UserResourcePolicy : IPolicy<UserResource>
     {
