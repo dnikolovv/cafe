@@ -6,6 +6,7 @@ using Cafe.Domain.Entities;
 using Cafe.Tests.Business.TabContext.Helpers;
 using Cafe.Tests.Customizations;
 using Cafe.Tests.Extensions;
+using Shouldly;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,9 +43,41 @@ namespace Cafe.Tests.Api.Controllers
                         TableNumber = waiter.ServedTables[0].Number
                     };
 
+                    await _fixture.SendAsync(openTabCommand);
+
                     // Act
                     var response = await httpClient
                         .PostAsJsonAsync(TabRoute("open"), openTabCommand);
+
+                    // Assert
+                    var expectedLinks = new List<string>
+                    {
+                        LinkNames.Self
+                    };
+
+                    var resource = await response.ShouldBeAResource<TabsContainerResource>(expectedLinks);
+
+                    // Assure that the nested resource links have been properly set
+                    resource.Items.ShouldAllBe(r => r.Links.Count > 0);
+                },
+                fixture);
+
+        [Theory]
+        [CustomizedAutoData]
+        public Task GetAllOpenTabsShouldReturnProperHypermediaLinks(Fixture fixture) =>
+            _apiHelper.InTheContextOfAWaiter(
+                waiter => async httpClient =>
+                {
+                    // Arrange
+                    var openTabCommand = new OpenTab
+                    {
+                        Id = Guid.NewGuid(),
+                        CustomerName = "Some customer",
+                        TableNumber = waiter.ServedTables[0].Number
+                    };
+
+                    // Act
+                    var response = await httpClient.GetAsync(TabRoute());
 
                     // Assert
                     var expectedLinks = new List<string>
@@ -92,7 +125,6 @@ namespace Cafe.Tests.Api.Controllers
                     };
 
                     await response.ShouldBeAResource<OrderMenuItemsResource>(expectedLinks);
-
                 },
                 fixture);
 
@@ -265,7 +297,7 @@ namespace Cafe.Tests.Api.Controllers
                 },
                 fixture);
 
-        private static string TabRoute(string route) =>
+        private static string TabRoute(string route = null) =>
             $"tab/{route?.TrimStart('/') ?? string.Empty}";
     }
 }
