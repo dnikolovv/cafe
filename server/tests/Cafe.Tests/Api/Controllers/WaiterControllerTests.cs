@@ -1,9 +1,13 @@
 ﻿using AutoFixture;
 using Cafe.Api.Hateoas;
+using Cafe.Api.Hateoas.Resources.Waiter;
 using Cafe.Core.TableContext.Commands;
 using Cafe.Core.WaiterContext.Commands;
 using Cafe.Tests.Customizations;
+using Cafe.Tests.Extensions;
+using Shouldly;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -22,7 +26,7 @@ namespace Cafe.Tests.Api.Controllers
 
         [Theory]
         [CustomizedAutoData]
-        public async Task GetEmployedWaitersShouldReturnProperHypermediaLinks(HireWaiter[] waitersToHire, Fixture fixture) =>
+        public Task GetEmployedWaitersShouldReturnProperHypermediaLinks(HireWaiter[] waitersToHire, Fixture fixture) =>
             _apiHelper.InTheContextOfAManager(
                 manager => async httpClient =>
                 {
@@ -39,7 +43,7 @@ namespace Cafe.Tests.Api.Controllers
                         LinkNames.Waiter.Hire
                     };
 
-                    var resource = response.ShouldBeAResource<WaitersContainerResource>();
+                    var resource = await response.ShouldBeAResource<WaitersContainerResource>(expectedLinks);
 
                     resource.Items.ShouldAllBe(r => r.Links.Count > 0);
                 },
@@ -47,7 +51,7 @@ namespace Cafe.Tests.Api.Controllers
 
         [Theory]
         [CustomizedAutoData]
-        public async Task HireWaiterShouldReturnProperHypermediaLinks(HireWaiter command, Fixture fixture) =>
+        public Task HireWaiterShouldReturnProperHypermediaLinks(HireWaiter command, Fixture fixture) =>
             _apiHelper.InTheContextOfAManager(
                 manager => async httpClient =>
                 {
@@ -59,18 +63,17 @@ namespace Cafe.Tests.Api.Controllers
                     var expectedLinks = new List<string>
                     {
                         LinkNames.Self,
-                        LinkNames.Waiter.Get,
                         LinkNames.Waiter.GetEmployedWaiters,
                         LinkNames.Waiter.AssignTable
                     };
 
-                    response.ShouldBeAResource<HireWaiter>(expectedLinks);
+                    await response.ShouldBeAResource<HireWaiterResource>(expectedLinks);
                 },
                 fixture);
 
         [Theory]
         [CustomizedAutoData]
-        public async Task AssignTableShouldReturnProperHypermediaLinks(HireWaiter hireWaiterCommand, AddTable addTableCommand, Fixture fixture) =>
+        public Task AssignTableShouldReturnProperHypermediaLinks(HireWaiter hireWaiterCommand, AddTable addTableCommand, Fixture fixture) =>
             _apiHelper.InTheContextOfAManager(
                 manager => async httpClient =>
                 {
@@ -92,12 +95,11 @@ namespace Cafe.Tests.Api.Controllers
                     var expectedLinks = new List<string>
                     {
                         LinkNames.Self,
-                        LinkNames.Waiter.Get,
                         LinkNames.Waiter.GetEmployedWaiters,
                         LinkNames.Waiter.Hire
                     };
 
-                    response.ShouldBeAResource<HireWaiter>(expectedLinks);
+                    await response.ShouldBeAResource<AssignTableResource>(expectedLinks);
                 },
                 fixture);
 

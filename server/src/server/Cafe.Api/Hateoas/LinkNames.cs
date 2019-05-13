@@ -21,5 +21,12 @@
             public const string Open = "open-tab";
             public const string Close = "close-tab";
         }
+
+        public static class Waiter
+        {
+            public const string GetEmployedWaiters = "get-waiters";
+            public const string Hire = "hire-waiter";
+            public const string AssignTable = "assign-table";
+        }
     }
 }

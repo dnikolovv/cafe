@@ -146,13 +146,13 @@ namespace Cafe.Tests
 
         public Task SendManyAsync(params ICommand[] commands)
         {
-            return ExecuteScopeAsync(sp =>
+            return ExecuteScopeAsync(async sp =>
             {
                 var mediator = sp.GetService<IMediator>();
 
                 foreach (var command in commands)
                 {
-                    mediator.Send(command);
+                    await mediator.Send(command);
                 }
 
                 return Task.CompletedTask;

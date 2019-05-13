@@ -43,8 +43,6 @@ namespace Cafe.Tests.Api.Controllers
                         TableNumber = waiter.ServedTables[0].Number
                     };
 
-                    await _fixture.SendAsync(openTabCommand);
-
                     // Act
                     var response = await httpClient
                         .PostAsJsonAsync(TabRoute("open"), openTabCommand);
@@ -52,13 +50,13 @@ namespace Cafe.Tests.Api.Controllers
                     // Assert
                     var expectedLinks = new List<string>
                     {
-                        LinkNames.Self
+                        LinkNames.Self,
+                        LinkNames.Tab.GetTab,
+                        LinkNames.Tab.Close,
+                        LinkNames.Tab.OrderItems
                     };
 
-                    var resource = await response.ShouldBeAResource<TabsContainerResource>(expectedLinks);
-
-                    // Assure that the nested resource links have been properly set
-                    resource.Items.ShouldAllBe(r => r.Links.Count > 0);
+                    await response.ShouldBeAResource<OpenTabResource>(expectedLinks);
                 },
                 fixture);
 
@@ -76,19 +74,21 @@ namespace Cafe.Tests.Api.Controllers
                         TableNumber = waiter.ServedTables[0].Number
                     };
 
+                    await _fixture.SendAsync(openTabCommand);
+
                     // Act
                     var response = await httpClient.GetAsync(TabRoute());
 
                     // Assert
                     var expectedLinks = new List<string>
                     {
-                        LinkNames.Self,
-                        LinkNames.Tab.GetTab,
-                        LinkNames.Tab.Close,
-                        LinkNames.Tab.OrderItems
+                        LinkNames.Self
                     };
 
-                    await response.ShouldBeAResource<OpenTabResource>(expectedLinks);
+                    var resource = await response.ShouldBeAResource<TabsContainerResource>(expectedLinks);
+
+                    // Assure that the nested resource links have been properly set
+                    resource.Items.ShouldAllBe(r => r.Links.Count > 0);
                 },
                 fixture);
 
