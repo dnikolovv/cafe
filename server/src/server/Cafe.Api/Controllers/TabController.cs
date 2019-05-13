@@ -26,7 +26,8 @@ namespace Cafe.Api.Controllers
         /// </summary>
         [HttpPut("close", Name = nameof(CloseTab))]
         public async Task<IActionResult> CloseTab([FromBody] CloseTab command) =>
-            (await Mediator.Send(command))
+            (await Mediator.Send(command)
+                .MapAsync(_ => ToEmptyResourceAsync<CloseTabResource>(x => x.TabId = command.TabId)))
                 .Match(Ok, Error);
 
         /// <summary>

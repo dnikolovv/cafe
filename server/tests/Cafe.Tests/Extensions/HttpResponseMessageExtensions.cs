@@ -22,15 +22,16 @@ namespace Cafe.Tests.Extensions
             }
         }
 
-        public static async Task<TResource> ShouldBeAResource<TResource>(this HttpResponseMessage response, IEnumerable<string> expectedLinks = null)
+        public static async Task<TResource> ShouldBeAResource<TResource>(this HttpResponseMessage response, IEnumerable<string> expectedLinks)
             where TResource : Resource
         {
-            // We always expect resources to be returned with a success status code
+            // We always expect valid resources to be returned with a success status code
             response.IsSuccessStatusCode.ShouldBeTrue();
 
             var resource = await response.ShouldDeserializeTo<TResource>();
 
-            expectedLinks?.ShouldAllBe(el => resource.Links.Any(l => l.Key == el));
+            if (expectedLinks != null)
+                resource.Links.ShouldAllBe(l => expectedLinks.Contains(l.Key));
 
             return resource;
         }

@@ -22,7 +22,7 @@ namespace Cafe.Tests
             var client = new HttpClient();
 
             // Act
-            var result = await client.GetAsync(_fixture.GetCompleteServerUrl("api/health"));
+            var result = await client.GetAsync(_fixture.GetCompleteServerUrl("health"));
 
             // Assert
             result.StatusCode.ShouldBe(HttpStatusCode.OK);
