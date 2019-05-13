@@ -13,7 +13,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Cafe.Tests.Api.Auth
+namespace Cafe.Tests.Api.Controllers
 {
     public class AuthControllerTests : ResetDatabaseLifetime
     {
@@ -141,6 +141,6 @@ namespace Cafe.Tests.Api.Auth
                     fixture);
 
         private static string AuthRoute(string route = null) =>
-            $"api/auth/{route?.TrimStart('/') ?? string.Empty}";
+            $"/auth/{route?.TrimStart('/') ?? string.Empty}";
     }
 }

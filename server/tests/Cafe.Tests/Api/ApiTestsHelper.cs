@@ -1,6 +1,12 @@
 ﻿using AutoFixture;
+using Cafe.Core.AuthContext;
 using Cafe.Core.AuthContext.Commands;
+using Cafe.Core.TableContext.Commands;
+using Cafe.Core.WaiterContext.Commands;
+using Cafe.Domain.Entities;
 using Cafe.Tests.Business.AuthContext;
+using Cafe.Tests.Business.TabContext.Helpers;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -13,14 +19,42 @@ namespace Cafe.Tests.Api
     {
         private readonly AppFixture _appFixture;
         private readonly AuthTestsHelper _authHelper;
+        private readonly TabTestsHelper _tabHelper;
 
         public ApiTestsHelper(AppFixture appFixture)
         {
             _appFixture = appFixture;
             _authHelper = new AuthTestsHelper(_appFixture);
+            _tabHelper = new TabTestsHelper(_appFixture);
         }
 
         public async Task InTheContextOfAnAuthenticatedUser(Func<HttpClient, Task> serverCall, Fixture fixture, IEnumerable<Claim> withClaims = null)
+        {
+            var token = await SetupUserWithClaims(fixture, withClaims);
+
+            await _appFixture.ExecuteHttpClientAsync(serverCall, token);
+        }
+
+        public async Task InTheContextOfAWaiter(Func<Waiter, Func<HttpClient, Task>> serverCall, Fixture fixture)
+        {
+            var hireWaiter = fixture.Create<HireWaiter>();
+
+            await _tabHelper.SetupWaiterWithTable(hireWaiter, fixture.Create<AddTable>());
+
+            var waiter = await _appFixture.ExecuteDbContextAsync(dbContext =>
+                dbContext
+                    .Waiters
+                    .Include(w => w.ServedTables)
+                    .FirstOrDefaultAsync(w => w.Id == hireWaiter.Id));
+
+            var token = await SetupUserWithClaims(
+                fixture,
+                new List<Claim> { new Claim(AuthConstants.ClaimTypes.WaiterId, waiter.Id.ToString()) });
+
+            await _appFixture.ExecuteHttpClientAsync(serverCall(waiter), token);
+        }
+
+        private async Task<string> SetupUserWithClaims(Fixture fixture, IEnumerable<Claim> withClaims)
         {
             var registerCommand = fixture
                 .Create<Register>();
@@ -34,7 +68,7 @@ namespace Cafe.Tests.Api
                 .Login(registerCommand.Email, registerCommand.Password))
                 .TokenString;
 
-            await _appFixture.ExecuteHttpClientAsync(serverCall, token);
+            return token;
         }
     }
 }

@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Cafe.Api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     public class ApiController : Controller
     {
         public ApiController(IResourceMapper resourceMapper, IMediator mediator)
