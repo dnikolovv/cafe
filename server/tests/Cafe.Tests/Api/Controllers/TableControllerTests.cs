@@ -126,6 +126,66 @@ namespace Cafe.Tests.Api.Controllers
                 },
                 fixture);
 
+        [Theory]
+        [CustomizedAutoData]
+        public Task CallWaiterShouldReturnProperHypermediaLinks(HireWaiter hireWaiter, AddTable addTable, Fixture fixture) =>
+            _apiHelper.InTheContextOfAnAuthenticatedUser(
+                async httpClient =>
+                {
+                    // Arrange
+                    await _tabHelper.SetupWaiterWithTable(hireWaiter, addTable);
+
+                    var callWaiter = new CallWaiter
+                    {
+                        TableNumber = addTable.Number
+                    };
+
+                    // Act
+                    var response = await httpClient
+                        .PostAsJsonAsync(TableRoute($"{addTable.Number}/callWaiter"), callWaiter);
+
+                    // Assert
+                    var expectedLinks = new List<string>
+                    {
+                        LinkNames.Self,
+                        LinkNames.Table.RequestBill,
+                        LinkNames.Table.GetAll
+                    };
+
+                    await response.ShouldBeAResource<CallWaiterResource>(expectedLinks);
+                },
+                fixture);
+
+        [Theory]
+        [CustomizedAutoData]
+        public Task RequestBillShouldReturnProperHypermediaLinks(HireWaiter hireWaiter, AddTable addTable, Fixture fixture) =>
+            _apiHelper.InTheContextOfAnAuthenticatedUser(
+                async httpClient =>
+                {
+                    // Arrange
+                    await _tabHelper.SetupWaiterWithTable(hireWaiter, addTable);
+
+                    var requestBill = new RequestBill
+                    {
+                        TableNumber = addTable.Number
+                    };
+
+                    // Act
+                    var response = await httpClient
+                        .PostAsJsonAsync(TableRoute($"{addTable.Number}/requestBill"), requestBill);
+
+                    // Assert
+                    var expectedLinks = new List<string>
+                    {
+                        LinkNames.Self,
+                        LinkNames.Table.CallWaiter,
+                        LinkNames.Table.GetAll
+                    };
+
+                    await response.ShouldBeAResource<RequestBillResource>(expectedLinks);
+                },
+                fixture);
+
         private static string TableRoute(string route = null) =>
             $"table/{route?.TrimStart('/') ?? string.Empty}";
     }

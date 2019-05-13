@@ -12,14 +12,13 @@ namespace Cafe.Tests.Extensions
     {
         public static async Task<TResponse> ShouldDeserializeTo<TResponse>(this HttpResponseMessage response)
         {
-            try
-            {
-                return await response.Content.ReadAsAsync<TResponse>();
-            }
-            catch (Exception e)
-            {
-                throw new ShouldAssertException($"Expected the response to be of type {typeof(TResponse).FullName} but could not deserialize it.", e);
-            }
+            var deserialized = await response?
+                .Content?
+                .ReadAsAsync<TResponse>();
+
+            return deserialized != null ?
+                deserialized :
+                throw new ShouldAssertException($"Expected the response to be of type {typeof(TResponse).FullName} but could not deserialize it.");
         }
 
         public static async Task<TResource> ShouldBeAResource<TResource>(this HttpResponseMessage response, IEnumerable<string> expectedLinks)

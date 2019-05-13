@@ -44,8 +44,9 @@ namespace Cafe.Api.Controllers
         [Authorize]
         [HttpPost("{tableNumber}/callWaiter", Name = nameof(CallWaiter))]
         public async Task<IActionResult> CallWaiter(int tableNumber) =>
-            (await Mediator.Send(new CallWaiter { TableNumber = tableNumber }))
-            .Match(Ok, Error);
+            (await Mediator.Send(new CallWaiter { TableNumber = tableNumber })
+                .MapAsync(_ => ToEmptyResourceAsync<CallWaiterResource>(x => x.TableNumber = tableNumber)))
+                .Match(Ok, Error);
 
         /// <summary>
         /// Requests the bill from the waiter assigned to the table number provided.
@@ -53,7 +54,8 @@ namespace Cafe.Api.Controllers
         [Authorize]
         [HttpPost("{tableNumber}/requestBill", Name = nameof(RequestBill))]
         public async Task<IActionResult> RequestBill(int tableNumber) =>
-            (await Mediator.Send(new RequestBill { TableNumber = tableNumber }))
-            .Match(Ok, Error);
+            (await Mediator.Send(new RequestBill { TableNumber = tableNumber })
+                .MapAsync(_ => ToEmptyResourceAsync<RequestBillResource>(x => x.TableNumber = tableNumber)))
+                .Match(Ok, Error);
     }
 }
