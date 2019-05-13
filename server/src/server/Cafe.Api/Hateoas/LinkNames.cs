@@ -22,6 +22,14 @@
             public const string Close = "close-tab";
         }
 
+        public static class Table
+        {
+            public const string Add = "add-table";
+            public const string GetAll = "get-all-tables";
+            public const string CallWaiter = "call-waiter";
+            public const string RequestBill = "request-bill";
+        }
+
         public static class Waiter
         {
             public const string GetEmployedWaiters = "get-waiters";

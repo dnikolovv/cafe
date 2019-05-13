@@ -1,10 +1,13 @@
 ﻿using Cafe.Api.Hateoas.Resources;
+using Cafe.Api.Hateoas.Resources.Table;
 using Cafe.Core.AuthContext;
 using Cafe.Core.TableContext.Commands;
 using Cafe.Core.TableContext.Queries;
+using Cafe.Domain.Views;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Optional.Async;
 using System.Threading.Tasks;
 
 namespace Cafe.Api.Controllers
@@ -21,8 +24,9 @@ namespace Cafe.Api.Controllers
         /// </summary>
         [HttpGet(Name = nameof(GetAllTables))]
         public async Task<IActionResult> GetAllTables() =>
-            (await Mediator.Send(new GetAllTables()))
-            .Match(Ok, Error);
+            (await Mediator.Send(new GetAllTables())
+                .MapAsync(ToResourceContainerAsync<TableView, TableResource, TableContainerResource>))
+                .Match(Ok, Error);
 
         /// <summary>
         /// Adds a table to the café.
@@ -30,8 +34,9 @@ namespace Cafe.Api.Controllers
         [HttpPost(Name = nameof(AddTable))]
         [Authorize(Policy = AuthConstants.Policies.IsAdminOrManager)]
         public async Task<IActionResult> AddTable([FromBody] AddTable command) =>
-            (await Mediator.Send(command))
-            .Match(Ok, Error);
+            (await Mediator.Send(command)
+                .MapAsync(ToEmptyResourceAsync<AddTableResource>))
+                .Match(Ok, Error);
 
         /// <summary>
         /// Calls the waiter assigned to the table number provided.

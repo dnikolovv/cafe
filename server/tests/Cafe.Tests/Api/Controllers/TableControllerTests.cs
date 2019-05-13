@@ -1,9 +1,15 @@
 ﻿using AutoFixture;
 using Cafe.Api.Hateoas;
+using Cafe.Api.Hateoas.Resources.Table;
 using Cafe.Core.TableContext.Commands;
+using Cafe.Core.WaiterContext.Commands;
+using Cafe.Tests.Business.TabContext.Helpers;
 using Cafe.Tests.Customizations;
 using Cafe.Tests.Extensions;
+using Shouldly;
 using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -13,16 +19,18 @@ namespace Cafe.Tests.Api.Controllers
     {
         private readonly AppFixture _fixture;
         private readonly ApiTestsHelper _apiHelper;
+        private readonly TabTestsHelper _tabHelper;
 
         public TableControllerTests()
         {
             _fixture = new AppFixture();
             _apiHelper = new ApiTestsHelper(_fixture);
+            _tabHelper = new TabTestsHelper(_fixture);
         }
 
         [Theory]
         [CustomizedAutoData]
-        public Task GetAllTablesReturnsProperHypermediaLinks(AddTable[] addTablesCommands, Fixture fixture) =>
+        public Task GetAllTablesReturnsProperHypermediaLinksForTablesWithoutWaiters(AddTable[] addTablesCommands, Fixture fixture) =>
             _apiHelper.InTheContextOfAnAuthenticatedUser(
                 async httpClient =>
                 {
@@ -34,17 +42,68 @@ namespace Cafe.Tests.Api.Controllers
                         .GetAsync(TableRoute());
 
                     // Assert
-                    var expectedLinks = new List<string>
+                    var expectedContainerLinks = new List<string>
                     {
                         LinkNames.Self,
                         LinkNames.Table.Add
                     };
 
-                    var resource = response.ShouldBeAResource<TableContainerResource>(expectedLinks);
+                    var resource = await response.ShouldBeAResource<TableContainerResource>(expectedContainerLinks);
 
-                    // TODO:
-                    resource.Items.ShouldAllBe(tableResource => tableResource.Links.Should);
-                });
+                    var expectedTableLinks = new List<string>
+                    {
+                        LinkNames.Table.GetAll
+                    };
+
+                    resource.Items.ShouldAllBe(tableResource => tableResource.Links.All(link => expectedTableLinks.Contains(link.Key)));
+                },
+                fixture);
+
+        [Theory]
+        [CustomizedAutoData]
+        public Task GetAllTablesReturnsProperHypermediaLinksForTablesWithWaiters(Fixture fixture) =>
+            _apiHelper.InTheContextOfAnAuthenticatedUser(
+                async httpClient =>
+                {
+                    // Arrange
+                    const int countOfTables = 5;
+
+                    var hireWaiterCommands = fixture
+                        .CreateMany<HireWaiter>(countOfTables)
+                        .ToArray();
+
+                    var addTableCommands = fixture
+                        .CreateMany<AddTable>(countOfTables)
+                        .ToArray();
+
+                    for (int i = 0; i < hireWaiterCommands.Length; i++)
+                    {
+                        await _tabHelper.SetupWaiterWithTable(hireWaiterCommands[i], addTableCommands[i]);
+                    }
+
+                    // Act
+                    var response = await httpClient
+                        .GetAsync(TableRoute());
+
+                    // Assert
+                    var expectedContainerLinks = new List<string>
+                    {
+                        LinkNames.Self,
+                        LinkNames.Table.Add
+                    };
+
+                    var resource = await response.ShouldBeAResource<TableContainerResource>(expectedContainerLinks);
+
+                    var expectedTableLinks = new List<string>
+                    {
+                        LinkNames.Table.GetAll,
+                        LinkNames.Table.CallWaiter,
+                        LinkNames.Table.RequestBill
+                    };
+
+                    resource.Items.ShouldAllBe(tableResource => tableResource.Links.All(link => expectedTableLinks.Contains(link.Key)));
+                },
+                fixture);
 
         [Theory]
         [CustomizedAutoData]
@@ -54,7 +113,7 @@ namespace Cafe.Tests.Api.Controllers
                 {
                     // Act
                     var response = await httpClient
-                        .PostAsync(TableRoute(), command);
+                        .PostAsJsonAsync(TableRoute(), command);
 
                     // Assert
                     var expectedLinks = new List<string>
@@ -63,11 +122,11 @@ namespace Cafe.Tests.Api.Controllers
                         LinkNames.Table.GetAll
                     };
 
-                    response.ShouldBeAResource<AddTableResource>(expectedLinks);
+                    await response.ShouldBeAResource<AddTableResource>(expectedLinks);
                 },
                 fixture);
 
         private static string TableRoute(string route = null) =>
-            $"table/{route.TrimStart('/') ?? string.Empty}";
+            $"table/{route?.TrimStart('/') ?? string.Empty}";
     }
 }
