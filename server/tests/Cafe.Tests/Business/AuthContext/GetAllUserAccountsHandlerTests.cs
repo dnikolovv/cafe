@@ -11,11 +11,11 @@ namespace Cafe.Tests.Business.AuthContext
 {
     public class GetAllUserAccountsHandlerTests : ResetDatabaseLifetime
     {
-        private readonly SliceFixture _fixture;
+        private readonly AppFixture _fixture;
 
         public GetAllUserAccountsHandlerTests()
         {
-            _fixture = new SliceFixture();
+            _fixture = new AppFixture();
         }
 
         [Theory]

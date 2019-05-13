@@ -14,13 +14,13 @@ namespace Cafe.Tests.Api.Hubs
 {
     public class HiredWaitersHubTests : ResetDatabaseLifetime
     {
-        private readonly SliceFixture _fixture;
+        private readonly AppFixture _fixture;
         private readonly AuthTestsHelper _authTestsHelper;
         private readonly string _hubUrl;
 
         public HiredWaitersHubTests()
         {
-            _fixture = new SliceFixture();
+            _fixture = new AppFixture();
             _authTestsHelper = new AuthTestsHelper(_fixture);
             _hubUrl = _fixture.GetCompleteServerUrl("/hiredWaiters");
         }

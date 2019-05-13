@@ -8,11 +8,11 @@ namespace Cafe.Tests
 {
     public class HealthTests
     {
-        private readonly SliceFixture _fixture;
+        private readonly AppFixture _fixture;
 
         public HealthTests()
         {
-            _fixture = new SliceFixture();
+            _fixture = new AppFixture();
         }
 
         [Fact]

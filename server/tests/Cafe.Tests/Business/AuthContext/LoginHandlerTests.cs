@@ -12,11 +12,11 @@ namespace Cafe.Tests.Business.AuthContext
 {
     public class LoginHandlerTests : ResetDatabaseLifetime
     {
-        private readonly SliceFixture _fixture;
+        private readonly AppFixture _fixture;
 
         public LoginHandlerTests()
         {
-            _fixture = new SliceFixture();
+            _fixture = new AppFixture();
         }
 
         [Theory]

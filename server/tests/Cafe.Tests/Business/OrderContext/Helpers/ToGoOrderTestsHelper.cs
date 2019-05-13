@@ -11,9 +11,9 @@ namespace Cafe.Tests.Business.OrderContext.Helpers
 {
     public class ToGoOrderTestsHelper
     {
-        private readonly SliceFixture _fixture;
+        private readonly AppFixture _fixture;
 
-        public ToGoOrderTestsHelper(SliceFixture fixture)
+        public ToGoOrderTestsHelper(AppFixture fixture)
         {
             _fixture = fixture;
         }

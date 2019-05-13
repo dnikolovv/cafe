@@ -12,11 +12,11 @@ namespace Cafe.Tests.Business.TableContext
 {
     public class AddTableHandlerTests : ResetDatabaseLifetime
     {
-        private readonly SliceFixture _fixture;
+        private readonly AppFixture _fixture;
 
         public AddTableHandlerTests()
         {
-            _fixture = new SliceFixture();
+            _fixture = new AppFixture();
         }
 
         [Theory]

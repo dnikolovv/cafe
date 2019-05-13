@@ -15,9 +15,9 @@ namespace Cafe.Tests.Business.AuthContext
 {
     public class AuthTestsHelper
     {
-        private readonly SliceFixture _fixture;
+        private readonly AppFixture _fixture;
 
-        public AuthTestsHelper(SliceFixture fixture)
+        public AuthTestsHelper(AppFixture fixture)
         {
             _fixture = fixture;
         }

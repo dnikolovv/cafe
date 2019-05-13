@@ -12,13 +12,13 @@ using System.Threading.Tasks;
 
 namespace Cafe.Tests
 {
-    public class SliceFixture
+    public class AppFixture
     {
         public static readonly string BaseUrl;
         private static readonly IConfiguration _configuration;
         private static readonly IServiceScopeFactory _scopeFactory;
 
-        static SliceFixture()
+        static AppFixture()
         {
             BaseUrl = $"http://localhost:{GetFreeTcpPort()}";
 

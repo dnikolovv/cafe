@@ -11,11 +11,11 @@ namespace Cafe.Tests.Business.CashierContext
 {
     public class HireCashierHandlerTests : ResetDatabaseLifetime
     {
-        private readonly SliceFixture _fixture;
+        private readonly AppFixture _fixture;
 
         public HireCashierHandlerTests()
         {
-            _fixture = new SliceFixture();
+            _fixture = new AppFixture();
         }
 
         [Theory]

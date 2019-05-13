@@ -16,11 +16,11 @@ namespace Cafe.Tests.Business.MenuContext
 {
     public class AddMenuItemsHandlerTests : ResetDatabaseLifetime
     {
-        private readonly SliceFixture _fixture;
+        private readonly AppFixture _fixture;
 
         public AddMenuItemsHandlerTests()
         {
-            _fixture = new SliceFixture();
+            _fixture = new AppFixture();
         }
 
         [Theory]

@@ -12,12 +12,12 @@ namespace Cafe.Tests.Business.AuthContext
 {
     public class AssignWaiterToAccountHandlerTests : ResetDatabaseLifetime
     {
-        private readonly SliceFixture _fixture;
+        private readonly AppFixture _fixture;
         private readonly AuthTestsHelper _helper;
 
         public AssignWaiterToAccountHandlerTests()
         {
-            _fixture = new SliceFixture();
+            _fixture = new AppFixture();
             _helper = new AuthTestsHelper(_fixture);
         }
 
