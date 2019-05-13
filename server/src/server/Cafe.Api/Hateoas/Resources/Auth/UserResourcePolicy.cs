@@ -8,8 +8,8 @@ namespace Cafe.Api.Hateoas.Resources.Auth
     {
         public Action<LinksPolicyBuilder<UserResource>> PolicyConfiguration => policy =>
         {
-            policy.RequireRoutedLink("self", nameof(AuthController.GetCurrentUser));
-            policy.RequireRoutedLink("logout", nameof(AuthController.Logout));
+            policy.RequireSelfLink();
+            policy.RequireRoutedLink(LinkNames.Auth.Logout, nameof(AuthController.Logout));
         };
     }
 }

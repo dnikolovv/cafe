@@ -55,10 +55,11 @@ namespace Cafe.Api.Controllers
         /// Logout. (unsets the auth cookie)
         /// </summary>
         [HttpDelete("logout", Name = nameof(Logout))]
-        public IActionResult Logout()
+        public async Task<IActionResult> Logout()
         {
             HttpContext.Response.Cookies.Delete(AuthConstants.Cookies.AuthCookieName);
-            return NoContent();
+            var resource = await ToEmptyResourceAsync<LogoutResource>();
+            return Ok(resource);
         }
 
         /// <summary>

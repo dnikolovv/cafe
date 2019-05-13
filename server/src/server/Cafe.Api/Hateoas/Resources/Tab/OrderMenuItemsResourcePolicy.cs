@@ -8,11 +8,12 @@ namespace Cafe.Api.Hateoas.Resources.Tab
     {
         public Action<LinksPolicyBuilder<OrderMenuItemsResource>> PolicyConfiguration => policy =>
         {
-            policy.RequireRoutedLink("self", nameof(TabController.OrderMenuItems));
-            policy.RequireRoutedLink("view", nameof(TabController.GetTabView), x => new { id = x.TabId });
-            policy.RequireRoutedLink("serve-items", nameof(TabController.ServeMenuItems));
-            policy.RequireRoutedLink("reject-items", nameof(TabController.RejectMenuItems));
-            policy.RequireRoutedLink("close", nameof(TabController.CloseTab));
+            policy.RequireSelfLink();
+            policy.RequireRoutedLink(LinkNames.Tab.GetTab, nameof(TabController.GetTabView), x => new { id = x.TabId });
+            policy.RequireRoutedLink(LinkNames.Tab.Close, nameof(TabController.CloseTab));
+            policy.RequireRoutedLink(LinkNames.Tab.OrderItems, nameof(TabController.OrderMenuItems));
+            policy.RequireRoutedLink(LinkNames.Tab.ServeItems, nameof(TabController.ServeMenuItems));
+            policy.RequireRoutedLink(LinkNames.Tab.RejectItems, nameof(TabController.RejectMenuItems));
         };
     }
 }

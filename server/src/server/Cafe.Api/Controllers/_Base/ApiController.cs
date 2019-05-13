@@ -74,7 +74,7 @@ namespace Cafe.Api.Controllers
             where TResource : Resource =>
             ResourceMapper.MapAsync<T, TResource>(obj);
 
-        protected Task<TResource> ToEmptyResourceAsync<TResource>(Unit unit)
+        protected Task<TResource> ToEmptyResourceAsync<TResource>(Unit unit = default(Unit))
             where TResource : Resource, new() =>
             ResourceMapper.CreateEmptyResourceAsync<TResource>();
 

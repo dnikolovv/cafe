@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Net;
+using System.Net.Http;
 using System.Net.Sockets;
 using System.Threading.Tasks;
 
@@ -35,10 +36,7 @@ namespace Cafe.Tests
             using (var scope = scopeFactory.CreateScope())
             {
                 _configuration = scope.ServiceProvider.GetService<IConfiguration>();
-            }
 
-            using (var scope = scopeFactory.CreateScope())
-            {
                 var dbContext = scope.ServiceProvider.GetService<ApplicationDbContext>();
                 dbContext.Database.EnsureCreated();
             }
@@ -75,6 +73,18 @@ namespace Cafe.Tests
 
                 return action(dbContext);
             });
+
+        public Task<TResult> ExecuteHttpClientAsync<TResult>(Func<HttpClient, Task<TResult>> action, string accessToken = null)
+        {
+            var client = BuildHttpClient(accessToken);
+            return action(client);
+        }
+
+        public Task ExecuteHttpClientAsync(Func<HttpClient, Task> action, string accessToken = null)
+        {
+            var client = BuildHttpClient(accessToken);
+            return action(client);
+        }
 
         public async Task ExecuteScopeAsync(Func<IServiceProvider, Task> action)
         {
@@ -147,6 +157,21 @@ namespace Cafe.Tests
 
                 return Task.CompletedTask;
             });
+        }
+
+        private static HttpClient BuildHttpClient(string accessToken = null)
+        {
+            var client = new HttpClient
+            {
+                BaseAddress = new Uri(BaseUrl)
+            };
+
+            if (!string.IsNullOrEmpty(accessToken))
+            {
+                client.DefaultRequestHeaders.Add("Authorization", $"Bearer {accessToken}");
+            }
+
+            return client;
         }
 
         private static int GetFreeTcpPort()

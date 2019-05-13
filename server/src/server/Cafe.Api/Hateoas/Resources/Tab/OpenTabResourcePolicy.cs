@@ -8,9 +8,10 @@ namespace Cafe.Api.Hateoas.Resources.Tab
     {
         public Action<LinksPolicyBuilder<OpenTabResource>> PolicyConfiguration => policy =>
         {
-            policy.RequireRoutedLink("view", nameof(TabController.GetTabView), x => new { id = x.Id });
-            policy.RequireRoutedLink("close", nameof(TabController.CloseTab));
-            policy.RequireRoutedLink("order-items", nameof(TabController.OrderMenuItems));
+            policy.RequireSelfLink();
+            policy.RequireRoutedLink(LinkNames.Tab.GetTab, nameof(TabController.GetTabView), x => new { id = x.Id });
+            policy.RequireRoutedLink(LinkNames.Tab.Close, nameof(TabController.CloseTab));
+            policy.RequireRoutedLink(LinkNames.Tab.OrderItems, nameof(TabController.OrderMenuItems));
         };
     }
 }
