@@ -23,7 +23,7 @@ namespace Cafe.Api.Controllers
         [Authorize(Policy = AuthConstants.Policies.IsAdminOrManager)]
         public async Task<IActionResult> GetEmployedWaiters() =>
             (await Mediator.Send(new GetEmployedWaiters()))
-            .Match(Ok, Error);
+                .Match(Ok, Error);
 
         /// <summary>
         /// Hires a waiter in the café.
@@ -32,7 +32,7 @@ namespace Cafe.Api.Controllers
         [Authorize(Policy = AuthConstants.Policies.IsAdminOrManager)]
         public async Task<IActionResult> HireWaiter([FromBody] HireWaiter command) =>
             (await Mediator.Send(command))
-            .Match(Ok, Error);
+                .Match(Ok, Error);
 
         /// <summary>
         /// Assigns a table to a waiter.
@@ -41,6 +41,6 @@ namespace Cafe.Api.Controllers
         [Authorize(Policy = AuthConstants.Policies.IsAdminOrManager)]
         public async Task<IActionResult> AssignTable([FromBody] AssignTable command) =>
             (await Mediator.Send(command))
-            .Match(Ok, Error);
+                .Match(Ok, Error);
     }
 }
