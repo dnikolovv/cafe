@@ -18,6 +18,12 @@
             public const string GetAll = "get-all-baristas";
         }
 
+        public static class Cashier
+        {
+            public const string Hire = "hire-cashier";
+            public const string GetAll = "get-all-cashiers";
+        }
+
         public static class Tab
         {
             public const string GetTab = "view";

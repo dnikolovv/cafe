@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 
 namespace Cafe.Api.Controllers
 {
+    [Authorize(Policy = AuthConstants.Policies.IsAdminOrManager)]
     public class BaristaController : ApiController
     {
         public BaristaController(IResourceMapper resourceMapper, IMediator mediator)
@@ -23,7 +24,6 @@ namespace Cafe.Api.Controllers
         /// Hires a new barista.
         /// </summary>
         [HttpPost(Name = nameof(HireBarista))]
-        [Authorize(Policy = AuthConstants.Policies.IsAdminOrManager)]
         public async Task<IActionResult> HireBarista([FromBody] HireBarista command) =>
             (await Mediator.Send(command)
                 .MapAsync(ToEmptyResourceAsync<HireBaristaResource>))
@@ -33,7 +33,6 @@ namespace Cafe.Api.Controllers
         /// Retrieves currently employed baristas.
         /// </summary>
         [HttpGet(Name = nameof(GetEmployedBaristas))]
-        [Authorize(Policy = AuthConstants.Policies.IsAdminOrManager)]
         public async Task<IActionResult> GetEmployedBaristas() =>
             (await Mediator.Send(new GetEmployedBaristas())
                 .MapAsync(ToResourceContainerAsync<BaristaView, BaristaResource, BaristaContainerResource>))
