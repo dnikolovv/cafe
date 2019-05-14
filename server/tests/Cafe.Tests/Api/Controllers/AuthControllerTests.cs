@@ -85,6 +85,24 @@ namespace Cafe.Tests.Api.Controllers
 
         [Theory]
         [CustomizedAutoData]
+        public async Task RegisterShouldReturnProperHypermediaLinks(Register command)
+        {
+            // Act
+            var response = await _fixture.ExecuteHttpClientAsync(client =>
+                client.PostAsJsonAsync(AuthRoute("register"), command));
+
+            // Assert
+            var expectedLinks = new List<string>
+            {
+                LinkNames.Self,
+                LinkNames.Auth.Login
+            };
+
+            await response.ShouldBeAResource<RegisterResource>(expectedLinks);
+        }
+
+        [Theory]
+        [CustomizedAutoData]
         public Task GetCurrentUserShouldReturnProperHypermediaLinks(Fixture fixture) =>
             _apiHelper.InTheContextOfAnAuthenticatedUser(
                 async client =>

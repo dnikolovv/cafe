@@ -72,7 +72,8 @@ namespace Cafe.Api.Controllers
         [HttpPost("register", Name = nameof(Register))]
         [ProducesResponseType(typeof(Error), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> Register([FromBody] Register command) =>
-            (await Mediator.Send(command))
+            (await Mediator.Send(command)
+                .MapAsync(ToEmptyResourceAsync<RegisterResource>))
                 .Match(u => CreatedAtAction(nameof(Register), u), Error);
 
         /// <summary>
