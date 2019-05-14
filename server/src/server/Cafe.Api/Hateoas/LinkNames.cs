@@ -12,6 +12,12 @@
             public const string Logout = "logout";
         }
 
+        public static class Barista
+        {
+            public const string Hire = "hire-barista";
+            public const string GetAll = "get-all-baristas";
+        }
+
         public static class Tab
         {
             public const string GetTab = "view";
