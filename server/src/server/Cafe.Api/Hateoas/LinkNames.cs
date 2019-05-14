@@ -37,6 +37,12 @@
             public const string AssignTable = "assign-table";
         }
 
+        public static class Menu
+        {
+            public const string GetAllMenuItems = "get-menu-items";
+            public const string AddMenuItem = "add-menu-item";
+        }
+
         public static class Order
         {
             public const string Get = "get-order";
