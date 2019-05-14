@@ -1,10 +1,13 @@
 ﻿using Cafe.Api.Hateoas.Resources;
+using Cafe.Api.Hateoas.Resources.Manager;
 using Cafe.Core.AuthContext;
 using Cafe.Core.ManagerContext.Commands;
 using Cafe.Core.ManagerContext.Queries;
+using Cafe.Domain.Views;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Optional.Async;
 using System.Threading.Tasks;
 
 namespace Cafe.Api.Controllers
@@ -20,17 +23,19 @@ namespace Cafe.Api.Controllers
         /// <summary>
         /// Retrieves all currently employed managers.
         /// </summary>
-        [HttpGet]
+        [HttpGet(Name = nameof(GetEmployedManagers))]
         public async Task<IActionResult> GetEmployedManagers() =>
-            (await Mediator.Send(new GetEmployedManagers()))
+            (await Mediator.Send(new GetEmployedManagers())
+                .MapAsync(ToResourceContainerAsync<ManagerView, ManagerResource, ManagerContainerResource>))
                 .Match(Ok, Error);
 
         /// <summary>
         /// Hires a new manager.
         /// </summary>
-        [HttpPost]
+        [HttpPost(Name = nameof(HireManager))]
         public async Task<IActionResult> HireManager([FromBody] HireManager command) =>
-            (await Mediator.Send(command))
+            (await Mediator.Send(command)
+                .MapAsync(ToEmptyResourceAsync<HireManagerResource>))
                 .Match(Ok, Error);
     }
 }

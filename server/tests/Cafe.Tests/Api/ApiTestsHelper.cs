@@ -111,6 +111,13 @@ namespace Cafe.Tests.Api
             await _appFixture.ExecuteHttpClientAsync(serverCall(barista), token);
         }
 
+        public async Task InTheContextOfAnAdmin(Func<HttpClient, Task> serverCall)
+        {
+            var token = await _authHelper.GetAdminToken();
+
+            await _appFixture.ExecuteHttpClientAsync(serverCall, token);
+        }
+
         private async Task<string> SetupUserWithClaims(Fixture fixture, IEnumerable<Claim> withClaims)
         {
             var registerCommand = fixture

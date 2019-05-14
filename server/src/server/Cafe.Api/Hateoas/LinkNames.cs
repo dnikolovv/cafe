@@ -24,6 +24,12 @@
             public const string GetAll = "get-all-cashiers";
         }
 
+        public static class Manager
+        {
+            public const string Hire = "hire-manager";
+            public const string GetAll = "get-all-managers";
+        }
+
         public static class Tab
         {
             public const string GetTab = "view";

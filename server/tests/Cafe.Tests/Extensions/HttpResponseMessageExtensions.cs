@@ -25,7 +25,7 @@ namespace Cafe.Tests.Extensions
             where TResource : Resource
         {
             // We always expect valid resources to be returned with a success status code
-            response.IsSuccessStatusCode.ShouldBeTrue();
+            response.IsSuccessStatusCode.ShouldBeTrue(response.StatusCode.ToString());
 
             var resource = await response.ShouldDeserializeTo<TResource>();
 
