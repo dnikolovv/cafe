@@ -1,6 +1,8 @@
 ﻿using AutoFixture;
 using Cafe.Core.AuthContext;
 using Cafe.Core.AuthContext.Commands;
+using Cafe.Core.BaristaContext.Commands;
+using Cafe.Core.CashierContext.Commands;
 using Cafe.Core.ManagerContext.Commands;
 using Cafe.Core.TableContext.Commands;
 using Cafe.Core.WaiterContext.Commands;
@@ -71,6 +73,42 @@ namespace Cafe.Tests.Api
                 new List<Claim> { new Claim(AuthConstants.ClaimTypes.ManagerId, manager.Id.ToString()) });
 
             await _appFixture.ExecuteHttpClientAsync(serverCall(manager), token);
+        }
+
+        public async Task InTheContextOfACashier(Func<Cashier, Func<HttpClient, Task>> serverCall, Fixture fixture)
+        {
+            var hireCashier = fixture.Create<HireCashier>();
+
+            await _appFixture.SendAsync(hireCashier);
+
+            var cashier = await _appFixture.ExecuteDbContextAsync(dbContext =>
+                dbContext
+                    .Cashiers
+                    .FirstAsync(c => c.Id == hireCashier.Id));
+
+            var token = await SetupUserWithClaims(
+                fixture,
+                new List<Claim> { new Claim(AuthConstants.ClaimTypes.CashierId, cashier.Id.ToString()) });
+
+            await _appFixture.ExecuteHttpClientAsync(serverCall(cashier), token);
+        }
+
+        public async Task InTheContextOfABarista(Func<Barista, Func<HttpClient, Task>> serverCall, Fixture fixture)
+        {
+            var hireBarista = fixture.Create<HireBarista>();
+
+            await _appFixture.SendAsync(hireBarista);
+
+            var barista = await _appFixture.ExecuteDbContextAsync(dbContext =>
+                dbContext
+                    .Baristas
+                    .FirstAsync(c => c.Id == hireBarista.Id));
+
+            var token = await SetupUserWithClaims(
+                fixture,
+                new List<Claim> { new Claim(AuthConstants.ClaimTypes.BaristaId, barista.Id.ToString()) });
+
+            await _appFixture.ExecuteHttpClientAsync(serverCall(barista), token);
         }
 
         private async Task<string> SetupUserWithClaims(Fixture fixture, IEnumerable<Claim> withClaims)

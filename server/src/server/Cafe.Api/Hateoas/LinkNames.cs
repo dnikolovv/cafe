@@ -36,5 +36,14 @@
             public const string Hire = "hire-waiter";
             public const string AssignTable = "assign-table";
         }
+
+        public static class Order
+        {
+            public const string Get = "get-order";
+            public const string Confirm = "confirm-order";
+            public const string Complete = "complete-order";
+            public const string New = "new-order";
+            public const string GetAll = "get-all-orders";
+        }
     }
 }
