@@ -57,13 +57,7 @@ namespace Cafe.Api.Controllers
         }
 
         protected IActionResult NotFound(Error error) =>
-                    NotFound((object)error);
-
-        /// <summary>
-        /// Enables using method groups when matching on Unit.
-        /// </summary>
-        protected IActionResult Ok(Unit unit) =>
-            Ok();
+            NotFound((object)error);
 
         protected Task<TContainer> ToResourceContainerAsync<T, TResource, TContainer>(IEnumerable<T> models)
             where TContainer : ResourceContainer<TResource>, new()

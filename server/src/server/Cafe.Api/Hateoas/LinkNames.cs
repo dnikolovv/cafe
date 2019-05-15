@@ -10,6 +10,10 @@
             public const string Register = "register";
             public const string GetCurrentUser = "get-current-user";
             public const string Logout = "logout";
+            public const string AssignWaiter = "assign-waiter";
+            public const string AssignManager = "assign-manager";
+            public const string AssignCashier = "assign-cashier";
+            public const string AssignBarista = "assign-barista";
         }
 
         public static class Barista

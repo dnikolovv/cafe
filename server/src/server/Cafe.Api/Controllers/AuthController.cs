@@ -82,43 +82,48 @@ namespace Cafe.Api.Controllers
         [HttpGet("users", Name = nameof(GetAllUserAccounts))]
         [Authorize(Policy = AuthConstants.Policies.IsAdmin)]
         public async Task<IActionResult> GetAllUserAccounts() =>
-            (await Mediator.Send(new GetAllUserAccounts()))
+            (await Mediator.Send(new GetAllUserAccounts())
+                .MapAsync(ToResourceContainerAsync<UserView, UserResource, UsersContainerResource>))
                 .Match(Ok, Error);
 
         /// <summary>
         /// Assigns a waiter to an account.
         /// </summary>
-        [HttpPost("assign/waiter")]
+        [HttpPost("assign/waiter", Name = nameof(AssignWaiterToAccount))]
         [Authorize(Policy = AuthConstants.Policies.IsAdmin)]
         public async Task<IActionResult> AssignWaiterToAccount([FromBody] AssignWaiterToAccount command) =>
-            (await Mediator.Send(command))
+            (await Mediator.Send(command)
+                .MapAsync(ToEmptyResourceAsync<AssignWaiterToAccountResource>))
                 .Match(Ok, Error);
 
         /// <summary>
         /// Assigns a manager to an account.
         /// </summary>
-        [HttpPost("assign/manager")]
+        [HttpPost("assign/manager", Name = nameof(AssignManagerToAccount))]
         [Authorize(Policy = AuthConstants.Policies.IsAdmin)]
         public async Task<IActionResult> AssignManagerToAccount([FromBody] AssignManagerToAccount command) =>
-            (await Mediator.Send(command))
+            (await Mediator.Send(command)
+                .MapAsync(ToEmptyResourceAsync<AssignManagerToAccountResource>))
                 .Match(Ok, Error);
 
         /// <summary>
         /// Assigns a cashier to an account.
         /// </summary>
-        [HttpPost("assign/cashier")]
+        [HttpPost("assign/cashier", Name = nameof(AssignCashierToAccount))]
         [Authorize(Policy = AuthConstants.Policies.IsAdmin)]
         public async Task<IActionResult> AssignCashierToAccount([FromBody] AssignCashierToAccount command) =>
-            (await Mediator.Send(command))
+            (await Mediator.Send(command)
+                .MapAsync(ToEmptyResourceAsync<AssignCashierToAccountResource>))
                 .Match(Ok, Error);
 
         /// <summary>
         /// Assigns a barista to an account.
         /// </summary>
-        [HttpPost("assign/barista")]
+        [HttpPost("assign/barista", Name = nameof(AssignBaristaToAccount))]
         [Authorize(Policy = AuthConstants.Policies.IsAdmin)]
         public async Task<IActionResult> AssignBaristaToAccount([FromBody] AssignBaristaToAccount command) =>
-            (await Mediator.Send(command))
+            (await Mediator.Send(command)
+                .MapAsync(ToEmptyResourceAsync<AssignBaristaToAccountResource>))
                 .Match(Ok, Error);
 
         private void SetAuthCookie(string token) =>
