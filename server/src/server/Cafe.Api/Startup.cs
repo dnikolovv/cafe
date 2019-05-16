@@ -3,7 +3,6 @@ using Cafe.Api.Configuration;
 using Cafe.Api.Filters;
 using Cafe.Api.Hateoas.Resources.Tab;
 using Cafe.Api.Hubs;
-using Cafe.Api.ModelBinders;
 using Cafe.Core.AuthContext;
 using Cafe.Core.AuthContext.Commands;
 using Cafe.Core.AuthContext.Configuration;
@@ -89,7 +88,6 @@ namespace Cafe.Api
 
             services.AddMvc(options =>
             {
-                options.ModelBinderProviders.Insert(0, new OptionModelBinderProvider());
                 options.Filters.Add<ExceptionFilter>();
                 options.Filters.Add<ModelStateFilter>();
             })
@@ -114,7 +112,7 @@ namespace Cafe.Api
                     .AllowAnyHeader()
                     .AllowCredentials());
 
-                DatabaseConfiguration.RevertDatabaseToInitialState(dbContext);
+                DatabaseConfiguration.SeedDatabase(dbContext);
                 DatabaseConfiguration.AddDefaultAdminAccountIfNoneExisting(userManager, Configuration).Wait();
             }
 

@@ -24,7 +24,7 @@ namespace Cafe.Tests
             BaseUrl = $"http://localhost:{GetFreeTcpPort()}";
 
             var webhost = Program
-                .CreateWebHostBuilder(new string[] { "--environment", "IntegrationTesting" }, BaseUrl)
+                .CreateWebHostBuilder(new string[] { "--environment", "Development" }, BaseUrl)
                 .Build();
 
             webhost.Start();

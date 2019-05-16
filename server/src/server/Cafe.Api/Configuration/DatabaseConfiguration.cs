@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -12,8 +13,11 @@ namespace Cafe.Api.Configuration
 {
     public static class DatabaseConfiguration
     {
-        public static void RevertDatabaseToInitialState(ApplicationDbContext dbContext)
+        public static void SeedDatabase(ApplicationDbContext dbContext)
         {
+            if (dbContext.MenuItems.Any() && dbContext.Waiters.Any() && dbContext.Cashiers.Any())
+                return;
+
             var menuItems = new List<MenuItem>
             {
                 new MenuItem
@@ -86,13 +90,6 @@ namespace Cafe.Api.Configuration
                     ShortName = "Steve"
                 }
             };
-
-            dbContext.MenuItems.RemoveRange(dbContext.MenuItems);
-            dbContext.Waiters.RemoveRange(dbContext.Waiters);
-            dbContext.Tables.RemoveRange(dbContext.Tables);
-            dbContext.Baristas.RemoveRange(dbContext.Baristas);
-            dbContext.Cashiers.RemoveRange(dbContext.Cashiers);
-            dbContext.ToGoOrders.RemoveRange(dbContext.ToGoOrders);
 
             dbContext.MenuItems.AddRange(menuItems);
             dbContext.Waiters.AddRange(waiters);
