@@ -77,6 +77,11 @@
             Hires a cashier in the café.
             </summary>
         </member>
+        <member name="M:Cafe.Api.Controllers.HomeController.ApiHome">
+            <summary>
+            The root of the API.
+            </summary>
+        </member>
         <member name="M:Cafe.Api.Controllers.ManagerController.GetEmployedManagers">
             <summary>
             Retrieves all currently employed managers.

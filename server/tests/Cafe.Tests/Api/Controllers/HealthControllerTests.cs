@@ -1,6 +1,5 @@
 ﻿using Shouldly;
 using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -9,23 +8,25 @@ namespace Cafe.Tests.Api.Controllers
     public class HealthControllerTests
     {
         private readonly AppFixture _fixture;
+        private readonly ApiTestsHelper _apiHelper;
 
         public HealthControllerTests()
         {
             _fixture = new AppFixture();
+            _apiHelper = new ApiTestsHelper(_fixture);
         }
 
         [Fact]
-        public async Task CanConnectToTestServer()
-        {
-            // Arrange
-            var client = new HttpClient();
+        public Task CanConnectToTestServer() =>
+            _apiHelper.InTheContextOfAnAnonymousUser(
+                async httpClient =>
+                {
+                    // Act
+                    var response = await httpClient
+                        .GetAsync("health");
 
-            // Act
-            var result = await client.GetAsync(_fixture.GetCompleteServerUrl("health"));
-
-            // Assert
-            result.StatusCode.ShouldBe(HttpStatusCode.OK);
-        }
+                    // Assert
+                    response.StatusCode.ShouldBe(HttpStatusCode.OK);
+                });
     }
 }

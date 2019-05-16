@@ -54,6 +54,7 @@ namespace Cafe.Api.Controllers
         /// <summary>
         /// Logout. (unsets the auth cookie)
         /// </summary>
+        [Authorize]
         [HttpDelete("logout", Name = nameof(Logout))]
         public async Task<IActionResult> Logout()
         {

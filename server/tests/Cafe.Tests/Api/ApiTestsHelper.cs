@@ -38,6 +38,9 @@ namespace Cafe.Tests.Api
             await _appFixture.ExecuteHttpClientAsync(serverCall, token);
         }
 
+        public Task InTheContextOfAnAnonymousUser(Func<HttpClient, Task> serverCall) =>
+            _appFixture.ExecuteHttpClientAsync(serverCall, null);
+
         public async Task InTheContextOfAWaiter(Func<Waiter, Func<HttpClient, Task>> serverCall, Fixture fixture)
         {
             var hireWaiter = fixture.Create<HireWaiter>();
