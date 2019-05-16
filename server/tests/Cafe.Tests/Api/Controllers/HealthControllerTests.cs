@@ -4,13 +4,13 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Cafe.Tests
+namespace Cafe.Tests.Api.Controllers
 {
-    public class HealthTests
+    public class HealthControllerTests
     {
         private readonly AppFixture _fixture;
 
-        public HealthTests()
+        public HealthControllerTests()
         {
             _fixture = new AppFixture();
         }
