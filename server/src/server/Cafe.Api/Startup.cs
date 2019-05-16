@@ -1,15 +1,14 @@
 ﻿using AutoMapper;
 using Cafe.Api.Configuration;
 using Cafe.Api.Filters;
+using Cafe.Api.Hateoas.Resources.Tab;
 using Cafe.Api.Hubs;
 using Cafe.Api.ModelBinders;
 using Cafe.Core.AuthContext;
 using Cafe.Core.AuthContext.Commands;
 using Cafe.Core.AuthContext.Configuration;
-using Cafe.Core.TableContext.Commands;
 using Cafe.Domain.Entities;
 using Cafe.Persistance.EntityFramework;
-using FluentValidation;
 using FluentValidation.AspNetCore;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
@@ -50,10 +49,13 @@ namespace Cafe.Api
             services.AddAutoMapper(cfg =>
             {
                 cfg.AddProfiles(typeof(MappingProfile).Assembly);
+                cfg.AddProfiles(typeof(TabMappingProfile).Assembly);
             });
 
             services.AddSwagger();
             services.AddCommonServices();
+
+            services.AddHateoas();
 
             services.AddJwtIdentity(
                 Configuration.GetSection(nameof(JwtConfiguration)),

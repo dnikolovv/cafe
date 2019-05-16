@@ -13,13 +13,13 @@ namespace Cafe.Tests.Api.Hubs
     // TODO: The test argument names are weird
     public class TableActionsHubTests : ResetDatabaseLifetime
     {
-        private readonly SliceFixture _fixture;
+        private readonly AppFixture _fixture;
         private readonly AuthTestsHelper _authHelper;
         private readonly string _hubUrl;
 
         public TableActionsHubTests()
         {
-            _fixture = new SliceFixture();
+            _fixture = new AppFixture();
             _authHelper = new AuthTestsHelper(_fixture);
             _hubUrl = _fixture.GetCompleteServerUrl("/tableActions");
         }

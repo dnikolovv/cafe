@@ -1,38 +1,42 @@
-﻿using Cafe.Core.AuthContext;
+﻿using Cafe.Api.Hateoas.Resources;
+using Cafe.Api.Hateoas.Resources.Menu;
+using Cafe.Core.AuthContext;
 using Cafe.Core.MenuContext.Commands;
 using Cafe.Core.MenuContext.Queries;
+using Cafe.Domain.Views;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Optional.Async;
 using System.Threading.Tasks;
 
 namespace Cafe.Api.Controllers
 {
     public class MenuController : ApiController
     {
-        private readonly IMediator _mediator;
-
-        public MenuController(IMediator mediator)
+        public MenuController(IResourceMapper resourceMapper, IMediator mediator)
+            : base(resourceMapper, mediator)
         {
-            _mediator = mediator;
         }
 
         /// <summary>
         /// Retrieves a list of all items currently in the menu.
         /// </summary>
-        [HttpGet("items")]
+        [HttpGet("items", Name = nameof(GetMenuItems))]
         public async Task<IActionResult> GetMenuItems() =>
-            (await _mediator.Send(new GetAllMenuItems()))
-            .Match(Ok, Error);
+            (await Mediator.Send(new GetAllMenuItems())
+                .MapAsync(ToResourceContainerAsync<MenuItemView, MenuItemResource, MenuItemsContainerResource>))
+                .Match(Ok, Error);
 
         /// <summary>
         /// Adds items to the menu.
         /// </summary>
         /// <param name="command">The items to add.</param>
-        [HttpPost("items")]
+        [HttpPost("items", Name = nameof(AddMenuItems))]
         [Authorize(Policy = AuthConstants.Policies.IsAdminOrManager)]
         public async Task<IActionResult> AddMenuItems([FromBody] AddMenuItems command) =>
-            (await _mediator.Send(command))
-            .Match(Ok, Error);
+            (await Mediator.Send(command)
+                .MapAsync(ToEmptyResourceAsync<AddMenuItemsResource>))
+                .Match(Ok, Error);
     }
 }

@@ -4,8 +4,10 @@ using Cafe.Domain.Entities;
 using Cafe.Domain.Views;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
 using System;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
@@ -15,11 +17,26 @@ namespace Cafe.Tests.Business.AuthContext
 {
     public class AuthTestsHelper
     {
-        private readonly SliceFixture _fixture;
+        private readonly AppFixture _fixture;
 
-        public AuthTestsHelper(SliceFixture fixture)
+        public AuthTestsHelper(AppFixture fixture)
         {
             _fixture = fixture;
+        }
+
+        public async Task AddClaimsAsync(Guid userId, IEnumerable<Claim> claims)
+        {
+            await _fixture.ExecuteScopeAsync(async sp =>
+            {
+                var userManager = sp.GetRequiredService<UserManager<User>>();
+
+                var user = await userManager.FindByIdAsync(userId.ToString());
+
+                if (user != null)
+                {
+                    await userManager.AddClaimsAsync(user, claims);
+                }
+            });
         }
 
         public async Task LoginAndCheckClaim(string email, string password, Func<Claim, bool> claimPredicate)

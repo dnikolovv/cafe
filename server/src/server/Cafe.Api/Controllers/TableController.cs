@@ -1,55 +1,61 @@
-﻿using Cafe.Core.AuthContext;
+﻿using Cafe.Api.Hateoas.Resources;
+using Cafe.Api.Hateoas.Resources.Table;
+using Cafe.Core.AuthContext;
 using Cafe.Core.TableContext.Commands;
 using Cafe.Core.TableContext.Queries;
+using Cafe.Domain.Views;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Optional.Async;
 using System.Threading.Tasks;
 
 namespace Cafe.Api.Controllers
 {
     public class TableController : ApiController
     {
-        private readonly IMediator _mediator;
-
-        public TableController(IMediator mediator)
+        public TableController(IResourceMapper resourceMapper, IMediator mediator)
+            : base(resourceMapper, mediator)
         {
-            _mediator = mediator;
         }
 
         /// <summary>
         /// Retrieves a list of the tables in the café.
         /// </summary>
-        [HttpGet]
+        [HttpGet(Name = nameof(GetAllTables))]
         public async Task<IActionResult> GetAllTables() =>
-            (await _mediator.Send(new GetAllTables()))
-            .Match(Ok, Error);
+            (await Mediator.Send(new GetAllTables())
+                .MapAsync(ToResourceContainerAsync<TableView, TableResource, TableContainerResource>))
+                .Match(Ok, Error);
 
         /// <summary>
         /// Adds a table to the café.
         /// </summary>
-        [HttpPost]
+        [HttpPost(Name = nameof(AddTable))]
         [Authorize(Policy = AuthConstants.Policies.IsAdminOrManager)]
         public async Task<IActionResult> AddTable([FromBody] AddTable command) =>
-            (await _mediator.Send(command))
-            .Match(Ok, Error);
+            (await Mediator.Send(command)
+                .MapAsync(ToEmptyResourceAsync<AddTableResource>))
+                .Match(Ok, Error);
 
         /// <summary>
         /// Calls the waiter assigned to the table number provided.
         /// </summary>
         [Authorize]
-        [HttpPost("{tableNumber}/callWaiter")]
+        [HttpPost("{tableNumber}/callWaiter", Name = nameof(CallWaiter))]
         public async Task<IActionResult> CallWaiter(int tableNumber) =>
-            (await _mediator.Send(new CallWaiter { TableNumber = tableNumber }))
-            .Match(Ok, Error);
+            (await Mediator.Send(new CallWaiter { TableNumber = tableNumber })
+                .MapAsync(_ => ToEmptyResourceAsync<CallWaiterResource>(x => x.TableNumber = tableNumber)))
+                .Match(Ok, Error);
 
         /// <summary>
         /// Requests the bill from the waiter assigned to the table number provided.
         /// </summary>
         [Authorize]
-        [HttpPost("{tableNumber}/requestBill")]
+        [HttpPost("{tableNumber}/requestBill", Name = nameof(RequestBill))]
         public async Task<IActionResult> RequestBill(int tableNumber) =>
-            (await _mediator.Send(new RequestBill { TableNumber = tableNumber }))
-            .Match(Ok, Error);
+            (await Mediator.Send(new RequestBill { TableNumber = tableNumber })
+                .MapAsync(_ => ToEmptyResourceAsync<RequestBillResource>(x => x.TableNumber = tableNumber)))
+                .Match(Ok, Error);
     }
 }

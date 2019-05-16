@@ -11,12 +11,12 @@ namespace Cafe.Tests.Business.TabContext
 {
     public class GetAllOpenTabsHandlerTests : ResetDatabaseLifetime
     {
-        private readonly SliceFixture _fixture;
+        private readonly AppFixture _fixture;
         private readonly TabTestsHelper _helper;
 
         public GetAllOpenTabsHandlerTests()
         {
-            _fixture = new SliceFixture();
+            _fixture = new AppFixture();
             _helper = new TabTestsHelper(_fixture);
         }
 

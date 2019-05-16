@@ -11,11 +11,11 @@ namespace Cafe.Tests.Business.BaristaContext
 {
     public class HireBaristaHandlerTests : ResetDatabaseLifetime
     {
-        private readonly SliceFixture _fixture;
+        private readonly AppFixture _fixture;
 
         public HireBaristaHandlerTests()
         {
-            _fixture = new SliceFixture();
+            _fixture = new AppFixture();
         }
 
         [Theory]

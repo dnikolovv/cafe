@@ -16,14 +16,14 @@ namespace Cafe.Tests.Api.Hubs
 {
     public class ConfirmedOrdersHubTests : ResetDatabaseLifetime
     {
-        private readonly SliceFixture _fixture;
+        private readonly AppFixture _fixture;
         private readonly ToGoOrderTestsHelper _toGoOrdersHelper;
         private readonly AuthTestsHelper _authTestsHelper;
         private readonly string _hubUrl;
 
         public ConfirmedOrdersHubTests()
         {
-            _fixture = new SliceFixture();
+            _fixture = new AppFixture();
             _toGoOrdersHelper = new ToGoOrderTestsHelper(_fixture);
             _authTestsHelper = new AuthTestsHelper(_fixture);
             _hubUrl = _fixture.GetCompleteServerUrl("/confirmedOrders");
@@ -100,7 +100,6 @@ namespace Cafe.Tests.Api.Hubs
                     e => e.Order.Id == orderId &&
                          e.Order.OrderedItems.Count == menuItems.Length,
                     Times.Once());
-
         }
 
         [Fact]

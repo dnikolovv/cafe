@@ -1,4 +1,6 @@
-﻿using Cafe.Core.AuthContext;
+﻿using Cafe.Api.Hateoas.Resources;
+using Cafe.Api.Hateoas.Resources.Auth;
+using Cafe.Core.AuthContext;
 using Cafe.Core.AuthContext.Commands;
 using Cafe.Core.AuthContext.Queries;
 using Cafe.Domain;
@@ -6,6 +8,7 @@ using Cafe.Domain.Views;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Optional.Async;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -13,19 +16,18 @@ namespace Cafe.Api.Controllers
 {
     public class AuthController : ApiController
     {
-        private readonly IMediator _mediator;
-
-        public AuthController(IMediator mediator)
+        public AuthController(IResourceMapper resourceMapper, IMediator mediator)
+            : base(resourceMapper, mediator)
         {
-            _mediator = mediator;
         }
 
         /// <summary>
         /// Retrieves the currently logged in user.
         /// </summary>
-        [HttpGet]
+        [HttpGet(Name = nameof(GetCurrentUser))]
         public async Task<IActionResult> GetCurrentUser() =>
-            (await _mediator.Send(new GetUser { Id = CurrentUserId }))
+            (await Mediator.Send(new GetUser { Id = CurrentUserId })
+                .MapAsync(ToResourceAsync<UserView, UserResource>))
                 .Match<IActionResult>(Ok, _ => Unauthorized());
 
         /// <summary>
@@ -35,11 +37,12 @@ namespace Cafe.Api.Controllers
         /// <returns>A JWT.</returns>
         /// <response code="200">If the credentials have a match.</response>
         /// <response code="400">If the credentials don't match/don't meet the requirements.</response>
-        [HttpPost("login")]
+        [HttpPost("login", Name = nameof(Login))]
         [ProducesResponseType(typeof(JwtView), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Error), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> Login([FromBody] Login command) =>
-            (await _mediator.Send(command))
+            (await Mediator.Send(command)
+                .MapAsync(ToResourceAsync<JwtView, LoginResource>))
                 .Match(
                 jwt =>
                 {
@@ -51,11 +54,12 @@ namespace Cafe.Api.Controllers
         /// <summary>
         /// Logout. (unsets the auth cookie)
         /// </summary>
-        [HttpDelete("logout")]
-        public IActionResult Logout()
+        [HttpDelete("logout", Name = nameof(Logout))]
+        public async Task<IActionResult> Logout()
         {
             HttpContext.Response.Cookies.Delete(AuthConstants.Cookies.AuthCookieName);
-            return NoContent();
+            var resource = await ToEmptyResourceAsync<LogoutResource>();
+            return Ok(resource);
         }
 
         /// <summary>
@@ -65,55 +69,61 @@ namespace Cafe.Api.Controllers
         /// <returns>A user model.</returns>
         /// <response code="201">A user was created.</response>
         /// <response code="400">Invalid input.</response>
-        [HttpPost("register")]
+        [HttpPost("register", Name = nameof(Register))]
         [ProducesResponseType(typeof(Error), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> Register([FromBody] Register command) =>
-            (await _mediator.Send(command))
+            (await Mediator.Send(command)
+                .MapAsync(ToEmptyResourceAsync<RegisterResource>))
                 .Match(u => CreatedAtAction(nameof(Register), u), Error);
 
         /// <summary>
         /// Retrieves all user accounts.
         /// </summary>
-        [HttpGet("users")]
+        [HttpGet("users", Name = nameof(GetAllUserAccounts))]
         [Authorize(Policy = AuthConstants.Policies.IsAdmin)]
         public async Task<IActionResult> GetAllUserAccounts() =>
-            (await _mediator.Send(new GetAllUserAccounts()))
+            (await Mediator.Send(new GetAllUserAccounts())
+                .MapAsync(ToResourceContainerAsync<UserView, UserResource, UsersContainerResource>))
                 .Match(Ok, Error);
 
         /// <summary>
         /// Assigns a waiter to an account.
         /// </summary>
-        [HttpPost("assign/waiter")]
+        [HttpPost("assign/waiter", Name = nameof(AssignWaiterToAccount))]
         [Authorize(Policy = AuthConstants.Policies.IsAdmin)]
         public async Task<IActionResult> AssignWaiterToAccount([FromBody] AssignWaiterToAccount command) =>
-            (await _mediator.Send(command))
+            (await Mediator.Send(command)
+                .MapAsync(ToEmptyResourceAsync<AssignWaiterToAccountResource>))
                 .Match(Ok, Error);
 
         /// <summary>
         /// Assigns a manager to an account.
         /// </summary>
-        [HttpPost("assign/manager")]
+        [HttpPost("assign/manager", Name = nameof(AssignManagerToAccount))]
         [Authorize(Policy = AuthConstants.Policies.IsAdmin)]
         public async Task<IActionResult> AssignManagerToAccount([FromBody] AssignManagerToAccount command) =>
-            (await _mediator.Send(command))
+            (await Mediator.Send(command)
+                .MapAsync(ToEmptyResourceAsync<AssignManagerToAccountResource>))
                 .Match(Ok, Error);
 
         /// <summary>
         /// Assigns a cashier to an account.
         /// </summary>
-        [HttpPost("assign/cashier")]
+        [HttpPost("assign/cashier", Name = nameof(AssignCashierToAccount))]
         [Authorize(Policy = AuthConstants.Policies.IsAdmin)]
         public async Task<IActionResult> AssignCashierToAccount([FromBody] AssignCashierToAccount command) =>
-            (await _mediator.Send(command))
+            (await Mediator.Send(command)
+                .MapAsync(ToEmptyResourceAsync<AssignCashierToAccountResource>))
                 .Match(Ok, Error);
 
         /// <summary>
         /// Assigns a barista to an account.
         /// </summary>
-        [HttpPost("assign/barista")]
+        [HttpPost("assign/barista", Name = nameof(AssignBaristaToAccount))]
         [Authorize(Policy = AuthConstants.Policies.IsAdmin)]
         public async Task<IActionResult> AssignBaristaToAccount([FromBody] AssignBaristaToAccount command) =>
-            (await _mediator.Send(command))
+            (await Mediator.Send(command)
+                .MapAsync(ToEmptyResourceAsync<AssignBaristaToAccountResource>))
                 .Match(Ok, Error);
 
         private void SetAuthCookie(string token) =>

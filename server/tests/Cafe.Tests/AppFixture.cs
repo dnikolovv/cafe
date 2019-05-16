@@ -7,18 +7,19 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Net;
+using System.Net.Http;
 using System.Net.Sockets;
 using System.Threading.Tasks;
 
 namespace Cafe.Tests
 {
-    public class SliceFixture
+    public class AppFixture
     {
         public static readonly string BaseUrl;
         private static readonly IConfiguration _configuration;
         private static readonly IServiceScopeFactory _scopeFactory;
 
-        static SliceFixture()
+        static AppFixture()
         {
             BaseUrl = $"http://localhost:{GetFreeTcpPort()}";
 
@@ -35,10 +36,7 @@ namespace Cafe.Tests
             using (var scope = scopeFactory.CreateScope())
             {
                 _configuration = scope.ServiceProvider.GetService<IConfiguration>();
-            }
 
-            using (var scope = scopeFactory.CreateScope())
-            {
                 var dbContext = scope.ServiceProvider.GetService<ApplicationDbContext>();
                 dbContext.Database.EnsureCreated();
             }
@@ -75,6 +73,18 @@ namespace Cafe.Tests
 
                 return action(dbContext);
             });
+
+        public Task<TResult> ExecuteHttpClientAsync<TResult>(Func<HttpClient, Task<TResult>> action, string accessToken = null)
+        {
+            var client = BuildHttpClient(accessToken);
+            return action(client);
+        }
+
+        public Task ExecuteHttpClientAsync(Func<HttpClient, Task> action, string accessToken = null)
+        {
+            var client = BuildHttpClient(accessToken);
+            return action(client);
+        }
 
         public async Task ExecuteScopeAsync(Func<IServiceProvider, Task> action)
         {
@@ -136,17 +146,32 @@ namespace Cafe.Tests
 
         public Task SendManyAsync(params ICommand[] commands)
         {
-            return ExecuteScopeAsync(sp =>
+            return ExecuteScopeAsync(async sp =>
             {
                 var mediator = sp.GetService<IMediator>();
 
                 foreach (var command in commands)
                 {
-                    mediator.Send(command);
+                    await mediator.Send(command);
                 }
 
                 return Task.CompletedTask;
             });
+        }
+
+        private static HttpClient BuildHttpClient(string accessToken = null)
+        {
+            var client = new HttpClient
+            {
+                BaseAddress = new Uri(BaseUrl)
+            };
+
+            if (!string.IsNullOrEmpty(accessToken))
+            {
+                client.DefaultRequestHeaders.Add("Authorization", $"Bearer {accessToken}");
+            }
+
+            return client;
         }
 
         private static int GetFreeTcpPort()

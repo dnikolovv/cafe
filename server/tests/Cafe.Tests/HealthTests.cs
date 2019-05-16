@@ -8,11 +8,11 @@ namespace Cafe.Tests
 {
     public class HealthTests
     {
-        private readonly SliceFixture _fixture;
+        private readonly AppFixture _fixture;
 
         public HealthTests()
         {
-            _fixture = new SliceFixture();
+            _fixture = new AppFixture();
         }
 
         [Fact]
@@ -22,7 +22,7 @@ namespace Cafe.Tests
             var client = new HttpClient();
 
             // Act
-            var result = await client.GetAsync(_fixture.GetCompleteServerUrl("api/health"));
+            var result = await client.GetAsync(_fixture.GetCompleteServerUrl("health"));
 
             // Assert
             result.StatusCode.ShouldBe(HttpStatusCode.OK);

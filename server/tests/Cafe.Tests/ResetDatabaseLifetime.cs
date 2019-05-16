@@ -33,8 +33,8 @@ namespace Cafe.Tests
 
         public async Task DisposeAsync()
         {
-            await Reset(_relationalCheckpoint, SliceFixture.RelationalDbConnectionString);
-            await Reset(_eventStoreCheckpoint, SliceFixture.EventStoreConnectionString);
+            await Reset(_relationalCheckpoint, AppFixture.RelationalDbConnectionString);
+            await Reset(_eventStoreCheckpoint, AppFixture.EventStoreConnectionString);
         }
 
         public Task InitializeAsync() => Task.CompletedTask;

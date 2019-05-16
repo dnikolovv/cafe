@@ -19,7 +19,7 @@ namespace Cafe.Api.Configuration
                 new MenuItem
                 {
                     Id = Guid.NewGuid(),
-                    Description = "Cofee",
+                    Description = "Coffee",
                     Number = 1,
                     Price = 1
                 },

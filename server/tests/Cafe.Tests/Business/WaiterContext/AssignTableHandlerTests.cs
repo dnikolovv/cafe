@@ -13,11 +13,11 @@ namespace Cafe.Tests.Business.WaiterContext
 {
     public class AssignTableHandlerTests : ResetDatabaseLifetime
     {
-        private readonly SliceFixture _fixture;
+        private readonly AppFixture _fixture;
 
         public AssignTableHandlerTests()
         {
-            _fixture = new SliceFixture();
+            _fixture = new AppFixture();
         }
 
         [Theory]

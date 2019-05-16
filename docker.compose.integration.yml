@@ -22,3 +22,5 @@ services:
     links:
       - cafe.tests.sql:relationaldb
       - cafe.tests.eventstore:eventstore
+    volumes:
+      - ./:/coverage

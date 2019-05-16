@@ -15,12 +15,12 @@ namespace Cafe.Tests.Business.OrderContext
 {
     public class CompleteToGoOrderHandlerTests : ResetDatabaseLifetime
     {
-        private readonly SliceFixture _fixture;
+        private readonly AppFixture _fixture;
         private readonly ToGoOrderTestsHelper _helper;
 
         public CompleteToGoOrderHandlerTests()
         {
-            _fixture = new SliceFixture();
+            _fixture = new AppFixture();
             _helper = new ToGoOrderTestsHelper(_fixture);
         }
 
