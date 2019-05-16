@@ -4,7 +4,6 @@ using System;
 
 namespace Cafe.Api.Hateoas.Resources.Auth
 {
-
     public class AssignManagerToAccountResourcePolicy : IPolicy<AssignManagerToAccountResource>
     {
         public Action<LinksPolicyBuilder<AssignManagerToAccountResource>> PolicyConfiguration => policy =>
@@ -16,4 +15,3 @@ namespace Cafe.Api.Hateoas.Resources.Auth
         };
     }
 }
-

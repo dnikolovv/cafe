@@ -193,11 +193,6 @@
             Assigns a table to a waiter.
             </summary>
         </member>
-        <member name="M:Cafe.Api.Controllers.ApiController.Ok(MediatR.Unit)">
-            <summary>
-            Enables using method groups when matching on Unit.
-            </summary>
-        </member>
         <member name="T:Cafe.Api.OperationFilters.OptionOperationFilter">
             <summary>
             This operation filter only works on <see cref="T:Optional.Option"/> types that are contained in a class.

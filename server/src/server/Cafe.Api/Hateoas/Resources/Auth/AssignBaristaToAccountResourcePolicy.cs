@@ -4,7 +4,6 @@ using System;
 
 namespace Cafe.Api.Hateoas.Resources.Auth
 {
-
     public class AssignBaristaToAccountResourcePolicy : IPolicy<AssignBaristaToAccountResource>
     {
         public Action<LinksPolicyBuilder<AssignBaristaToAccountResource>> PolicyConfiguration => policy =>

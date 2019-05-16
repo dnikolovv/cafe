@@ -17,4 +17,6 @@ RUN dotnet build Cafe.sln
 
 WORKDIR /src/tests/Cafe.Tests
 
-CMD ["dotnet", "test", "--logger:\"console;verbosity=normal\""]
+RUN chmod +x run-tests-with-coverage-report.sh
+CMD ./run-tests-with-coverage-report.sh \
+ && cp coverage.* /coverage

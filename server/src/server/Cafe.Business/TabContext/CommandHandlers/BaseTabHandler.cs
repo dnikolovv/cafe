@@ -6,7 +6,6 @@ using Cafe.Domain.Events;
 using Cafe.Persistance.EntityFramework;
 using FluentValidation;
 using Marten;
-using MediatR;
 using Optional;
 using Optional.Async;
 using System;
@@ -33,7 +32,7 @@ namespace Cafe.Business.TabContext.CommandHandlers
         protected IMenuItemsService MenuItemsService { get; }
 
         protected Task<Tab> GetTabFromStore(Guid id) =>
-                    Session.LoadAsync<Tab>(id);
+            Session.LoadAsync<Tab>(id);
 
         protected Task<Option<Tab, Error>> GetTabIfExists(Guid id) =>
             GetTabFromStore(id)
@@ -49,7 +48,7 @@ namespace Cafe.Business.TabContext.CommandHandlers
                 .MapAsync(async _ => new Tab(id));
 
         protected Task<Option<Tab, Error>> TabShouldNotBeClosed(Guid id) =>
-                            GetTabIfExists(id)
+            GetTabIfExists(id)
                 .FilterAsync(async tab => tab.IsOpen, Error.Validation($"Tab {id} is closed."));
 
         protected Task<Option<Tab, Error>> TabShouldNotExist(Guid id) =>
