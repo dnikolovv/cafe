@@ -11,7 +11,7 @@ namespace Cafe.Api.Configuration
             app.UseSwagger();
             app.UseSwaggerUI(setup =>
             {
-                setup.RoutePrefix = string.Empty;
+                setup.RoutePrefix = "swagger";
 
                 setup.SwaggerEndpoint(
                     url: "/swagger/v1/swagger.json",
