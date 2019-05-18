@@ -36,9 +36,6 @@ namespace Cafe.Tests
             using (var scope = scopeFactory.CreateScope())
             {
                 _configuration = scope.ServiceProvider.GetService<IConfiguration>();
-
-                var dbContext = scope.ServiceProvider.GetService<ApplicationDbContext>();
-                dbContext.Database.EnsureCreated();
             }
 
             DocumentStore.For(options =>

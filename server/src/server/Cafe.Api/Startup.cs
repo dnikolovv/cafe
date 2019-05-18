@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -100,6 +101,9 @@ namespace Cafe.Api
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, UserManager<User> userManager, ApplicationDbContext dbContext)
         {
+            dbContext.Database.EnsureCreated();
+            DatabaseConfiguration.AddDefaultAdminAccountIfNoneExisting(userManager, Configuration).Wait();
+
             if (!env.IsDevelopment())
             {
                 app.UseHsts();
@@ -113,7 +117,6 @@ namespace Cafe.Api
                     .AllowCredentials());
 
                 DatabaseConfiguration.SeedDatabase(dbContext);
-                DatabaseConfiguration.AddDefaultAdminAccountIfNoneExisting(userManager, Configuration).Wait();
             }
 
             loggerFactory.AddLogging(Configuration.GetSection("Logging"));
