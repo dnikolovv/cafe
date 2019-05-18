@@ -13,6 +13,34 @@ namespace Cafe.Api.Configuration
 {
     public static class DatabaseConfiguration
     {
+        public static async Task<(string Email, string Password)> AddDefaultAdminAccountIfNoneExisting(UserManager<User> userManager, IConfiguration configuration)
+        {
+            var adminSection = configuration.GetSection("DefaultAdminAccount");
+
+            var adminEmail = adminSection["Email"];
+            var adminPassword = adminSection["Password"];
+
+            if (!await AccountExists(adminEmail, userManager))
+            {
+                var adminUser = new User
+                {
+                    Id = Guid.NewGuid(),
+                    Email = adminEmail,
+                    UserName = adminEmail,
+                    FirstName = "Café",
+                    LastName = "Admin"
+                };
+
+                await userManager.CreateAsync(adminUser, adminPassword);
+
+                var isAdminClaim = new Claim(AuthConstants.ClaimTypes.IsAdmin, true.ToString());
+
+                await userManager.AddClaimAsync(adminUser, isAdminClaim);
+            }
+
+            return (adminEmail, adminPassword);
+        }
+
         public static void SeedDatabase(ApplicationDbContext dbContext)
         {
             if (dbContext.MenuItems.Any() && dbContext.Waiters.Any() && dbContext.Cashiers.Any())
@@ -98,34 +126,6 @@ namespace Cafe.Api.Configuration
             dbContext.Cashiers.AddRange(cashiers);
 
             dbContext.SaveChanges();
-        }
-
-        public static async Task<(string Email, string Password)> AddDefaultAdminAccountIfNoneExisting(UserManager<User> userManager, IConfiguration configuration)
-        {
-            var adminSection = configuration.GetSection("DefaultAdminAccount");
-
-            var adminEmail = adminSection["Email"];
-            var adminPassword = adminSection["Password"];
-
-            if (!await AccountExists(adminEmail, userManager))
-            {
-                var adminUser = new User
-                {
-                    Id = Guid.NewGuid(),
-                    Email = adminEmail,
-                    UserName = adminEmail,
-                    FirstName = "Café",
-                    LastName = "Admin"
-                };
-
-                await userManager.CreateAsync(adminUser, adminPassword);
-
-                var isAdminClaim = new Claim(AuthConstants.ClaimTypes.IsAdmin, true.ToString());
-
-                await userManager.AddClaimAsync(adminUser, isAdminClaim);
-            }
-
-            return (adminEmail, adminPassword);
         }
 
         private static async Task<bool> AccountExists(string email, UserManager<User> userManager)
