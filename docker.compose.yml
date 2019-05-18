@@ -1,0 +1,30 @@
+version: "3.4"
+
+services:
+  cafe.sql:
+    image: postgres:9.5
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: postgres
+  cafe.eventstore:
+    image: postgres:9.5
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: postgres
+  cafe.api:
+    image: cafeapi
+    build:
+      context: ./server
+      dockerfile: ./src/server/Cafe.Api/Dockerfile
+    ports:
+      - "5100:80"
+      - "5200:443"
+    environment:
+      ASPNETCORE_HTTPS_PORT: 5200
+      ASPNETCORE_URLS: https://+;http://+
+    depends_on:
+      - cafe.sql
+      - cafe.eventstore
+    links:
+      - cafe.sql:relationaldb
+      - cafe.eventstore:eventstore

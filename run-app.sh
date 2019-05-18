@@ -1,0 +1,1 @@
+docker-compose -f docker.compose.yml up --build --exit-code-from cafe.api

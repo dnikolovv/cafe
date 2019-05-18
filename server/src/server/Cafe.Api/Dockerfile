@@ -1,26 +1,25 @@
 FROM endeveit/docker-jq AS config
-WORKDIR /src
+
+EXPOSE 80
+EXPOSE 443
+
+WORKDIR /server
 COPY . .
-WORKDIR /src/tests/Cafe.Tests
+WORKDIR /server/src/server/Cafe.Api
+
 RUN jq '.ConnectionStrings.DefaultConnection = "Server=relationaldb;Port=5432;Database=cafe-relational;User Id=postgres;Password=postgres;"' appsettings.json > tmp.$$.json && mv tmp.$$.json appsettings.json
 RUN jq '.EventStore.ConnectionString = "Server=eventstore;Port=5432;Database=cafe-event-store;User Id=postgres;Password=postgres;"' appsettings.json > tmp.$$.json && mv tmp.$$.json appsettings.json
 RUN cat appsettings.json
 
 FROM microsoft/dotnet:2.2-sdk AS build
 
-WORKDIR /src
+WORKDIR /server
 
-COPY --from=config /src .
+COPY --from=config /server .
 
-# RUN dotnet restore Cafe.sln
-# RUN dotnet build Cafe.sln 
+WORKDIR /server/src/server/Cafe.Api
+RUN dotnet publish Cafe.Api.csproj --configuration Release --output ./artifacts
 
-RUN ls
-
-WORKDIR /src/tests/Cafe.Tests
-
-RUN ls
-
-RUN chmod +x run-tests-with-coverage-report.sh
-CMD bash run-tests-with-coverage-report.sh \
-    && cp coverage.* /coverage
+WORKDIR /server/src/server/Cafe.Api/artifacts
+RUN cat appsettings.json
+ENTRYPOINT [ "dotnet", "Cafe.Api.dll" ]
