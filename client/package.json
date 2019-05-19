@@ -27,6 +27,7 @@
     "start": "react-scripts start",
     "build": "sh -ac '. .env.${REACT_APP_ENV}; react-scripts build'",
     "build:development": "REACT_APP_ENV=development npm run build",
+    "build:production": "REACT_APP_ENV=production npm run build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

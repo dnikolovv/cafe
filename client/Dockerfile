@@ -10,8 +10,10 @@ COPY package.json /app/package.json
 RUN npm install
 RUN npm install react-scripts@3.0.1 -g
 
-RUN npm run build
+ARG REACT_APP_ENVIRONMENT
+
+RUN npm run build:${REACT_APP_ENVIRONMENT}
 
 RUN npm install -g serve
 
-CMD ["serve", "-s", "build"]
+CMD ["serve", "-s", "build", "-l", "3000"]
