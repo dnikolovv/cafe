@@ -110,14 +110,15 @@ namespace Cafe.Api
             }
             else if (env.IsDevelopment())
             {
-                app.UseCors(builder => builder
-                    .WithOrigins("http://localhost:3000")
-                    .AllowAnyMethod()
-                    .AllowAnyHeader()
-                    .AllowCredentials());
-
                 DatabaseConfiguration.SeedDatabase(dbContext);
             }
+
+            app.UseCors(builder => builder
+                .SetIsOriginAllowedToAllowWildcardSubdomains()
+                .WithOrigins("http://localhost:3000", "https://*.devadventures.net")
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials());
 
             loggerFactory.AddLogging(Configuration.GetSection("Logging"));
 
