@@ -11,8 +11,8 @@ export function loadTabSuccess(tab) {
 
 export function loadAllTabs() {
   return function(dispatch) {
-    return tabApi.loadAllTabs().then(tabs => {
-      dispatch(loadAllTabsSuccess(tabs));
+    return tabApi.loadAllTabs().then(response => {
+      dispatch(loadAllTabsSuccess(response.items));
     });
   };
 }

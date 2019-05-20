@@ -7,8 +7,8 @@ export function loadWaitersSuccess(waiters) {
 
 export function loadWaiters() {
   return function(dispatch) {
-    return waitersApi.getWaiters().then(waiters => {
-      dispatch(loadWaitersSuccess(waiters));
+    return waitersApi.getWaiters().then(response => {
+      dispatch(loadWaitersSuccess(response.items));
     });
   };
 }

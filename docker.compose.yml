@@ -11,6 +11,15 @@ services:
     restart: always
     environment:
       POSTGRES_PASSWORD: postgres
+  cafe.client:
+    image: cafeclient
+    build:
+      context: ./client
+      dockerfile: ./Dockerfile
+      args:
+        REACT_APP_ENVIRONMENT: development
+    ports:
+      - "5000:5000"
   cafe.api:
     image: cafeapi
     build:

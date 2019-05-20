@@ -1,5 +1,4 @@
 ﻿using Cafe.Api.Hateoas.Resources;
-using Cafe.Api.OperationFilters;
 using Cafe.Business;
 using Cafe.Business.AuthContext;
 using Cafe.Core;
@@ -192,8 +191,6 @@ namespace Cafe.Api.Configuration
                     {
                         { "Bearer", Enumerable.Empty<string>() },
                     });
-
-                    setup.OperationFilter<OptionOperationFilter>();
                 }
             });
         }

@@ -7,8 +7,8 @@ export function loadOrdersSuccess(orders) {
 
 export function loadOrders() {
   return function(dispatch) {
-    return orderApi.getOrders().then(orders => {
-      dispatch(loadOrdersSuccess(orders));
+    return orderApi.getOrders().then(response => {
+      dispatch(loadOrdersSuccess(response.items));
     });
   };
 }

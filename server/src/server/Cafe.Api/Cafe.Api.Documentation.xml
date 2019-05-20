@@ -198,12 +198,6 @@
             Assigns a table to a waiter.
             </summary>
         </member>
-        <member name="T:Cafe.Api.OperationFilters.OptionOperationFilter">
-            <summary>
-            This operation filter only works on <see cref="T:Optional.Option"/> types that are contained in a class.
-            Optional values that are put as type parameters will not be properly displayed in Swagger, although they will work.
-            </summary>
-        </member>
         <member name="M:Cafe.Api.Program.BuildWebHost(System.String[])">
             <summary>
             To be used by EF tooling until I implement IDesignTimeDbContextFactory.

@@ -1,0 +1,30 @@
+codecov:
+  notify:
+    require_ci_to_pass: yes
+
+coverage:
+  precision: 2
+  round: up
+  range: "90...100"
+
+  status:
+    project: yes
+    patch: yes
+    changes: no
+
+ignore:
+  - "server\src\server\Cafe.Api\Startup.cs"
+  - "server\src\server\Cafe.Api\Program.cs"
+
+parsers:
+  gcov:
+    branch_detection:
+      conditional: yes
+      loop: yes
+      method: no
+      macro: no
+
+comment:
+  layout: "header, diff"
+  behavior: default
+  require_changes: no

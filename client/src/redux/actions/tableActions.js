@@ -15,8 +15,8 @@ export function requestBillSuccess(tableNumber) {
 
 export function loadTables() {
   return function(dispatch) {
-    return tablesApi.loadTables().then(tables => {
-      dispatch(loadTablesSuccess(tables));
+    return tablesApi.loadTables().then(response => {
+      dispatch(loadTablesSuccess(response.items));
     });
   };
 }
