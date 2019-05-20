@@ -19,5 +19,7 @@ namespace Cafe.Api.Hateoas.Resources.Auth
         public bool IsWaiter => WaiterId.HasValue;
         public bool IsBarista => BaristaId.HasValue;
         public bool IsCashier => CashierId.HasValue;
+
+        public bool IsAdmin { get; set; }
     }
 }

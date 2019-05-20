@@ -77,6 +77,8 @@ namespace Cafe.Business
             user.CashierId = TryGetIdClaim(userClaims, c => c.ClaimType == AuthConstants.ClaimTypes.CashierId);
             user.BaristaId = TryGetIdClaim(userClaims, c => c.ClaimType == AuthConstants.ClaimTypes.BaristaId);
 
+            user.IsAdmin = userClaims.Any(c => c.ClaimType == AuthConstants.ClaimTypes.IsAdmin && c.ClaimValue == true.ToString());
+
             return user;
         }
 
