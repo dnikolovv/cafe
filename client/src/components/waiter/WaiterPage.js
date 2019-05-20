@@ -32,7 +32,6 @@ const WaiterPage = ({
   };
 
   const handleOpenTab = tab => {
-    debugger;
     openTab(tab);
   };
 

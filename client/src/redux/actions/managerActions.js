@@ -7,8 +7,8 @@ export function loadManagersSuccess(managers) {
 
 export function loadManagers() {
   return function(dispatch) {
-    return managerApi.getManagers().then(managers => {
-      dispatch(loadManagersSuccess(managers));
+    return managerApi.getManagers().then(response => {
+      dispatch(loadManagersSuccess(response.items));
     });
   };
 }

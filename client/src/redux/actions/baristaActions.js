@@ -7,8 +7,8 @@ export function loadBaristasSuccess(baristas) {
 
 export function loadBaristas() {
   return function(dispatch) {
-    return baristaApi.getBaristas().then(baristas => {
-      dispatch(loadBaristasSuccess(baristas));
+    return baristaApi.getBaristas().then(response => {
+      dispatch(loadBaristasSuccess(response.items));
     });
   };
 }
