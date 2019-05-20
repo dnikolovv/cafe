@@ -1,6 +1,7 @@
 import * as apiClient from "./apiClient";
+import { joinUrlWithRoute } from "../utils/urlUtils";
 
-const baseUrl = apiClient.BASE_URL + "/menu/items/";
+const baseUrl = joinUrlWithRoute(apiClient.BASE_URL, "/menu/items");
 
 export function addMenuItem(item) {
   return apiClient.post(baseUrl, { menuItems: [item] });

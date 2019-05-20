@@ -1,14 +1,15 @@
 import * as apiClient from "./apiClient";
+import { joinUrlWithRoute } from "../utils/urlUtils";
 
-const baseUrl = apiClient.BASE_URL + "/auth/";
+const baseUrl = joinUrlWithRoute(apiClient.BASE_URL, "/auth");
 
 export function getUsers() {
-  const url = baseUrl + "users";
+  const url = joinUrlWithRoute(baseUrl, "users");
   return apiClient.get(url);
 }
 
 export function assignRole(userId, roleId, roleName) {
-  const url = baseUrl + "assign/" + roleName;
+  const url = joinUrlWithRoute(baseUrl, "assign/" + roleName);
   const body = {
     accountId: userId,
     [`${roleName}Id`]: roleId

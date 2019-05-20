@@ -1,14 +1,15 @@
 import * as apiClient from "./apiClient";
+import { joinUrlWithRoute } from "../utils/urlUtils";
 
-const baseUrl = apiClient.BASE_URL + "/auth/";
+const baseUrl = joinUrlWithRoute(apiClient.BASE_URL, "/auth/");
 
 export function login(credentials) {
-  const url = baseUrl + "login";
+  const url = joinUrlWithRoute(baseUrl, "login");
   return apiClient.post(url, credentials);
 }
 
 export function logout() {
-  const url = baseUrl + "logout";
+  const url = joinUrlWithRoute(baseUrl, "logout");
   return apiClient.httpDelete(url);
 }
 
