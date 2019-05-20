@@ -23,10 +23,7 @@ namespace Cafe.Tests.Business.AuthContext
         public async Task CanGetAllUserAccounts(Register[] registerAccountsCommands)
         {
             // Arrange
-            foreach (var command in registerAccountsCommands)
-            {
-                await _fixture.SendAsync(command);
-            }
+            await _fixture.SendManyAsync(registerAccountsCommands);
 
             var query = new GetAllUserAccounts();
 
