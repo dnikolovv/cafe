@@ -1,12 +1,15 @@
 import * as SignalR from "@aspnet/signalr";
+import { joinUrlWithRoute } from "../utils/urlUtils";
 
 const baseUrl = process.env.REACT_APP_API_URL;
 
 const openConnections = [];
 
 export function subscribeTo(socketRoute, eventCallbackPairs) {
+  const url = joinUrlWithRoute(baseUrl, socketRoute);
+
   const connection = new SignalR.HubConnectionBuilder()
-    .withUrl(baseUrl + socketRoute, {
+    .withUrl(url, {
       accessTokenFactory: () => localStorage.getItem("access_token")
     })
     .configureLogging(SignalR.LogLevel.Error)
