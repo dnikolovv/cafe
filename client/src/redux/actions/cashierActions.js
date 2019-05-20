@@ -7,8 +7,8 @@ export function loadCashiersSuccess(cashiers) {
 
 export function loadCashiers() {
   return function(dispatch) {
-    return cashierApi.getCashiers().then(cashiers => {
-      dispatch(loadCashiersSuccess(cashiers));
+    return cashierApi.getCashiers().then(response => {
+      dispatch(loadCashiersSuccess(response.items));
     });
   };
 }

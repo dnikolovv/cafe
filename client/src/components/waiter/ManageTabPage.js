@@ -62,6 +62,7 @@ const ManageTabPage = ({
 
   const handleTabClose = amountPaid => {
     closeTab(tabId, amountPaid);
+    loadTab(tabId);
   };
 
   const extractItemNumbersFromPairs = pairs => {

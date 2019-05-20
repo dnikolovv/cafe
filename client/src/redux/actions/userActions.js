@@ -7,8 +7,8 @@ export function loadUsersSuccess(users) {
 
 export function loadUsers() {
   return function(dispatch) {
-    return usersApi.getUsers().then(users => {
-      dispatch(loadUsersSuccess(users));
+    return usersApi.getUsers().then(response => {
+      dispatch(loadUsersSuccess(response.items));
     });
   };
 }

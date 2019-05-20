@@ -15,8 +15,8 @@ export function addMenuItem(item) {
 
 export function loadMenuItems() {
   return function(dispatch) {
-    return menuItemsApi.getMenuItems().then(menuItems => {
-      dispatch(loadMenuItemsSuccess(menuItems));
+    return menuItemsApi.getMenuItems().then(response => {
+      dispatch(loadMenuItemsSuccess(response.items));
     });
   };
 }

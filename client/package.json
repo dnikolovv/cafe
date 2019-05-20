@@ -20,13 +20,14 @@
     "redux-thunk": "2.3.0",
     "uuid": "^3.3.2"
   },
-  "proxy": "http://localhost:5000/api",
   "devDependencies": {
     "redux-immutable-state-invariant": "2.1.0"
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "sh -ac '. .env.${REACT_APP_ENV}; react-scripts build'",
+    "build:development": "REACT_APP_ENV=development npm run build",
+    "build:production": "REACT_APP_ENV=production npm run build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
