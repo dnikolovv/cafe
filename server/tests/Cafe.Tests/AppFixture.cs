@@ -1,7 +1,6 @@
 ﻿using Cafe.Api;
 using Cafe.Core;
 using Cafe.Persistance.EntityFramework;
-using Marten;
 using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -37,19 +36,6 @@ namespace Cafe.Tests
             {
                 _configuration = scope.ServiceProvider.GetService<IConfiguration>();
             }
-
-            DocumentStore.For(options =>
-            {
-                options.Connection(EventStoreConnectionString);
-                options.CreateDatabasesForTenants(c =>
-                {
-                    c.ForTenant()
-                        .CheckAgainstPgDatabase()
-                        .WithOwner("postgres")
-                        .WithEncoding("UTF-8")
-                        .ConnectionLimit(-1);
-                });
-            });
         }
 
         public static string EventStoreConnectionString => _configuration.GetSection("EventStore")["ConnectionString"];
