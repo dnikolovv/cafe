@@ -114,7 +114,8 @@ namespace Cafe.Api
             }
 
             app.UseCors(builder => builder
-                .WithOrigins("http://localhost:3000", "http://cafe-client.devadventures.net")
+                .SetIsOriginAllowedToAllowWildcardSubdomains()
+                .WithOrigins("http://localhost:3000", "https://*.devadventures.net")
                 .AllowAnyMethod()
                 .AllowAnyHeader()
                 .AllowCredentials());
