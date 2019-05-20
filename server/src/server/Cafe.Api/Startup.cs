@@ -101,6 +101,7 @@ namespace Cafe.Api
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, UserManager<User> userManager, ApplicationDbContext dbContext)
         {
             dbContext.Database.EnsureCreated();
+            DatabaseConfiguration.EnsureEventStoreIsCreated(Configuration);
 
             if (!env.IsEnvironment(Environment.IntegrationTests))
             {
