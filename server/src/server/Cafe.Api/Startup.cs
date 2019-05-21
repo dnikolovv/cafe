@@ -81,6 +81,8 @@ namespace Cafe.Api
 
             services.AddLogging(logBuilder => logBuilder.AddSerilog(dispose: true));
 
+            services.AddTransient<DatabaseSeeder>();
+
             services.AddMarten(Configuration);
             services.AddCqrs();
             services.AddMediatR();
@@ -98,7 +100,7 @@ namespace Cafe.Api
             .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, UserManager<User> userManager, ApplicationDbContext dbContext)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, UserManager<User> userManager, ApplicationDbContext dbContext, DatabaseSeeder seeder)
         {
             dbContext.Database.EnsureCreated();
             DatabaseConfiguration.EnsureEventStoreIsCreated(Configuration);
@@ -106,15 +108,12 @@ namespace Cafe.Api
             if (!env.IsEnvironment(Environment.IntegrationTests))
             {
                 DatabaseConfiguration.AddDefaultAdminAccountIfNoneExisting(userManager, Configuration).Wait();
+                seeder.SeedDatabase().Wait();
             }
 
             if (!env.IsDevelopment())
             {
                 app.UseHsts();
-            }
-            else if (env.IsDevelopment())
-            {
-                DatabaseConfiguration.SeedDatabase(dbContext);
             }
 
             app.UseCors(builder => builder

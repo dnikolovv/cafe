@@ -101,6 +101,12 @@ namespace Cafe.Tests
             }
         }
 
+        public async Task ExecuteServiceAsync<TService>(Func<TService, Task> action)
+        {
+            var service = await ExecuteScopeAsync(async sp => sp.GetRequiredService<TService>());
+            await action(service);
+        }
+
         public string GetCompleteServerUrl(string route)
         {
             route = route.TrimStart('/', '\\');

@@ -76,12 +76,14 @@ namespace Cafe.Tests.Business.AuthContext
             _fixture.SendAsync(command);
 
         public Task<(string Email, string Password)> RegisterAdminAccountIfNotExisting() =>
-            _fixture.ExecuteScopeAsync(serviceProvider =>
+            _fixture.ExecuteScopeAsync(async serviceProvider =>
             {
-                var userManager = (UserManager<User>)serviceProvider.GetService(typeof(UserManager<User>));
-                var configuration = (IConfiguration)serviceProvider.GetService(typeof(IConfiguration));
+                var userManager = serviceProvider.GetService<UserManager<User>>();
+                var configuration = serviceProvider.GetService<IConfiguration>();
 
-                return DatabaseConfiguration.AddDefaultAdminAccountIfNoneExisting(userManager, configuration);
+                return (await DatabaseConfiguration
+                    .AddDefaultAdminAccountIfNoneExisting(userManager, configuration))
+                    .ValueOr(configuration.GetAdminCredentials());
             });
 
         public async Task<string> GetAdminToken()
