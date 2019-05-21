@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Routing;
-using Moq;
 using System;
 using System.Collections.Generic;
 
@@ -40,19 +39,15 @@ namespace Cafe.Tests
 
         private static ActionContext GetFakeActionContext(string requestMethod = null)
         {
-            var httpContextMock = new Mock<HttpContext>();
-
-            httpContextMock
-                .Setup(c => c.Request.Method)
-                .Returns(requestMethod ?? "GET");
+            var httpContext = A.Fake<HttpContext>();
+            httpContext.Request.Method = requestMethod ?? "GET";
 
             var actionContext = new ActionContext()
             {
-                HttpContext = httpContextMock.Object,
+                HttpContext = httpContext,
                 RouteData = A.Fake<RouteData>(),
                 ActionDescriptor = A.Fake<ActionDescriptor>()
             };
-
             return actionContext;
         }
     }
