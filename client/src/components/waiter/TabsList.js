@@ -7,7 +7,9 @@ const TabsList = ({ tabs, onTabSelected }) => {
       {tabs.map(tab => {
         return (
           <li className="list-group-item" key={tab.id}>
-            Tab on table {tab.tableNumber}
+            Table: {tab.tableNumber}, Waiter: {tab.waiterName}{" "}
+            {!tab.isOpen &&
+              `(bill: $${tab.servedItemsValue}, tip: $${tab.tipValue})`}
             <button
               className="btn btn-success btn-sm float-right"
               onClick={() => onTabSelected(tab.id)}

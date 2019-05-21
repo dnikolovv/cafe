@@ -81,50 +81,66 @@ const ManageUserPage = ({
       {user ? (
         <>
           <UserForm user={user} />
-          <AssignRoleToUserSelect
-            value={user.waiterId || ""}
-            name="waiterId"
-            label="Waiter"
-            options={waiters.map(waiter => ({
-              value: waiter.id,
-              text: waiter.shortName
-            }))}
-            onChange={handleChange}
-            onAssign={handleRoleAssignment}
-          />
-          <AssignRoleToUserSelect
-            value={user.baristaId || ""}
-            name="baristaId"
-            label="Barista"
-            options={baristas.map(barista => ({
-              value: barista.id,
-              text: barista.shortName
-            }))}
-            onChange={handleChange}
-            onAssign={handleRoleAssignment}
-          />
-          <AssignRoleToUserSelect
-            value={user.cashierId || ""}
-            name="cashierId"
-            label="Cashier"
-            options={cashiers.map(cashier => ({
-              value: cashier.id,
-              text: cashier.shortName
-            }))}
-            onChange={handleChange}
-            onAssign={handleRoleAssignment}
-          />
-          <AssignRoleToUserSelect
-            value={user.managerId || ""}
-            name="managerId"
-            label="Manager"
-            options={managers.map(manager => ({
-              value: manager.id,
-              text: manager.shortName
-            }))}
-            onChange={handleChange}
-            onAssign={handleRoleAssignment}
-          />
+
+          <div className="row">
+            <div className="col-md-6">
+              <AssignRoleToUserSelect
+                value={user.waiterId || ""}
+                name="waiterId"
+                label="Waiter"
+                options={waiters.map(waiter => ({
+                  value: waiter.id,
+                  text: waiter.shortName
+                }))}
+                onChange={handleChange}
+                onAssign={handleRoleAssignment}
+              />
+            </div>
+            <div className="col-md-6">
+              <AssignRoleToUserSelect
+                value={user.baristaId || ""}
+                name="baristaId"
+                label="Barista"
+                options={baristas.map(barista => ({
+                  value: barista.id,
+                  text: barista.shortName
+                }))}
+                onChange={handleChange}
+                onAssign={handleRoleAssignment}
+              />
+            </div>
+          </div>
+
+          <hr />
+
+          <div className="row">
+            <div className="col-md-6">
+              <AssignRoleToUserSelect
+                value={user.cashierId || ""}
+                name="cashierId"
+                label="Cashier"
+                options={cashiers.map(cashier => ({
+                  value: cashier.id,
+                  text: cashier.shortName
+                }))}
+                onChange={handleChange}
+                onAssign={handleRoleAssignment}
+              />
+            </div>
+            <div className="col-md-6">
+              <AssignRoleToUserSelect
+                value={user.managerId || ""}
+                name="managerId"
+                label="Manager"
+                options={managers.map(manager => ({
+                  value: manager.id,
+                  text: manager.shortName
+                }))}
+                onChange={handleChange}
+                onAssign={handleRoleAssignment}
+              />
+            </div>
+          </div>
         </>
       ) : (
         <div>Loading...</div>

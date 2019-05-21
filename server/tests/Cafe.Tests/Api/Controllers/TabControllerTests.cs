@@ -86,8 +86,43 @@ namespace Cafe.Tests.Api.Controllers
                     };
 
                     var resource = await response.ShouldBeAResource<TabsContainerResource>(expectedLinks);
+                    resource.Items.ShouldAllBe(r => r.Links.Count > 0);
+                },
+                fixture);
 
-                    // Assure that the nested resource links have been properly set
+        [Theory]
+        [CustomizedAutoData]
+        public Task GetTabHistoryShouldReturnProperHypermediaLinks(Fixture fixture) =>
+            _apiHelper.InTheContextOfAWaiter(
+                waiter => async httpClient =>
+                {
+                    // Arrange
+                    var openTabCommand = new OpenTab
+                    {
+                        Id = Guid.NewGuid(),
+                        CustomerName = "Some customer",
+                        TableNumber = waiter.ServedTables[0].Number
+                    };
+
+                    var closeTabCommand = new CloseTab
+                    {
+                        TabId = openTabCommand.Id,
+                        AmountPaid = 0
+                    };
+
+                    await _fixture.SendAsync(openTabCommand);
+                    await _fixture.SendAsync(closeTabCommand);
+
+                    // Act
+                    var response = await httpClient.GetAsync(TabRoute("history"));
+
+                    // Assert
+                    var expectedLinks = new List<string>
+                    {
+                        LinkNames.Self
+                    };
+
+                    var resource = await response.ShouldBeAResource<TabsContainerResource>(expectedLinks);
                     resource.Items.ShouldAllBe(r => r.Links.Count > 0);
                 },
                 fixture);

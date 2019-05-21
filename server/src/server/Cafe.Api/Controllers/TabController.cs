@@ -40,6 +40,15 @@ namespace Cafe.Api.Controllers
                 .Match(Ok, Error);
 
         /// <summary>
+        /// Retrieves all closed tabs.
+        /// </summary>
+        [HttpGet("history", Name = nameof(GetTabHistory))]
+        public async Task<IActionResult> GetTabHistory() =>
+            (await Mediator.Send(new GetTabHistory())
+                .MapAsync(ToResourceContainerAsync<TabView, TabResource, TabsContainerResource>))
+                .Match(Ok, Error);
+
+        /// <summary>
         /// Retrieves a tab by id.
         /// </summary>
         [HttpGet("{id}", Name = nameof(GetTabView))]

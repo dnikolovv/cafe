@@ -138,6 +138,11 @@
             Retrieves all open tabs.
             </summary>
         </member>
+        <member name="M:Cafe.Api.Controllers.TabController.GetTabHistory">
+            <summary>
+            Retrieves all closed tabs.
+            </summary>
+        </member>
         <member name="M:Cafe.Api.Controllers.TabController.GetTabView(System.Guid)">
             <summary>
             Retrieves a tab by id.
