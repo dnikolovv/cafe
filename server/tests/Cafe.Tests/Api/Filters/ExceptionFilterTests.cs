@@ -4,6 +4,7 @@ using Cafe.Tests.Customizations;
 using FakeItEasy;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Moq;
 using Shouldly;
 using System;
 using System.Net;
@@ -18,12 +19,13 @@ namespace Cafe.Tests.Api.Filters
         public void ShouldReturnSerializedExceptionWhenInDevelopment(Exception exception)
         {
             // Arrange
-            var environment = A.Fake<IHostingEnvironment>(opts =>
-            {
-                opts.ConfigureFake(env => env.EnvironmentName = "Development");
-            });
+            var environmentMock = new Mock<IHostingEnvironment>();
 
-            var filter = new ExceptionFilter(environment);
+            environmentMock
+                .Setup(e => e.EnvironmentName)
+                .Returns("Development");
+
+            var filter = new ExceptionFilter(environmentMock.Object);
             var filterContext = FilterContextProvider.GetExceptionContext(exception);
 
             // Act
