@@ -26,7 +26,7 @@ const AssignRoleToUserSelect = ({
     <div>
       <SelectInput
         name={name}
-        label={label}
+        label={`Assign ${label.toLowerCase()}`}
         value={value}
         defaultOption={`Select ${label}`}
         options={options}

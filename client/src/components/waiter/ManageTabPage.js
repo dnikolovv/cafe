@@ -21,7 +21,8 @@ const ManageTabPage = ({
   rejectMenuItems,
   serveMenuItems,
   callWaiter,
-  requestBill
+  requestBill,
+  tabs
 }) => {
   useEffect(() => {
     if (!tab) {
@@ -29,7 +30,7 @@ const ManageTabPage = ({
     }
 
     loadMenuItems();
-  }, []);
+  }, [tabs]);
 
   const [selectedItemsToOrder, setSelectedItemsToOrder] = useState([]);
   const [selectedOustandingItems, setSelectedOutstandingItems] = useState([]);
@@ -155,8 +156,8 @@ const ManageTabPage = ({
           ) : (
             <div className="row">
               <div className="col-md-12">
-                The tab is closed. Total paid - ${tab.totalPaid}. Tip - $
-                {tab.tipValue}.
+                The tab is closed. Bill - ${tab.servedItemsValue}, Paid - $
+                {tab.totalPaid}, Tipped - ${tab.tipValue}.
               </div>
             </div>
           )}
@@ -220,7 +221,9 @@ function mapStateToProps(state, ownProps) {
 
   return {
     tabId: tabId,
-    tab: state.tabs.find(t => t.id === tabId),
+    tab:
+      state.tabs.open.find(t => t.id === tabId) ||
+      state.tabs.closed.find(t => t.id === tabId),
     tabs: state.tabs,
     menuItems: state.menuItems
   };

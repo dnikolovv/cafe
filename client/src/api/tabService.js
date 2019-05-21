@@ -5,8 +5,13 @@ const uuidv4 = require("uuid/v4");
 
 const baseUrl = joinUrlWithRoute(apiClient.BASE_URL, "/tab/");
 
-export function loadAllTabs() {
+export function loadAllOpenTabs() {
   return apiClient.get(baseUrl);
+}
+
+export function getPastTabsHistory() {
+  const url = joinUrlWithRoute(baseUrl, "history");
+  return apiClient.get(url);
 }
 
 export function loadTab(tabId) {
