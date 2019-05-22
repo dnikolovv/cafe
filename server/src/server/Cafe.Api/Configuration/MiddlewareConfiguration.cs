@@ -17,6 +17,15 @@ namespace Cafe.Api.Configuration
                     url: "/swagger/v1/swagger.json",
                     name: endpointName);
             });
+
+            app.UseSwaggerUI(setup =>
+            {
+                setup.RoutePrefix = "openapi";
+
+                setup.SwaggerEndpoint(
+                    url: "/swagger/v1/swagger.json",
+                    name: endpointName);
+            });
         }
 
         public static void AddLogging(this ILoggerFactory loggerFactory, IConfigurationSection loggingConfiguration)
