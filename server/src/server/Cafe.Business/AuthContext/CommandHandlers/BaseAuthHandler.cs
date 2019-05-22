@@ -23,7 +23,6 @@ namespace Cafe.Business.AuthContext.CommandHandlers
     {
         public BaseAuthHandler(
             UserManager<User> userManager,
-            IJwtFactory jwtFactory,
             IMapper mapper,
             IValidator<TCommand> validator,
             ApplicationDbContext dbContext,
@@ -32,11 +31,9 @@ namespace Cafe.Business.AuthContext.CommandHandlers
             : base(validator, dbContext, documentSession, eventBus, mapper)
         {
             UserManager = userManager;
-            JwtFactory = jwtFactory;
         }
 
         protected UserManager<User> UserManager { get; }
-        protected IJwtFactory JwtFactory { get; }
 
         protected Task<Option<User, Error>> AccountShouldExist(Guid accountId) =>
             UserManager

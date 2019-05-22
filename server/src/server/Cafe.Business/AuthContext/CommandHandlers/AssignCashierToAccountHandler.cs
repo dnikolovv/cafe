@@ -20,14 +20,13 @@ namespace Cafe.Business.AuthContext.CommandHandlers
     public class AssignCashierToAccountHandler : BaseAuthHandler<AssignCashierToAccount>
     {
         public AssignCashierToAccountHandler(
-            UserManager<User> userCashier,
-            IJwtFactory jwtFactory,
+            UserManager<User> userManager,
             IMapper mapper,
             IValidator<AssignCashierToAccount> validator,
             ApplicationDbContext dbContext,
             IDocumentSession documentSession,
             IEventBus eventBus)
-            : base(userCashier, jwtFactory, mapper, validator, dbContext, documentSession, eventBus)
+            : base(userManager, mapper, validator, dbContext, documentSession, eventBus)
         {
         }
 

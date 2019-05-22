@@ -20,13 +20,12 @@ namespace Cafe.Business.AuthContext.CommandHandlers
     {
         public RegisterHandler(
             UserManager<User> userManager,
-            IJwtFactory jwtFactory,
             IMapper mapper,
             IValidator<Register> validator,
             ApplicationDbContext dbContext,
             IDocumentSession documentSession,
             IEventBus eventBus)
-            : base(userManager, jwtFactory, mapper, validator, dbContext, documentSession, eventBus)
+            : base(userManager, mapper, validator, dbContext, documentSession, eventBus)
         {
         }
 
