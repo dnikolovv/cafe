@@ -156,5 +156,32 @@ namespace Cafe.Tests.Business.TabContext
             // Assert
             result.ShouldHaveErrorOfType(ErrorType.Validation);
         }
+
+        [Theory]
+        [CustomizedAutoData]
+        public async Task CanRejectServedItems(Guid tabId, int tableNumber, MenuItem[] items)
+        {
+            // Arrange
+            await _helper.AddMenuItems(items);
+            await _helper.OpenTabOnTable(tabId, tableNumber);
+            await _helper.OrderMenuItems(tabId, items);
+            await _helper.ServeMenuItems(tabId, items);
+
+            var rejectItemsCommand = new RejectMenuItems
+            {
+                TabId = tabId,
+                ItemNumbers = items.Select(i => i.Number).ToList()
+            };
+
+            // Act
+            var result = await _fixture.SendAsync(rejectItemsCommand);
+
+            // Assert
+            await _helper.AssertTabExists(
+                tabId,
+                tab => tab.RejectedMenuItems.Count == items.Length &&
+                       tab.RejectedItemsValue == items.Sum(i => i.Price) &&
+                       items.All(i => tab.RejectedMenuItems.Any(ri => i.Number == ri.Number)));
+        }
     }
 }

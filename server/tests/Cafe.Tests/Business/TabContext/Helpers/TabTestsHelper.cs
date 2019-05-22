@@ -49,7 +49,7 @@ namespace Cafe.Tests.Business.TabContext.Helpers
                 ItemNumbers = itemNumbers
             };
 
-            await _fixture.SendAsync(orderItems);
+            var result = await _fixture.SendAsync(orderItems);
         }
 
         public async Task ServeMenuItems(Guid tabId, params MenuItem[] items)
