@@ -11,5 +11,7 @@ namespace Cafe.Domain.Repositories
         Task<Option<Barista>> Get(Guid id);
 
         Task<Unit> Update(Barista barista);
+
+        Task<Unit> Add(Barista barista);
     }
 }
