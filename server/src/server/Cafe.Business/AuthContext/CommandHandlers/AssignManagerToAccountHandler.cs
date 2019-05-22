@@ -18,17 +18,16 @@ using IDocumentSession = Marten.IDocumentSession;
 
 namespace Cafe.Business.AuthContext.CommandHandlers
 {
-    public class AssignManagerToAccountHandler : BaseAuthHandler<AssignManagerToAccount>, ICommandHandler<AssignManagerToAccount>
+    public class AssignManagerToAccountHandler : BaseAuthHandler<AssignManagerToAccount>
     {
         public AssignManagerToAccountHandler(
             UserManager<User> userManager,
-            IJwtFactory jwtFactory,
             IMapper mapper,
             IValidator<AssignManagerToAccount> validator,
             ApplicationDbContext dbContext,
             IDocumentSession documentSession,
             IEventBus eventBus)
-            : base(userManager, jwtFactory, mapper, validator, dbContext, documentSession, eventBus)
+            : base(userManager, mapper, validator, dbContext, documentSession, eventBus)
         {
         }
 

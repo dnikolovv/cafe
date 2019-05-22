@@ -59,11 +59,6 @@ namespace Cafe.Business.AuthContext
             {
                 throw new ArgumentNullException(nameof(JwtConfiguration.SigningCredentials));
             }
-
-            if (options.JtiGenerator == null)
-            {
-                throw new ArgumentNullException(nameof(JwtConfiguration.JtiGenerator));
-            }
         }
     }
 }

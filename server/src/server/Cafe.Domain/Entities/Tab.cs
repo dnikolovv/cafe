@@ -89,6 +89,11 @@ namespace Cafe.Domain.Entities
 
         public void Apply(MenuItemsServed @event)
         {
+            foreach (var item in @event.MenuItems)
+            {
+                ServedMenuItems.Add(item);
+            }
+
             ServedItemsValue += @event.MenuItems.Sum(i => i.Price);
 
             foreach (var servedItem in @event.MenuItems)

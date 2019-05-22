@@ -3,6 +3,7 @@ using AutoFixture.Kernel;
 using AutoFixture.Xunit2;
 using Cafe.Business.AuthContext;
 using Cafe.Core.AuthContext.Configuration;
+using FakeItEasy;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Shouldly;
@@ -85,6 +86,37 @@ namespace Cafe.Tests.Business.AuthContext
 
             jwt.ValidFrom.ShouldBe(DateTime.UtcNow, TimeSpan.FromSeconds(10));
             jwt.ValidTo.ShouldBe(DateTime.UtcNow.Add(_jwtConfiguration.ValidFor), TimeSpan.FromSeconds(10));
+        }
+
+        [Fact]
+        public void CannotBeInitializedWithNullOptions() =>
+            ShouldThrowForConfiguration(null, typeof(ArgumentNullException));
+
+        [Fact]
+        public void CannotBeInitializedWithInvalidValidity() =>
+            ShouldThrowForConfiguration(
+                new JwtConfiguration
+                {
+                    ValidFor = TimeSpan.Zero.Subtract(TimeSpan.FromDays(1))
+                },
+                typeof(ArgumentException));
+
+        [Fact]
+        public void CannotBeInitializedWithNullSigningCredentials() =>
+            ShouldThrowForConfiguration(
+                new JwtConfiguration
+                {
+                    SigningCredentials = null
+                },
+                typeof(ArgumentNullException));
+
+        private void ShouldThrowForConfiguration(JwtConfiguration configuration, Type expectedExceptionType)
+        {
+            var options = Options.Create(configuration);
+
+            Should.Throw(
+                () => new JwtFactory(options),
+                expectedExceptionType);
         }
     }
 }

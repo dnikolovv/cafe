@@ -21,13 +21,12 @@ namespace Cafe.Business.AuthContext.CommandHandlers
     {
         public AssignBaristaToAccountHandler(
             UserManager<User> userManager,
-            IJwtFactory jwtFactory,
             IMapper mapper,
             IValidator<AssignBaristaToAccount> validator,
             ApplicationDbContext dbContext,
             IDocumentSession documentSession,
             IEventBus eventBus)
-            : base(userManager, jwtFactory, mapper, validator, dbContext, documentSession, eventBus)
+            : base(userManager, mapper, validator, dbContext, documentSession, eventBus)
         {
         }
 

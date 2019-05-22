@@ -13,7 +13,8 @@ namespace Cafe.Api
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args, params string[] urls)
         {
-            var builder = WebHost.CreateDefaultBuilder(args)
+            var builder = WebHost
+                .CreateDefaultBuilder(args)
                 .UseStartup<Startup>();
 
             if (urls?.Length > 0)
