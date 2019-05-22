@@ -28,8 +28,7 @@ namespace Cafe.Core.AuthContext.Configuration
         /// <summary>
         /// Gets the "jti" (JWT ID) Claim (default ID is a GUID)
         /// </summary>
-        public Func<string> JtiGenerator =>
-          () => Guid.NewGuid().ToString();
+        public Func<string> JtiGenerator => () => Guid.NewGuid().ToString();
 
         /// <summary>
         /// Gets or sets the signing key to use when generating tokens.
