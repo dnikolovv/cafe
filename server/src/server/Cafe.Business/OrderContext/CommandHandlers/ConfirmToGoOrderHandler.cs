@@ -3,8 +3,8 @@ using Cafe.Core.OrderContext.Commands;
 using Cafe.Domain;
 using Cafe.Domain.Entities;
 using Cafe.Domain.Events;
+using Cafe.Domain.Repositories;
 using Cafe.Domain.Views;
-using Cafe.Persistance.EntityFramework;
 using FluentValidation;
 using MediatR;
 using Optional;
@@ -12,7 +12,6 @@ using Optional.Async;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using IDocumentSession = Marten.IDocumentSession;
 
 namespace Cafe.Business.OrderContext.CommandHandlers
 {
@@ -20,11 +19,10 @@ namespace Cafe.Business.OrderContext.CommandHandlers
     {
         public ConfirmToGoOrderHandler(
             IValidator<ConfirmToGoOrder> validator,
-            ApplicationDbContext dbContext,
-            IDocumentSession documentSession,
             IEventBus eventBus,
-            IMapper mapper)
-            : base(validator, dbContext, documentSession, eventBus, mapper)
+            IMapper mapper,
+            IToGoOrderRepository toGoOrderRepository)
+            : base(validator, eventBus, mapper, toGoOrderRepository)
         {
         }
 
