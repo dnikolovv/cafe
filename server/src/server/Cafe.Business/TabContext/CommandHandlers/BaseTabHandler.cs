@@ -42,11 +42,6 @@ namespace Cafe.Business.TabContext.CommandHandlers
             // Wrapping to improve readability
             MenuItemsService.ItemsShouldExist(menuItemNumbers);
 
-        protected Task<Option<Tab, Error>> TabShouldExist(Guid id) =>
-            GetTabFromStore(id)
-                .SomeWhen<Tab, Error>(t => t != null, Error.Conflict($"Tab {id} does not exist."))
-                .MapAsync(async _ => new Tab(id));
-
         protected Task<Option<Tab, Error>> TabShouldNotBeClosed(Guid id) =>
             GetTabIfExists(id)
                 .FilterAsync(async tab => tab.IsOpen, Error.Validation($"Tab {id} is closed."));
