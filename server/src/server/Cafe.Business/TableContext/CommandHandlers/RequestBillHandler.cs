@@ -2,9 +2,8 @@
 using Cafe.Core.TableContext.Commands;
 using Cafe.Domain;
 using Cafe.Domain.Events;
-using Cafe.Persistance.EntityFramework;
+using Cafe.Domain.Repositories;
 using FluentValidation;
-using Marten;
 using MediatR;
 using Optional;
 using Optional.Async;
@@ -16,11 +15,10 @@ namespace Cafe.Business.TableContext.CommandHandlers
     {
         public RequestBillHandler(
             IValidator<RequestBill> validator,
-            ApplicationDbContext dbContext,
-            IDocumentSession documentSession,
             IEventBus eventBus,
-            IMapper mapper)
-            : base(validator, dbContext, documentSession, eventBus, mapper)
+            IMapper mapper,
+            ITableRepository tableRepository)
+            : base(validator, eventBus, mapper, tableRepository)
         {
         }
 

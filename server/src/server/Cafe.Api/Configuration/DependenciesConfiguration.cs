@@ -6,8 +6,10 @@ using Cafe.Core.AuthContext;
 using Cafe.Core.AuthContext.Configuration;
 using Cafe.Domain.Entities;
 using Cafe.Domain.Events;
+using Cafe.Domain.Repositories;
 using Cafe.Domain.Views;
 using Cafe.Persistance.EntityFramework;
+using Cafe.Persistance.Repositories;
 using Marten;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -60,6 +62,11 @@ namespace Cafe.Api.Configuration
         public static void AddCqrs(this IServiceCollection services)
         {
             services.AddScoped<IEventBus, EventBus>();
+        }
+
+        public static void AddRepositories(this IServiceCollection services)
+        {
+            services.AddTransient<ITabViewRepository, TabViewRepository>();
         }
 
         public static void AddDbContext(this IServiceCollection services, string connectionString)
