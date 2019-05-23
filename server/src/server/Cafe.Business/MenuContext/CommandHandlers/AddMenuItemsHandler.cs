@@ -3,10 +3,9 @@ using Cafe.Core.MenuContext.Commands;
 using Cafe.Domain;
 using Cafe.Domain.Entities;
 using Cafe.Domain.Events;
+using Cafe.Domain.Repositories;
 using Cafe.Domain.Views;
-using Cafe.Persistance.EntityFramework;
 using FluentValidation;
-using Marten;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Optional;
@@ -19,14 +18,16 @@ namespace Cafe.Business.MenuContext.CommandHandlers
 {
     public class AddMenuItemsHandler : BaseHandler<AddMenuItems>
     {
+        private readonly IMenuItemRepository _menuItemRepository;
+
         public AddMenuItemsHandler(
             IValidator<AddMenuItems> validator,
-            ApplicationDbContext dbContext,
-            IDocumentSession documentSession,
             IEventBus eventBus,
-            IMapper mapper)
-            : base(validator, dbContext, documentSession, eventBus, mapper)
+            IMapper mapper,
+            IMenuItemRepository menuItemRepository)
+            : base(validator, eventBus, mapper)
         {
+            _menuItemRepository = menuItemRepository;
         }
 
         public override Task<Option<Unit, Error>> Handle(AddMenuItems command) =>
@@ -39,11 +40,10 @@ namespace Cafe.Business.MenuContext.CommandHandlers
                 .Distinct()
                 .ToArray();
 
-            var conflictingNumbers = await DbContext
-                .MenuItems
-                .Where(i => numbersLookup.Contains(i.Number))
+            var conflictingNumbers = (await _menuItemRepository
+                .GetAll(i => numbersLookup.Contains(i.Number)))
                 .Select(i => i.Number)
-                .ToArrayAsync();
+                .ToArray();
 
             return conflictingNumbers
                 .SomeWhen(
@@ -52,14 +52,11 @@ namespace Cafe.Business.MenuContext.CommandHandlers
                 .Map(_ => Unit.Value);
         }
 
-        private async Task<Unit> PersistMenuItems(IEnumerable<MenuItemView> items)
+        private Task<Unit> PersistMenuItems(IEnumerable<MenuItemView> items)
         {
             var itemsToAdd = Mapper.Map<MenuItem[]>(items);
 
-            DbContext.MenuItems.AddRange(itemsToAdd);
-            await DbContext.SaveChangesAsync();
-
-            return Unit.Value;
+            return _menuItemRepository.Add(itemsToAdd);
         }
     }
 }
