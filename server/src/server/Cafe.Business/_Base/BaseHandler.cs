@@ -2,9 +2,7 @@
 using Cafe.Core;
 using Cafe.Domain;
 using Cafe.Domain.Events;
-using Cafe.Persistance.EntityFramework;
 using FluentValidation;
-using Marten;
 using MediatR;
 using Optional;
 using Optional.Async;

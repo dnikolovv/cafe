@@ -1,4 +1,5 @@
-﻿using Cafe.Domain.Repositories;
+﻿using Cafe.Domain.Entities;
+using Cafe.Domain.Repositories;
 using Cafe.Domain.Views;
 using Marten;
 using Optional;
@@ -19,11 +20,15 @@ namespace Cafe.Persistance.Repositories
             _session = session;
         }
 
-        public async Task<Option<TabView>> Get(Guid id) =>
-            (await _session
+        public async Task<Option<TabView>> Get(Guid id)
+        {
+            var tab = await _session
                 .Query<TabView>()
-                .SingleOrDefaultAsync(t => t.Id == id))
-            .SomeNotNull();
+                .SingleOrDefaultAsync(t => t.Id == id);
+
+            return tab
+                .SomeNotNull();
+        }
 
         public async Task<IList<TabView>> GetTabs(Expression<Func<TabView, bool>> predicate = null) =>
             (IList<TabView>)await _session

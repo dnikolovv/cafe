@@ -45,7 +45,7 @@ namespace Cafe.Business.TabContext.CommandHandlers
                 .Count > 0;
 
             return thereIsATabOnTable
-                .SomeWhen(isTaken => !isTaken, Error.Conflict($"Table {tableNumber} is already taken."))
+                .SomeWhen(isTaken => isTaken == false, Error.Conflict($"Table {tableNumber} is already taken."))
                 .Map(_ => tableNumber);
         }
 

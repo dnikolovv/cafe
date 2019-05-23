@@ -18,9 +18,13 @@ namespace Cafe.Business.TabContext.QueryHandlers
             _tabViewRepository = tabViewRepository;
         }
 
-        public async Task<Option<TabView, Error>> Handle(GetTabView request, CancellationToken cancellationToken) =>
-            (await _tabViewRepository
-                .Get(request.Id))
+        public async Task<Option<TabView, Error>> Handle(GetTabView request, CancellationToken cancellationToken)
+        {
+            var tab = await _tabViewRepository
+                .Get(request.Id);
+
+            return tab
                 .WithException(Error.NotFound($"No tab with an id of {request.Id} was found."));
+        }
     }
 }
