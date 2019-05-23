@@ -65,7 +65,33 @@ namespace Cafe.Api.Configuration
 
         public static void AddRepositories(this IServiceCollection services)
         {
-            services.AddTransient<ITabViewRepository, TabViewRepository>();
+            var repositoryTypes = Assembly
+                .GetAssembly(typeof(IUserRepository))
+                .GetTypes()
+                .Where(t => t.Name.EndsWith("Repository"))
+                .ToArray();
+
+            var repositoryImplementationTypes = Assembly
+                .GetAssembly(typeof(UserRepository))
+                .GetTypes()
+                .Where(t => t.Name.EndsWith("Repository"))
+                .ToDictionary(t => t.Name, t => t);
+
+            foreach (var repositoryType in repositoryTypes)
+            {
+                var expectedImplementationName = repositoryType
+                    .Name
+                    .Substring(1);
+
+                if (!repositoryImplementationTypes.ContainsKey(expectedImplementationName))
+                {
+                    throw new InvalidOperationException($"Could not find implementation for {repositoryType.FullName}.");
+                }
+
+                var implementation = repositoryImplementationTypes[expectedImplementationName];
+
+                services.AddTransient(repositoryType, implementation);
+            }
         }
 
         public static void AddDbContext(this IServiceCollection services, string connectionString)
