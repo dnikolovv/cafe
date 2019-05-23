@@ -3,26 +3,23 @@ using Cafe.Core.TableContext.Commands;
 using Cafe.Domain;
 using Cafe.Domain.Entities;
 using Cafe.Domain.Events;
-using Cafe.Persistance.EntityFramework;
+using Cafe.Domain.Repositories;
 using FluentValidation;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Optional;
 using Optional.Async;
 using System.Threading.Tasks;
-using IDocumentSession = Marten.IDocumentSession;
 
 namespace Cafe.Business.TableContext.CommandHandlers
 {
-    public class AddTableHandler : BaseHandler<AddTable>
+    public class AddTableHandler : BaseTableHandler<AddTable>
     {
         public AddTableHandler(
             IValidator<AddTable> validator,
-            ApplicationDbContext dbContext,
-            IDocumentSession documentSession,
             IEventBus eventBus,
-            IMapper mapper)
-            : base(validator, dbContext, documentSession, eventBus, mapper)
+            IMapper mapper,
+            ITableRepository tableRepository)
+            : base(validator, eventBus, mapper, tableRepository)
         {
         }
 
@@ -30,21 +27,16 @@ namespace Cafe.Business.TableContext.CommandHandlers
             CheckIfNumberIsNotTaken(command).MapAsync(
             PersistTable);
 
-        private async Task<Unit> PersistTable(Table table)
-        {
-            DbContext.Add(table);
-            await DbContext.SaveChangesAsync();
-            return Unit.Value;
-        }
+        private Task<Unit> PersistTable(Table table) =>
+            TableRepository.Add(table);
 
         private async Task<Option<Table, Error>> CheckIfNumberIsNotTaken(AddTable command)
         {
-            var table = await DbContext
-                .Tables
-                .FirstOrDefaultAsync(t => t.Number == command.Number);
+            var table = await TableRepository
+                .GetByNumber(command.Number);
 
             return table
-                .SomeWhen(t => t == null, Error.Conflict($"Table number '{command.Number}' is already taken."))
+                .SomeWhen(t => !t.HasValue, Error.Conflict($"Table number '{command.Number}' is already taken."))
                 .Map(_ => Mapper.Map<Table>(command));
         }
     }

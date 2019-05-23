@@ -76,6 +76,7 @@ namespace Cafe.Api
             services.AddCqrs();
             services.AddMediatR();
             services.AddSignalR();
+            services.AddRepositories();
 
             services.AddMvc(options =>
             {

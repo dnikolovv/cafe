@@ -2,9 +2,7 @@
 using Cafe.Core;
 using Cafe.Domain;
 using Cafe.Domain.Events;
-using Cafe.Persistance.EntityFramework;
 using FluentValidation;
-using Marten;
 using MediatR;
 using Optional;
 using Optional.Async;
@@ -20,8 +18,6 @@ namespace Cafe.Business
     {
         public BaseHandler(
             IValidator<TCommand> validator,
-            ApplicationDbContext dbContext,
-            IDocumentSession documentSession,
             IEventBus eventBus,
             IMapper mapper)
         {
@@ -29,17 +25,12 @@ namespace Cafe.Business
                 throw new InvalidOperationException(
                     "Tried to instantiate a command handler without a validator." +
                     "Did you forget to add one?");
-
-            DbContext = dbContext;
-            Session = documentSession;
             EventBus = eventBus;
             Mapper = mapper;
         }
 
-        protected ApplicationDbContext DbContext { get; }
         protected IEventBus EventBus { get; }
         protected IMapper Mapper { get; }
-        protected IDocumentSession Session { get; }
         protected IValidator<TCommand> Validator { get; }
 
         public Task<Option<Unit, Error>> Handle(TCommand command, CancellationToken cancellationToken) =>
@@ -48,14 +39,8 @@ namespace Cafe.Business
 
         public abstract Task<Option<Unit, Error>> Handle(TCommand command);
 
-        protected async Task<Unit> PublishEvents(Guid streamId, params IEvent[] events)
-        {
-            Session.Events.Append(streamId, events);
-            await Session.SaveChangesAsync();
-            await EventBus.Publish(events);
-
-            return Unit.Value;
-        }
+        protected Task<Unit> PublishEvents(Guid streamId, params IEvent[] events) =>
+            EventBus.Publish(streamId, events);
 
         protected Option<TCommand, Error> ValidateCommand(TCommand command)
         {

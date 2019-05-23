@@ -3,27 +3,27 @@ using Cafe.Core;
 using Cafe.Domain;
 using Cafe.Domain.Entities;
 using Cafe.Domain.Events;
-using Cafe.Persistance.EntityFramework;
+using Cafe.Domain.Repositories;
 using FluentValidation;
-using Microsoft.EntityFrameworkCore;
 using Optional;
 using System.Threading.Tasks;
-using IDocumentSession = Marten.IDocumentSession;
 
 namespace Cafe.Business.TableContext.CommandHandlers
 {
     public abstract class BaseTableHandler<TCommand> : BaseHandler<TCommand>
         where TCommand : ICommand
     {
-        public BaseTableHandler(
+        protected BaseTableHandler(
             IValidator<TCommand> validator,
-            ApplicationDbContext dbContext,
-            IDocumentSession documentSession,
             IEventBus eventBus,
-            IMapper mapper)
-            : base(validator, dbContext, documentSession, eventBus, mapper)
+            IMapper mapper,
+            ITableRepository tableRepository)
+            : base(validator, eventBus, mapper)
         {
+            TableRepository = tableRepository;
         }
+
+        protected ITableRepository TableRepository { get; }
 
         protected Option<Waiter, Error> TableShouldHaveAWaiterAssigned(Table table) =>
             table
@@ -32,13 +32,11 @@ namespace Cafe.Business.TableContext.CommandHandlers
 
         protected async Task<Option<Table, Error>> TableShouldExist(int tableNumber)
         {
-            var table = await DbContext
-                .Tables
-                .Include(t => t.Waiter)
-                .FirstOrDefaultAsync(t => t.Number == tableNumber);
+            var table = await TableRepository
+                .GetByNumber(tableNumber);
 
             return table
-                .SomeNotNull(Error.NotFound($"No table with number {tableNumber} was found."));
+                .WithException(Error.NotFound($"No table with number {tableNumber} was found."));
         }
     }
 }

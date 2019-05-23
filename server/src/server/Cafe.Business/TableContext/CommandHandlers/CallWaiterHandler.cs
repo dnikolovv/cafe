@@ -2,13 +2,12 @@
 using Cafe.Core.TableContext.Commands;
 using Cafe.Domain;
 using Cafe.Domain.Events;
-using Cafe.Persistance.EntityFramework;
+using Cafe.Domain.Repositories;
 using FluentValidation;
 using MediatR;
 using Optional;
 using Optional.Async;
 using System.Threading.Tasks;
-using IDocumentSession = Marten.IDocumentSession;
 
 namespace Cafe.Business.TableContext.CommandHandlers
 {
@@ -16,11 +15,10 @@ namespace Cafe.Business.TableContext.CommandHandlers
     {
         public CallWaiterHandler(
             IValidator<CallWaiter> validator,
-            ApplicationDbContext dbContext,
-            IDocumentSession documentSession,
             IEventBus eventBus,
-            IMapper mapper)
-            : base(validator, dbContext, documentSession, eventBus, mapper)
+            IMapper mapper,
+            ITableRepository tableRepository)
+            : base(validator, eventBus, mapper, tableRepository)
         {
         }
 

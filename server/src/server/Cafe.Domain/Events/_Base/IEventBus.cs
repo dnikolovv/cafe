@@ -1,9 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿using MediatR;
+using System;
+using System.Threading.Tasks;
 
 namespace Cafe.Domain.Events
 {
     public interface IEventBus
     {
-        Task Publish<TEvent>(params TEvent[] events) where TEvent : IEvent;
+        Task<Unit> Publish<TEvent>(Guid streamId, params TEvent[] events) where TEvent : IEvent;
     }
 }

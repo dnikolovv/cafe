@@ -1,34 +1,32 @@
 ﻿using AutoMapper;
-using Cafe.Core;
 using Cafe.Core.AuthContext;
 using Cafe.Core.AuthContext.Commands;
 using Cafe.Domain;
 using Cafe.Domain.Entities;
 using Cafe.Domain.Events;
-using Cafe.Persistance.EntityFramework;
+using Cafe.Domain.Repositories;
 using FluentValidation;
 using MediatR;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Optional;
 using Optional.Async;
 using System;
 using System.Threading.Tasks;
-using IDocumentSession = Marten.IDocumentSession;
 
 namespace Cafe.Business.AuthContext.CommandHandlers
 {
     public class AssignManagerToAccountHandler : BaseAuthHandler<AssignManagerToAccount>
     {
+        private readonly IManagerRepository _managerRepository;
+
         public AssignManagerToAccountHandler(
-            UserManager<User> userManager,
-            IMapper mapper,
             IValidator<AssignManagerToAccount> validator,
-            ApplicationDbContext dbContext,
-            IDocumentSession documentSession,
-            IEventBus eventBus)
-            : base(userManager, mapper, validator, dbContext, documentSession, eventBus)
+            IEventBus eventBus,
+            IMapper mapper,
+            IUserRepository userRepository,
+            IManagerRepository managerRepository)
+            : base(validator, eventBus, mapper, userRepository)
         {
+            _managerRepository = managerRepository;
         }
 
         public override Task<Option<Unit, Error>> Handle(AssignManagerToAccount command) =>
@@ -37,9 +35,8 @@ namespace Cafe.Business.AuthContext.CommandHandlers
             ReplaceClaim(account, AuthConstants.ClaimTypes.ManagerId, manager.Id.ToString())));
 
         private Task<Option<Manager, Error>> ManagerShouldExist(Guid managerId) =>
-            DbContext
-                .Managers
-                .FirstOrDefaultAsync(m => m.Id == managerId)
-                .SomeNotNull(Error.NotFound($"No manager with an id of {managerId} was found."));
+            _managerRepository
+                .Get(managerId)
+                .WithException(Error.NotFound($"No manager with id {managerId} was found."));
     }
 }

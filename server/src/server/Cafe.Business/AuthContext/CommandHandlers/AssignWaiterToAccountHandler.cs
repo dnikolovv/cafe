@@ -4,30 +4,29 @@ using Cafe.Core.AuthContext.Commands;
 using Cafe.Domain;
 using Cafe.Domain.Entities;
 using Cafe.Domain.Events;
-using Cafe.Persistance.EntityFramework;
+using Cafe.Domain.Repositories;
 using FluentValidation;
 using MediatR;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Optional;
 using Optional.Async;
 using System;
 using System.Threading.Tasks;
-using IDocumentSession = Marten.IDocumentSession;
 
 namespace Cafe.Business.AuthContext.CommandHandlers
 {
     public class AssignWaiterToAccountHandler : BaseAuthHandler<AssignWaiterToAccount>
     {
+        private readonly IWaiterRepository _waiterRepository;
+
         public AssignWaiterToAccountHandler(
-            UserManager<User> userManager,
-            IMapper mapper,
             IValidator<AssignWaiterToAccount> validator,
-            ApplicationDbContext dbContext,
-            IDocumentSession documentSession,
-            IEventBus eventBus)
-            : base(userManager, mapper, validator, dbContext, documentSession, eventBus)
+            IEventBus eventBus,
+            IMapper mapper,
+            IUserRepository userRepository,
+            IWaiterRepository waiterRepository)
+            : base(validator, eventBus, mapper, userRepository)
         {
+            _waiterRepository = waiterRepository;
         }
 
         public override Task<Option<Unit, Error>> Handle(AssignWaiterToAccount command) =>
@@ -36,9 +35,8 @@ namespace Cafe.Business.AuthContext.CommandHandlers
             ReplaceClaim(account, AuthConstants.ClaimTypes.WaiterId, waiter.Id.ToString())));
 
         private Task<Option<Waiter, Error>> WaiterShouldExist(Guid waiterId) =>
-            DbContext
-                .Waiters
-                .FirstOrDefaultAsync(w => w.Id == waiterId)
-                .SomeNotNull(Error.NotFound($"No waiter with id {waiterId} was found."));
+            _waiterRepository
+                .Get(waiterId)
+                .WithException(Error.NotFound($"No waiter with id {waiterId} was found."));
     }
 }

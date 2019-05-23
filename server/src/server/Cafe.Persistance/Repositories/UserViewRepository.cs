@@ -1,8 +1,7 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
-using Cafe.Core;
 using Cafe.Core.AuthContext;
-using Cafe.Domain;
+using Cafe.Domain.Repositories;
 using Cafe.Domain.Views;
 using Cafe.Persistance.EntityFramework;
 using Microsoft.AspNetCore.Identity;
@@ -13,20 +12,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Cafe.Business
+namespace Cafe.Persistance.Repositories
 {
-    public class UsersService : IUsersService
+    public class UserViewRepository : IUserViewRepository
     {
         private readonly ApplicationDbContext _dbContext;
         private readonly IMapper _mapper;
 
-        public UsersService(ApplicationDbContext dbContext, IMapper mapper)
+        public UserViewRepository(ApplicationDbContext dbContext, IMapper mapper)
         {
             _dbContext = dbContext;
             _mapper = mapper;
         }
 
-        public async Task<IList<UserView>> GetAllUsers()
+        public async Task<IList<UserView>> GetAll()
         {
             // This function can be made much simpler by having the User entity include its claims
             // but I'm still not sure whether the User domain entity should include them as they are
@@ -50,7 +49,7 @@ namespace Cafe.Business
             return userViews;
         }
 
-        public async Task<Option<UserView, Error>> GetUser(Guid id)
+        public async Task<Option<UserView>> Get(Guid id)
         {
             var user = await _dbContext
                 .Users
@@ -62,7 +61,7 @@ namespace Cafe.Business
                 .ToListAsync();
 
             return user
-                .SomeNotNull(Error.NotFound($"No user with id {id} was found."))
+                .SomeNotNull()
                 .Map(u => MapRoleIds(_mapper.Map<UserView>(u), userClaims));
         }
 

@@ -1,6 +1,7 @@
 ﻿using Cafe.Core;
 using Cafe.Domain;
 using Cafe.Domain.Entities;
+using Cafe.Domain.Repositories;
 using Cafe.Persistance.EntityFramework;
 using Microsoft.EntityFrameworkCore;
 using Optional;
@@ -13,18 +14,17 @@ namespace Cafe.Business
 {
     public class MenuItemsService : IMenuItemsService
     {
-        private readonly ApplicationDbContext _dbContext;
+        private readonly IMenuItemRepository _menuItemRepository;
 
-        public MenuItemsService(ApplicationDbContext dbContext)
+        public MenuItemsService(IMenuItemRepository menuItemRepository)
         {
-            _dbContext = dbContext;
+            _menuItemRepository = menuItemRepository;
         }
 
         public async Task<Option<IList<MenuItem>, Error>> ItemsShouldExist(IList<int> menuItemNumbers)
         {
-            var allMenuItems = (await _dbContext
-                .MenuItems
-                .ToListAsync())
+            var allMenuItems = (await _menuItemRepository
+                .GetAll())
 
                 // Purposefully not using a lookup to avoid possible unique key exceptions
                 // since we should never have items with conflicting menu numbers

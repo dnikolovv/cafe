@@ -1,6 +1,7 @@
 ﻿using Cafe.Core;
 using Cafe.Core.AuthContext.Queries;
 using Cafe.Domain;
+using Cafe.Domain.Repositories;
 using Cafe.Domain.Views;
 using Optional;
 using System.Threading;
@@ -10,14 +11,15 @@ namespace Cafe.Business.AuthContext.QueryHandlers
 {
     public class GetUserHandler : IQueryHandler<GetUser, UserView>
     {
-        private readonly IUsersService _usersService;
+        private readonly IUserViewRepository _userViewRepository;
 
-        public GetUserHandler(IUsersService usersService)
+        public GetUserHandler(IUserViewRepository userViewRepository)
         {
-            _usersService = usersService;
+            _userViewRepository = userViewRepository;
         }
 
-        public Task<Option<UserView, Error>> Handle(GetUser request, CancellationToken cancellationToken) =>
-            _usersService.GetUser(request.Id);
+        public async Task<Option<UserView, Error>> Handle(GetUser request, CancellationToken cancellationToken) =>
+            (await _userViewRepository.Get(request.Id))
+                .WithException(Error.NotFound($"No user with id {request.Id} was found."));
     }
 }

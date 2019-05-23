@@ -1,11 +1,8 @@
-﻿using AutoMapper;
-using AutoMapper.QueryableExtensions;
-using Cafe.Core;
+﻿using Cafe.Core;
 using Cafe.Core.BaristaContext.Queries;
 using Cafe.Domain;
+using Cafe.Domain.Repositories;
 using Cafe.Domain.Views;
-using Cafe.Persistance.EntityFramework;
-using Microsoft.EntityFrameworkCore;
 using Optional;
 using System.Collections.Generic;
 using System.Threading;
@@ -15,22 +12,17 @@ namespace Cafe.Business.BaristaContext.QueryHandlers
 {
     public class GetEmployedBaristasHandler : IQueryHandler<GetEmployedBaristas, IList<BaristaView>>
     {
-        private readonly ApplicationDbContext _dbContext;
-        private readonly IMapper _mapper;
+        private readonly IBaristaViewRepository _baristaViewRepository;
 
-        public GetEmployedBaristasHandler(IMapper mapper, ApplicationDbContext dbContext)
+        public GetEmployedBaristasHandler(IBaristaViewRepository baristaViewRepository)
         {
-            _mapper = mapper;
-            _dbContext = dbContext;
+            _baristaViewRepository = baristaViewRepository;
         }
 
         public async Task<Option<IList<BaristaView>, Error>> Handle(GetEmployedBaristas request, CancellationToken cancellationToken)
         {
-            var baristas = await _dbContext
-                .Baristas
-                .Include(b => b.CompletedOrders)
-                .ProjectTo<BaristaView>(_mapper.ConfigurationProvider)
-                .ToListAsync(cancellationToken);
+            var baristas = await _baristaViewRepository
+                .GetAll();
 
             return baristas
                 .Some<IList<BaristaView>, Error>();

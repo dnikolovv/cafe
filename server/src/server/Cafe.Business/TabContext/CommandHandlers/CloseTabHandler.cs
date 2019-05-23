@@ -3,9 +3,8 @@ using Cafe.Core;
 using Cafe.Core.TabContext.Commands;
 using Cafe.Domain;
 using Cafe.Domain.Events;
-using Cafe.Persistance.EntityFramework;
+using Cafe.Domain.Repositories;
 using FluentValidation;
-using Marten;
 using MediatR;
 using Optional;
 using Optional.Async;
@@ -16,13 +15,12 @@ namespace Cafe.Business.TabContext.CommandHandlers
     public class CloseTabHandler : BaseTabHandler<CloseTab>
     {
         public CloseTabHandler(
+            ITabRepository tabRepository,
+            IMenuItemsService menuItemsService,
             IValidator<CloseTab> validator,
-            ApplicationDbContext dbContext,
-            IDocumentSession documentSession,
             IEventBus eventBus,
-            IMapper mapper,
-            IMenuItemsService menuItemsService)
-            : base(validator, dbContext, documentSession, eventBus, mapper, menuItemsService)
+            IMapper mapper)
+            : base(tabRepository, menuItemsService, validator, eventBus, mapper)
         {
         }
 

@@ -3,46 +3,40 @@ using Cafe.Core.BaristaContext.Commands;
 using Cafe.Domain;
 using Cafe.Domain.Entities;
 using Cafe.Domain.Events;
-using Cafe.Persistance.EntityFramework;
+using Cafe.Domain.Repositories;
 using FluentValidation;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Optional;
 using Optional.Async;
 using System;
 using System.Threading.Tasks;
-using IDocumentSession = Marten.IDocumentSession;
 
 namespace Cafe.Business.BaristaContext.CommandHandlers
 {
     public class HireBaristaHandler : BaseHandler<HireBarista>
     {
+        private readonly IBaristaRepository _baristaRepository;
+
         public HireBaristaHandler(
             IValidator<HireBarista> validator,
-            ApplicationDbContext dbContext,
-            IDocumentSession documentSession,
             IEventBus eventBus,
-            IMapper mapper)
-            : base(validator, dbContext, documentSession, eventBus, mapper)
+            IMapper mapper,
+            IBaristaRepository baristaRepository)
+            : base(validator, eventBus, mapper)
         {
+            _baristaRepository = baristaRepository;
         }
 
         public override Task<Option<Unit, Error>> Handle(HireBarista command) =>
             BaristaShouldNotExist(command.Id).MapAsync(_ =>
             Persist(Mapper.Map<Barista>(command)));
 
-        private async Task<Unit> Persist(Barista barista)
-        {
-            DbContext.Baristas.Add(barista);
-            await DbContext.SaveChangesAsync();
-            return Unit.Value;
-        }
+        private Task<Unit> Persist(Barista barista) =>
+            _baristaRepository.Add(barista);
 
         private async Task<Option<Unit, Error>> BaristaShouldNotExist(Guid id) =>
-            (await DbContext
-                .Baristas
-                .FirstOrDefaultAsync(b => b.Id == id))
-            .SomeWhen(b => b == null, Error.Conflict($"Barista {id} already exists."))
-            .Map(_ => Unit.Value);
+            (await _baristaRepository.Get(id))
+                .SomeWhen(b => !b.HasValue, Error.Conflict($"Barista {id} already exists."))
+                .Map(_ => Unit.Value);
     }
 }
