@@ -28,6 +28,8 @@ namespace Cafe.Persistance.Repositories
         public async Task<Option<ToGoOrderView>> Get(Guid id) =>
             (await _dbContext
                 .ToGoOrders
+                .Include(o => o.OrderedItems)
+                    .ThenInclude(i => i.MenuItem)
                 .FirstOrDefaultAsync(o => o.Id == id))
                 .SomeNotNull()
                 .Map(_mapper.Map<ToGoOrderView>);
