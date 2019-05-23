@@ -31,5 +31,12 @@ namespace Cafe.Persistance.Repositories
                 .Include(t => t.Waiter)
                 .FirstOrDefaultAsync(t => t.Number == tableNumber)
                 .SomeNotNull();
+
+        public async Task<Unit> Update(Table table)
+        {
+            _dbContext.Tables.Update(table);
+            await _dbContext.SaveChangesAsync();
+            return Unit.Value;
+        }
     }
 }

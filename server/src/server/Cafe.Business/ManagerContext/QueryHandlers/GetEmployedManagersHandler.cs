@@ -1,11 +1,8 @@
-﻿using AutoMapper;
-using AutoMapper.QueryableExtensions;
-using Cafe.Core;
+﻿using Cafe.Core;
 using Cafe.Core.ManagerContext.Queries;
 using Cafe.Domain;
+using Cafe.Domain.Repositories;
 using Cafe.Domain.Views;
-using Cafe.Persistance.EntityFramework;
-using Microsoft.EntityFrameworkCore;
 using Optional;
 using System.Collections.Generic;
 using System.Threading;
@@ -15,21 +12,17 @@ namespace Cafe.Business.ManagerContext.QueryHandlers
 {
     public class GetEmployedManagersHandler : IQueryHandler<GetEmployedManagers, IList<ManagerView>>
     {
-        private readonly ApplicationDbContext _dbContext;
-        private readonly IMapper _mapper;
+        private readonly IManagerViewRepository _managerViewRepository;
 
-        public GetEmployedManagersHandler(ApplicationDbContext dbContext, IMapper mapper)
+        public GetEmployedManagersHandler(IManagerViewRepository managerViewRepository)
         {
-            _dbContext = dbContext;
-            _mapper = mapper;
+            _managerViewRepository = managerViewRepository;
         }
 
         public async Task<Option<IList<ManagerView>, Error>> Handle(GetEmployedManagers request, CancellationToken cancellationToken)
         {
-            var managers = await _dbContext
-                .Managers
-                .ProjectTo<ManagerView>(_mapper.ConfigurationProvider)
-                .ToListAsync();
+            var managers = await _managerViewRepository
+                .GetAll();
 
             return managers
                 .Some<IList<ManagerView>, Error>();
