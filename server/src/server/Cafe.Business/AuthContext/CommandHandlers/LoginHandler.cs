@@ -3,9 +3,9 @@ using Cafe.Core.AuthContext;
 using Cafe.Core.AuthContext.Commands;
 using Cafe.Domain;
 using Cafe.Domain.Entities;
+using Cafe.Domain.Repositories;
 using Cafe.Domain.Views;
 using FluentValidation;
-using Microsoft.AspNetCore.Identity;
 using Optional;
 using Optional.Async;
 using System.Collections.Generic;
@@ -19,12 +19,12 @@ namespace Cafe.Business.AuthContext.CommandHandlers
     public class LoginHandler : ICommandHandler<Login, JwtView>
     {
         private readonly IJwtFactory _jwtFactory;
-        private readonly UserManager<User> _userManager;
+        private readonly IUserRepository _userRepository;
         private readonly IValidator<Login> _validator;
 
-        public LoginHandler(UserManager<User> userManager, IJwtFactory jwtFactory, IValidator<Login> validator)
+        public LoginHandler(IUserRepository userRepository, IJwtFactory jwtFactory, IValidator<Login> validator)
         {
-            _userManager = userManager;
+            _userRepository = userRepository;
             _jwtFactory = jwtFactory;
             _validator = validator;
         }
@@ -38,8 +38,8 @@ namespace Cafe.Business.AuthContext.CommandHandlers
 
         private async Task<Option<bool, Error>> CheckPassword(User user, string password)
         {
-            var passwordIsValid = await _userManager
-                .CheckPasswordAsync(user, password);
+            var passwordIsValid = await _userRepository
+                .CheckPassword(user, password);
 
             var result = passwordIsValid
                 .SomeWhen(isValid => isValid == true, Error.Unauthorized("Invalid credentials."));
@@ -48,9 +48,9 @@ namespace Cafe.Business.AuthContext.CommandHandlers
         }
 
         private Task<Option<User, Error>> FindUser(string email) =>
-            _userManager
-                .FindByEmailAsync(email)
-                .SomeNotNull(Error.NotFound($"No user with email {email} was found."));
+            _userRepository
+                .GetByEmail(email)
+                .WithException(Error.NotFound($"No user with email {email} was found."));
 
         private JwtView GenerateJwt(User user, IEnumerable<Claim> extraClaims) =>
             new JwtView
@@ -60,7 +60,7 @@ namespace Cafe.Business.AuthContext.CommandHandlers
 
         private Task<Option<IList<Claim>, Error>> GetExtraClaims(User user) =>
             user.SomeNotNull(Error.Validation($"You must provide a non-null user."))
-                .MapAsync(u => _userManager.GetClaimsAsync(u));
+                .MapAsync(u => _userRepository.GetClaims(u));
 
         // TODO: This is duplicated in BaseHandler.cs
         private Option<Login, Error> ValidateCommand(Login command)

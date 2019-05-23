@@ -1,6 +1,7 @@
 ﻿using Cafe.Core;
 using Cafe.Core.AuthContext.Queries;
 using Cafe.Domain;
+using Cafe.Domain.Repositories;
 using Cafe.Domain.Views;
 using Optional;
 using System.Collections.Generic;
@@ -11,15 +12,15 @@ namespace Cafe.Business.AuthContext.QueryHandlers
 {
     public class GetAllUserAccountsHandler : IQueryHandler<GetAllUserAccounts, IList<UserView>>
     {
-        private readonly IUsersService _usersService;
+        private readonly IUserViewRepository _userViewRepository;
 
-        public GetAllUserAccountsHandler(IUsersService usersService)
+        public GetAllUserAccountsHandler(IUserViewRepository userViewRepository)
         {
-            _usersService = usersService;
+            _userViewRepository = userViewRepository;
         }
 
         public async Task<Option<IList<UserView>, Error>> Handle(GetAllUserAccounts request, CancellationToken cancellationToken) =>
-            (await _usersService.GetAllUsers())
+            (await _userViewRepository.GetAll())
                 .Some<IList<UserView>, Error>();
     }
 }

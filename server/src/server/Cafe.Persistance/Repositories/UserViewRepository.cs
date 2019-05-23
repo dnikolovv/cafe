@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
-using Cafe.Core;
 using Cafe.Core.AuthContext;
 using Cafe.Domain;
 using Cafe.Domain.Views;
@@ -13,14 +12,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Cafe.Business
+namespace Cafe.Persistance.Repositories
 {
-    public class UsersService : IUsersService
+    public class UserViewRepository
     {
         private readonly ApplicationDbContext _dbContext;
         private readonly IMapper _mapper;
 
-        public UsersService(ApplicationDbContext dbContext, IMapper mapper)
+        public UserViewRepository(ApplicationDbContext dbContext, IMapper mapper)
         {
             _dbContext = dbContext;
             _mapper = mapper;
@@ -50,7 +49,7 @@ namespace Cafe.Business
             return userViews;
         }
 
-        public async Task<Option<UserView, Error>> GetUser(Guid id)
+        public async Task<Option<UserView>> GetUser(Guid id)
         {
             var user = await _dbContext
                 .Users
@@ -62,7 +61,7 @@ namespace Cafe.Business
                 .ToListAsync();
 
             return user
-                .SomeNotNull(Error.NotFound($"No user with id {id} was found."))
+                .SomeNotNull()
                 .Map(u => MapRoleIds(_mapper.Map<UserView>(u), userClaims));
         }
 

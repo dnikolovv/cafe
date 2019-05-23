@@ -4,30 +4,29 @@ using Cafe.Core.AuthContext.Commands;
 using Cafe.Domain;
 using Cafe.Domain.Entities;
 using Cafe.Domain.Events;
-using Cafe.Persistance.EntityFramework;
+using Cafe.Domain.Repositories;
 using FluentValidation;
 using MediatR;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Optional;
 using Optional.Async;
 using System;
 using System.Threading.Tasks;
-using IDocumentSession = Marten.IDocumentSession;
 
 namespace Cafe.Business.AuthContext.CommandHandlers
 {
     public class AssignCashierToAccountHandler : BaseAuthHandler<AssignCashierToAccount>
     {
+        private readonly ICashierRepository _cashierRepository;
+
         public AssignCashierToAccountHandler(
-            UserManager<User> userManager,
-            IMapper mapper,
             IValidator<AssignCashierToAccount> validator,
-            ApplicationDbContext dbContext,
-            IDocumentSession documentSession,
-            IEventBus eventBus)
-            : base(userManager, mapper, validator, dbContext, documentSession, eventBus)
+            IEventBus eventBus,
+            IMapper mapper,
+            IUserRepository userRepository,
+            ICashierRepository cashierRepository)
+            : base(validator, eventBus, mapper, userRepository)
         {
+            _cashierRepository = cashierRepository;
         }
 
         public override Task<Option<Unit, Error>> Handle(AssignCashierToAccount command) =>
@@ -36,9 +35,8 @@ namespace Cafe.Business.AuthContext.CommandHandlers
             ReplaceClaim(account, AuthConstants.ClaimTypes.CashierId, cashier.Id.ToString())));
 
         private Task<Option<Cashier, Error>> CashierShouldExist(Guid cashierId) =>
-            DbContext
-                .Cashiers
-                .FirstOrDefaultAsync(c => c.Id == cashierId)
-                .SomeNotNull(Error.NotFound($"No cashier with an id of {cashierId} was found."));
+            _cashierRepository
+                .Get(cashierId)
+                .WithException(Error.NotFound($"No cashier with id {cashierId} was found."));
     }
 }
