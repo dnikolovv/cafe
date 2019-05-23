@@ -90,6 +90,11 @@ namespace Cafe.Api.Configuration
 
                 var implementation = repositoryImplementationTypes[expectedImplementationName];
 
+                if (!repositoryType.IsAssignableFrom(implementation))
+                {
+                    throw new InvalidOperationException($"For repository {repositoryType.Name} found matching type {implementation.Name}, but it does not implement it.");
+                }
+
                 services.AddTransient(repositoryType, implementation);
             }
         }

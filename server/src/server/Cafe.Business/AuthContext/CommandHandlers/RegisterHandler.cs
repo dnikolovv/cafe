@@ -24,7 +24,7 @@ namespace Cafe.Business.AuthContext.CommandHandlers
         }
 
         public override Task<Option<Unit, Error>> Handle(Register command) =>
-            CheckIfUserDoesntExist(command.Email).FlatMapAsync(__ =>
+            CheckIfUserDoesntExist(command.Email).FlatMapAsync(_ =>
             PersistUser(command));
 
         private Task<Option<Unit, Error>> PersistUser(Register command)
@@ -33,14 +33,13 @@ namespace Cafe.Business.AuthContext.CommandHandlers
             return UserRepository.Register(user, command.Password);
         }
 
-        private async Task<Option<User, Error>> CheckIfUserDoesntExist(string email)
+        private async Task<Option<bool, Error>> CheckIfUserDoesntExist(string email)
         {
             var user = await UserRepository.GetByEmail(email);
 
             return user
-                .SomeWhen(u => !u.HasValue)
-                .Flatten()
-                .WithException(Error.Conflict($"User with email {email} already exists."));
+                .HasValue
+                .SomeWhen(x => x == false, Error.Conflict($"User with email {email} already exists."));
         }
     }
 }

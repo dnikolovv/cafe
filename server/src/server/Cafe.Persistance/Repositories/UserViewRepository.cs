@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Cafe.Core.AuthContext;
-using Cafe.Domain;
+using Cafe.Domain.Repositories;
 using Cafe.Domain.Views;
 using Cafe.Persistance.EntityFramework;
 using Microsoft.AspNetCore.Identity;
@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace Cafe.Persistance.Repositories
 {
-    public class UserViewRepository
+    public class UserViewRepository : IUserViewRepository
     {
         private readonly ApplicationDbContext _dbContext;
         private readonly IMapper _mapper;
@@ -25,7 +25,7 @@ namespace Cafe.Persistance.Repositories
             _mapper = mapper;
         }
 
-        public async Task<IList<UserView>> GetAllUsers()
+        public async Task<IList<UserView>> GetAll()
         {
             // This function can be made much simpler by having the User entity include its claims
             // but I'm still not sure whether the User domain entity should include them as they are
@@ -49,7 +49,7 @@ namespace Cafe.Persistance.Repositories
             return userViews;
         }
 
-        public async Task<Option<UserView>> GetUser(Guid id)
+        public async Task<Option<UserView>> Get(Guid id)
         {
             var user = await _dbContext
                 .Users
