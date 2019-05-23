@@ -3,28 +3,28 @@ using Cafe.Core.CashierContext.Commands;
 using Cafe.Domain;
 using Cafe.Domain.Entities;
 using Cafe.Domain.Events;
-using Cafe.Persistance.EntityFramework;
+using Cafe.Domain.Repositories;
 using FluentValidation;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Optional;
 using Optional.Async;
 using System;
 using System.Threading.Tasks;
-using IDocumentSession = Marten.IDocumentSession;
 
 namespace Cafe.Business.CashierContext.CommandHandlers
 {
     public class HireCashierHandler : BaseHandler<HireCashier>
     {
+        private readonly ICashierRepository _cashierRepository;
+
         public HireCashierHandler(
             IValidator<HireCashier> validator,
-            ApplicationDbContext dbContext,
-            IDocumentSession documentSession,
             IEventBus eventBus,
-            IMapper mapper)
-            : base(validator, dbContext, documentSession, eventBus, mapper)
+            IMapper mapper,
+            ICashierRepository cashierRepository)
+            : base(validator, eventBus, mapper)
         {
+            _cashierRepository = cashierRepository;
         }
 
         public override Task<Option<Unit, Error>> Handle(HireCashier command) =>
@@ -32,20 +32,15 @@ namespace Cafe.Business.CashierContext.CommandHandlers
             PersistCashier(command));
 
         private async Task<Option<Unit, Error>> CashierShouldntExist(Guid cashierId) =>
-            (await DbContext
-                .Cashiers
-                .FirstOrDefaultAsync(c => c.Id == cashierId))
-                .SomeWhen(c => c == null, Error.Conflict($"Cashier {cashierId} already exists."))
+            (await _cashierRepository
+                .Get(cashierId))
+                .SomeWhen(c => !c.HasValue, Error.Conflict($"Cashier {cashierId} already exists."))
                 .Map(_ => Unit.Value);
 
-        private async Task<Unit> PersistCashier(HireCashier command)
+        private Task<Unit> PersistCashier(HireCashier command)
         {
             var cashier = Mapper.Map<Cashier>(command);
-
-            DbContext.Add(cashier);
-            await DbContext.SaveChangesAsync();
-
-            return Unit.Value;
+            return _cashierRepository.Add(cashier);
         }
     }
 }
