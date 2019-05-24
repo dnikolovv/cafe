@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Cafe.Api.Configuration;
 using Cafe.Api.Filters;
 using Cafe.Api.Hateoas.Resources.Tab;
@@ -104,6 +104,7 @@ namespace Cafe.Api
             if (!env.IsDevelopment())
             {
                 app.UseHsts();
+                app.UseHttpsRedirection();
             }
 
             app.UseCors(builder => builder
@@ -115,8 +116,7 @@ namespace Cafe.Api
 
             loggerFactory.AddLogging(Configuration.GetSection("Logging"));
 
-            app.UseHttpsRedirection();
-            app.UseSwagger("Café");
+            app.UseSwagger("Cafe");
             app.UseStaticFiles();
             app.UseAuthentication();
 

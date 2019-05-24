@@ -19,17 +19,20 @@ services:
       args:
         REACT_APP_ENVIRONMENT: development
     ports:
-      - "5000:5000"
+      - "3000:3000"
   cafe.api:
     image: cafeapi
     build:
       context: ./server
       dockerfile: ./src/server/Cafe.Api/Dockerfile
+      args:
+        DOTNET_BUILD_CONFIGURATION: Debug
+        ASPNETCORE_ENVIRONMENT: Development
     ports:
-      - "5100:80"
-      - "5200:443"
+      - "5000:80"
+      - "5100:443"
     environment:
-      ASPNETCORE_HTTPS_PORT: 5200
+      ASPNETCORE_HTTPS_PORT: 5100
       ASPNETCORE_URLS: https://+;http://+
     depends_on:
       - cafe.sql
