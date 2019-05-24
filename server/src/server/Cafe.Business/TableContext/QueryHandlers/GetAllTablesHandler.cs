@@ -1,9 +1,7 @@
 ﻿using Cafe.Core;
 using Cafe.Core.TableContext.Queries;
-using Cafe.Domain;
 using Cafe.Domain.Repositories;
 using Cafe.Domain.Views;
-using Optional;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -19,13 +17,8 @@ namespace Cafe.Business.TableContext.QueryHandlers
             _tableViewRepository = tableViewRepository;
         }
 
-        public async Task<Option<IList<TableView>, Error>> Handle(GetAllTables request, CancellationToken cancellationToken)
-        {
-            var tables = await _tableViewRepository
+        public Task<IList<TableView>> Handle(GetAllTables request, CancellationToken cancellationToken) =>
+            _tableViewRepository
                 .GetAll();
-
-            return tables
-                .Some<IList<TableView>, Error>();
-        }
     }
 }

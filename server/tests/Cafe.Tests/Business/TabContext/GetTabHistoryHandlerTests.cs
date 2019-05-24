@@ -28,12 +28,11 @@ namespace Cafe.Tests.Business.TabContext
             await CreateClosedTabsFromIds(tabIds);
 
             // Act
-            var result = await _fixture.SendAsync(new GetTabHistory());
+            var tabs = await _fixture.SendAsync(new GetTabHistory());
 
             // Assert
-            result.Exists(tabs =>
-                tabs.Count == tabIds.Length &&
-                tabs.All(t => tabIds.Contains(t.Id)))
+            (tabs.Count == tabIds.Length &&
+             tabs.All(t => tabIds.Contains(t.Id)))
             .ShouldBeTrue();
         }
 
@@ -52,13 +51,12 @@ namespace Cafe.Tests.Business.TabContext
             await _helper.OpenTabOnTable(openTabId, 100);
 
             // Act
-            var result = await _fixture.SendAsync(new GetTabHistory());
+            var tabs = await _fixture.SendAsync(new GetTabHistory());
 
             // Assert
             // Since we've left the first open we expect only the rest to show
-            result.Exists(tabs =>
-                tabs.Count == tabIds.Length - 1 &&
-                tabs.All(t => tabIdsToClose.Contains(t.Id)))
+            (tabs.Count == tabIds.Length - 1 &&
+             tabs.All(t => tabIdsToClose.Contains(t.Id)))
             .ShouldBeTrue();
         }
 

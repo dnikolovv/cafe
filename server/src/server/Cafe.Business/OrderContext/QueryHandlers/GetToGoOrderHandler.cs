@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Cafe.Business.OrderContext.QueryHandlers
 {
-    public class GetToGoOrderHandler : IQueryHandler<GetToGoOrder, ToGoOrderView>
+    public class GetToGoOrderHandler : IQueryHandler<GetToGoOrder, Option<ToGoOrderView, Error>>
     {
         private readonly IToGoOrderViewRepository _toGoOrderRepository;
 
@@ -18,13 +18,9 @@ namespace Cafe.Business.OrderContext.QueryHandlers
             _toGoOrderRepository = toGoOrderRepository;
         }
 
-        public async Task<Option<ToGoOrderView, Error>> Handle(GetToGoOrder request, CancellationToken cancellationToken)
-        {
-            var order = await _toGoOrderRepository
-                .Get(request.Id);
-
-            return order
+        public async Task<Option<ToGoOrderView, Error>> Handle(GetToGoOrder request, CancellationToken cancellationToken) =>
+            (await _toGoOrderRepository
+                .Get(request.Id))
                 .WithException(Error.NotFound($"Order {request.Id} was not found."));
-        }
     }
 }

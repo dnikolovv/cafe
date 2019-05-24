@@ -9,23 +9,8 @@ namespace Cafe.Api.Configuration
         public static void UseSwagger(this IApplicationBuilder app, string endpointName)
         {
             app.UseSwagger();
-            app.UseSwaggerUI(setup =>
-            {
-                setup.RoutePrefix = "swagger";
-
-                setup.SwaggerEndpoint(
-                    url: "/swagger/v1/swagger.json",
-                    name: endpointName);
-            });
-
-            app.UseSwaggerUI(setup =>
-            {
-                setup.RoutePrefix = "openapi";
-
-                setup.SwaggerEndpoint(
-                    url: "/swagger/v1/swagger.json",
-                    name: endpointName);
-            });
+            app.UseSwaggerOn("swagger", endpointName);
+            app.UseSwaggerOn("openapi", endpointName);
         }
 
         public static void AddLogging(this ILoggerFactory loggerFactory, IConfigurationSection loggingConfiguration)
@@ -33,6 +18,22 @@ namespace Cafe.Api.Configuration
             loggerFactory.AddConsole(loggingConfiguration);
             loggerFactory.AddFile("logs/cafe-api-{Date}.log");
             loggerFactory.AddDebug();
+        }
+
+        private static void UseSwaggerOn(this IApplicationBuilder app, string route, string endpointName)
+        {
+            app.UseSwaggerUI(setup =>
+            {
+                setup.RoutePrefix = route;
+
+                setup.IndexStream = () => typeof(Startup)
+                    .Assembly
+                    .GetManifestResourceStream("Cafe.Api.Resources.Swagger.index.html");
+
+                setup.SwaggerEndpoint(
+                    url: "/swagger/v1/swagger.json",
+                    name: endpointName);
+            });
         }
     }
 }

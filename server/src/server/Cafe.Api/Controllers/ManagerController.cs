@@ -24,10 +24,8 @@ namespace Cafe.Api.Controllers
         /// Retrieves all currently employed managers.
         /// </summary>
         [HttpGet(Name = nameof(GetEmployedManagers))]
-        public async Task<IActionResult> GetEmployedManagers() =>
-            (await Mediator.Send(new GetEmployedManagers())
-                .MapAsync(ToResourceContainerAsync<ManagerView, ManagerResource, ManagerContainerResource>))
-                .Match(Ok, Error);
+        public Task<IActionResult> GetEmployedManagers() =>
+            ResourceContainerResult<ManagerView, ManagerResource, ManagerContainerResource>(new GetEmployedManagers());
 
         /// <summary>
         /// Hires a new manager.

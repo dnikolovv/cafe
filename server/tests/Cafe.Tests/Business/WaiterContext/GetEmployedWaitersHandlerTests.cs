@@ -29,14 +29,13 @@ namespace Cafe.Tests.Business.WaiterContext
             });
 
             // Act
-            var result = await _fixture.SendAsync(query);
+            var waiters = await _fixture.SendAsync(query);
 
             // Assert
-            result.Exists(waiters =>
-                waiters.Count == waitersToHire.Length &&
-                waiters.All(w => waitersToHire.Any(hiredWaiter => w.Id == hiredWaiter.Id &&
-                                                                  w.ShortName == hiredWaiter.ShortName &&
-                                                                  w.TablesServed.Count == hiredWaiter.ServedTables.Count)))
+            (waiters.Count == waitersToHire.Length &&
+             waiters.All(w => waitersToHire.Any(hiredWaiter => w.Id == hiredWaiter.Id &&
+                                                               w.ShortName == hiredWaiter.ShortName &&
+                                                               w.TablesServed.Count == hiredWaiter.ServedTables.Count)))
             .ShouldBeTrue();
         }
 
@@ -48,10 +47,10 @@ namespace Cafe.Tests.Business.WaiterContext
             // Purposefully not hiring any waiters
 
             // Act
-            var result = await _fixture.SendAsync(query);
+            var waiters = await _fixture.SendAsync(query);
 
             // Assert
-            result.Exists(waiters => waiters.Count == 0).ShouldBeTrue();
+            (waiters.Count == 0).ShouldBeTrue();
         }
     }
 }

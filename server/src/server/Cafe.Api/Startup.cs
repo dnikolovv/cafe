@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Cafe.Api.Configuration;
 using Cafe.Api.Filters;
 using Cafe.Api.Hateoas.Resources.Tab;
