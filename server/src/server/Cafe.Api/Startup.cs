@@ -116,7 +116,7 @@ namespace Cafe.Api
             loggerFactory.AddLogging(Configuration.GetSection("Logging"));
 
             app.UseHttpsRedirection();
-            app.UseSwagger("Cafe");
+            app.UseSwagger("Café");
             app.UseStaticFiles();
             app.UseAuthentication();
 
