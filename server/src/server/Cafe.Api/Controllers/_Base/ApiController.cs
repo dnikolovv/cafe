@@ -1,4 +1,5 @@
 ﻿using Cafe.Api.Hateoas.Resources;
+using Cafe.Core;
 using Cafe.Core.AuthContext;
 using Cafe.Domain;
 using MediatR;
@@ -58,6 +59,15 @@ namespace Cafe.Api.Controllers
 
         protected IActionResult NotFound(Error error) =>
             NotFound((object)error);
+
+        protected async Task<IActionResult> ResourceContainerResult<TResponse, TResource, TContainer>(IQuery<IList<TResponse>> query)
+            where TResource : Resource
+            where TContainer : ResourceContainer<TResource>, new()
+        {
+            var result = await Mediator.Send(query);
+
+            return Ok(ToResourceContainerAsync<TResponse, TResource, TContainer>(result));
+        }
 
         protected Task<TContainer> ToResourceContainerAsync<T, TResource, TContainer>(IEnumerable<T> models)
             where TContainer : ResourceContainer<TResource>, new()

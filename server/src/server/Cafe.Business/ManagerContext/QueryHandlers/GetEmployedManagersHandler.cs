@@ -1,9 +1,7 @@
 ﻿using Cafe.Core;
 using Cafe.Core.ManagerContext.Queries;
-using Cafe.Domain;
 using Cafe.Domain.Repositories;
 using Cafe.Domain.Views;
-using Optional;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -19,13 +17,8 @@ namespace Cafe.Business.ManagerContext.QueryHandlers
             _managerViewRepository = managerViewRepository;
         }
 
-        public async Task<Option<IList<ManagerView>, Error>> Handle(GetEmployedManagers request, CancellationToken cancellationToken)
-        {
-            var managers = await _managerViewRepository
+        public Task<IList<ManagerView>> Handle(GetEmployedManagers request, CancellationToken cancellationToken) =>
+            _managerViewRepository
                 .GetAll();
-
-            return managers
-                .Some<IList<ManagerView>, Error>();
-        }
     }
 }

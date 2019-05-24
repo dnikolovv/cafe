@@ -82,10 +82,8 @@ namespace Cafe.Api.Controllers
         /// </summary>
         [HttpGet("users", Name = nameof(GetAllUserAccounts))]
         [Authorize(Policy = AuthConstants.Policies.IsAdmin)]
-        public async Task<IActionResult> GetAllUserAccounts() =>
-            (await Mediator.Send(new GetAllUserAccounts())
-                .MapAsync(ToResourceContainerAsync<UserView, UserResource, UsersContainerResource>))
-                .Match(Ok, Error);
+        public Task<IActionResult> GetAllUserAccounts() =>
+            ResourceContainerResult<UserView, UserResource, UsersContainerResource>(new GetAllUserAccounts());
 
         /// <summary>
         /// Assigns a waiter to an account.

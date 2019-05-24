@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Cafe.Business.TabContext.QueryHandlers
 {
-    public class GetTabViewHandler : IQueryHandler<GetTabView, TabView>
+    public class GetTabViewHandler : IQueryHandler<GetTabView, Option<TabView, Error>>
     {
         private readonly ITabViewRepository _tabViewRepository;
 
@@ -18,13 +18,9 @@ namespace Cafe.Business.TabContext.QueryHandlers
             _tabViewRepository = tabViewRepository;
         }
 
-        public async Task<Option<TabView, Error>> Handle(GetTabView request, CancellationToken cancellationToken)
-        {
-            var tab = await _tabViewRepository
-                .Get(request.Id);
-
-            return tab
+        public async Task<Option<TabView, Error>> Handle(GetTabView request, CancellationToken cancellationToken) =>
+            (await _tabViewRepository
+                .Get(request.Id))
                 .WithException(Error.NotFound($"No tab with an id of {request.Id} was found."));
-        }
     }
 }

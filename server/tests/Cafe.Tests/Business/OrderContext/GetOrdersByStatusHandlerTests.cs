@@ -44,16 +44,15 @@ namespace Cafe.Tests.Business.OrderContext
             };
 
             // Act
-            var result = await _fixture.SendAsync(queryToTest);
+            var orders = await _fixture.SendAsync(queryToTest);
 
             // Assert
-            result.Exists(orders =>
-                orders.Count == ordersToInsert.Count &&
-                orders.All(order => ordersToInsert.Any(insertedOrder =>
-                    order.Id == insertedOrder.Id &&
-                    order.OrderedItems.Count == insertedOrder.OrderedItems.Count &&
-                    order.Status == insertedOrder.Status &&
-                    !string.IsNullOrEmpty(order.StatusText))))
+            (orders.Count == ordersToInsert.Count &&
+             orders.All(order => ordersToInsert.Any(insertedOrder =>
+                 order.Id == insertedOrder.Id &&
+                 order.OrderedItems.Count == insertedOrder.OrderedItems.Count &&
+                 order.Status == insertedOrder.Status &&
+                 !string.IsNullOrEmpty(order.StatusText))))
             .ShouldBeTrue();
         }
 
@@ -84,10 +83,10 @@ namespace Cafe.Tests.Business.OrderContext
             };
 
             // Act
-            var result = await _fixture.SendAsync(queryToTest);
+            var orders = await _fixture.SendAsync(queryToTest);
 
             // Assert
-            result.Exists(orders => orders.Count == 0).ShouldBeTrue();
+            (orders.Count == 0).ShouldBeTrue();
         }
     }
 }

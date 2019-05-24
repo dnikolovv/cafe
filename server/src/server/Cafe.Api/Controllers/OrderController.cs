@@ -38,16 +38,14 @@ namespace Cafe.Api.Controllers
         /// </summary>
         [HttpGet(Name = nameof(GetAllOrders))]
         [Authorize]
-        public async Task<IActionResult> GetAllOrders([FromQuery] ToGoOrderStatus? status)
+        public Task<IActionResult> GetAllOrders([FromQuery] ToGoOrderStatus? status)
         {
             // TODO: Implement proper filters on the get all endpoints
             IQuery<IList<ToGoOrderView>> request = status == null ?
                 (IQuery<IList<ToGoOrderView>>)new GetAllToGoOrders() :
                 new GetOrdersByStatus { Status = status.Value };
 
-            return (await Mediator.Send(request)
-                .MapAsync(ToResourceContainerAsync<ToGoOrderView, ToGoOrderResource, ToGoOrderContainerResource>))
-                .Match(Ok, Error);
+            return ResourceContainerResult<ToGoOrderView, ToGoOrderResource, ToGoOrderContainerResource>(request);
         }
 
         /// <summary>
