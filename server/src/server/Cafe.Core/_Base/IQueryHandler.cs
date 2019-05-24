@@ -1,11 +1,9 @@
-﻿using Cafe.Domain;
-using MediatR;
-using Optional;
+﻿using MediatR;
 
 namespace Cafe.Core
 {
     public interface IQueryHandler<in TQuery, TResponse> :
-        IRequestHandler<TQuery, Option<TResponse, Error>>
+        IRequestHandler<TQuery, TResponse>
            where TQuery : IQuery<TResponse>
     {
     }

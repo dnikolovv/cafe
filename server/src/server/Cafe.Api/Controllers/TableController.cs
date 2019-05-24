@@ -23,10 +23,8 @@ namespace Cafe.Api.Controllers
         /// Retrieves a list of the tables in the café.
         /// </summary>
         [HttpGet(Name = nameof(GetAllTables))]
-        public async Task<IActionResult> GetAllTables() =>
-            (await Mediator.Send(new GetAllTables())
-                .MapAsync(ToResourceContainerAsync<TableView, TableResource, TableContainerResource>))
-                .Match(Ok, Error);
+        public Task<IActionResult> GetAllTables() =>
+            ResourceContainerResult<TableView, TableResource, TableContainerResource>(new GetAllTables());
 
         /// <summary>
         /// Adds a table to the café.

@@ -31,13 +31,12 @@ namespace Cafe.Tests.Business.TabContext
             }
 
             // Act
-            var result = await _fixture.SendAsync(new GetAllOpenTabs());
+            var tabs = await _fixture.SendAsync(new GetAllOpenTabs());
 
             // Assert
-            result.Exists(tabs =>
-                tabs.Count == tabIds.Length &&
-                tabs.All(t => tabIds.Contains(t.Id)))
-            .ShouldBeTrue();
+            (tabs.Count == tabIds.Length &&
+             tabs.All(t => tabIds.Contains(t.Id)))
+             .ShouldBeTrue();
         }
 
         [Theory]
@@ -55,16 +54,15 @@ namespace Cafe.Tests.Business.TabContext
             await _helper.CloseTab(tabToCloseId, decimal.MaxValue);
 
             // Act
-            var result = await _fixture.SendAsync(new GetAllOpenTabs());
+            var tabs = await _fixture.SendAsync(new GetAllOpenTabs());
 
             // Assert
             // Since we've closed only the first one we expect the rest to show
             var expectedTabIds = tabIds.Skip(1).ToArray();
 
-            result.Exists(tabs =>
-                tabs.Count == tabIds.Length - 1 &&
-                tabs.All(t => expectedTabIds.Contains(t.Id)))
-            .ShouldBeTrue();
+            (tabs.Count == tabIds.Length - 1 &&
+             tabs.All(t => expectedTabIds.Contains(t.Id)))
+             .ShouldBeTrue();
         }
     }
 }

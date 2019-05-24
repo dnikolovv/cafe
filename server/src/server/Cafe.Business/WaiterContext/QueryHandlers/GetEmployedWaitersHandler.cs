@@ -1,9 +1,7 @@
 ﻿using Cafe.Core;
 using Cafe.Core.WaiterContext.Queries;
-using Cafe.Domain;
 using Cafe.Domain.Repositories;
 using Cafe.Domain.Views;
-using Optional;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -19,13 +17,8 @@ namespace Cafe.Business.WaiterContext.QueryHandlers
             _waiterViewRepository = waiterViewRepository;
         }
 
-        public async Task<Option<IList<WaiterView>, Error>> Handle(GetEmployedWaiters request, CancellationToken cancellationToken)
-        {
-            var waiters = await _waiterViewRepository
+        public Task<IList<WaiterView>> Handle(GetEmployedWaiters request, CancellationToken cancellationToken) =>
+            _waiterViewRepository
                 .GetAll();
-
-            return waiters
-                .Some<IList<WaiterView>, Error>();
-        }
     }
 }

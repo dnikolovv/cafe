@@ -24,10 +24,8 @@ namespace Cafe.Api.Controllers
         /// </summary>
         [HttpGet(Name = nameof(GetEmployedWaiters))]
         [Authorize(Policy = AuthConstants.Policies.IsAdminOrManager)]
-        public async Task<IActionResult> GetEmployedWaiters() =>
-            (await Mediator.Send(new GetEmployedWaiters())
-                .MapAsync(ToResourceContainerAsync<WaiterView, WaiterResource, WaitersContainerResource>))
-                .Match(Ok, Error);
+        public Task<IActionResult> GetEmployedWaiters() =>
+            ResourceContainerResult<WaiterView, WaiterResource, WaitersContainerResource>(new GetEmployedWaiters());
 
         /// <summary>
         /// Hires a waiter in the café.

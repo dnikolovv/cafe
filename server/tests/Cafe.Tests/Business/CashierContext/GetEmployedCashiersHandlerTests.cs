@@ -29,13 +29,12 @@ namespace Cafe.Tests.Business.CashierContext
             });
 
             // Act
-            var result = await _fixture.SendAsync(query);
+            var cashiers = await _fixture.SendAsync(query);
 
             // Assert
-            result.Exists(cashiers =>
-                cashiers.Count == cashiersToHire.Length &&
-                cashiers.All(c => cashiersToHire.Any(hiredCashier => c.Id == hiredCashier.Id &&
-                                                                     c.ShortName == hiredCashier.ShortName)))
+            (cashiers.Count == cashiersToHire.Length &&
+             cashiers.All(c => cashiersToHire.Any(hiredCashier => c.Id == hiredCashier.Id &&
+                                                                  c.ShortName == hiredCashier.ShortName)))
             .ShouldBeTrue();
         }
 
@@ -47,10 +46,10 @@ namespace Cafe.Tests.Business.CashierContext
             // Purposefully not hiring any cashiers
 
             // Act
-            var result = await _fixture.SendAsync(query);
+            var cashiers = await _fixture.SendAsync(query);
 
             // Assert
-            result.Exists(cashiers => cashiers.Count == 0).ShouldBeTrue();
+            (cashiers.Count == 0).ShouldBeTrue();
         }
     }
 }

@@ -1,9 +1,7 @@
 ﻿using Cafe.Core;
 using Cafe.Core.AuthContext.Queries;
-using Cafe.Domain;
 using Cafe.Domain.Repositories;
 using Cafe.Domain.Views;
-using Optional;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -19,8 +17,8 @@ namespace Cafe.Business.AuthContext.QueryHandlers
             _userViewRepository = userViewRepository;
         }
 
-        public async Task<Option<IList<UserView>, Error>> Handle(GetAllUserAccounts request, CancellationToken cancellationToken) =>
-            (await _userViewRepository.GetAll())
-                .Some<IList<UserView>, Error>();
+        public Task<IList<UserView>> Handle(GetAllUserAccounts request, CancellationToken cancellationToken) =>
+            _userViewRepository
+                .GetAll();
     }
 }

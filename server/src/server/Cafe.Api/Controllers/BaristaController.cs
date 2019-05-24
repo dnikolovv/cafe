@@ -33,9 +33,7 @@ namespace Cafe.Api.Controllers
         /// Retrieves currently employed baristas.
         /// </summary>
         [HttpGet(Name = nameof(GetEmployedBaristas))]
-        public async Task<IActionResult> GetEmployedBaristas() =>
-            (await Mediator.Send(new GetEmployedBaristas())
-                .MapAsync(ToResourceContainerAsync<BaristaView, BaristaResource, BaristaContainerResource>))
-                .Match(Ok, Error);
+        public Task<IActionResult> GetEmployedBaristas() =>
+            ResourceContainerResult<BaristaView, BaristaResource, BaristaContainerResource>(new GetEmployedBaristas());
     }
 }

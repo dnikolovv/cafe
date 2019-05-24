@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Cafe.Business.AuthContext.QueryHandlers
 {
-    public class GetUserHandler : IQueryHandler<GetUser, UserView>
+    public class GetUserHandler : IQueryHandler<GetUser, Option<UserView, Error>>
     {
         private readonly IUserViewRepository _userViewRepository;
 

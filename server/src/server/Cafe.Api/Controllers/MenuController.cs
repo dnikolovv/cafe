@@ -23,10 +23,8 @@ namespace Cafe.Api.Controllers
         /// Retrieves a list of all items currently in the menu.
         /// </summary>
         [HttpGet("items", Name = nameof(GetMenuItems))]
-        public async Task<IActionResult> GetMenuItems() =>
-            (await Mediator.Send(new GetAllMenuItems())
-                .MapAsync(ToResourceContainerAsync<MenuItemView, MenuItemResource, MenuItemsContainerResource>))
-                .Match(Ok, Error);
+        public Task<IActionResult> GetMenuItems() =>
+            ResourceContainerResult<MenuItemView, MenuItemResource, MenuItemsContainerResource>(new GetAllMenuItems());
 
         /// <summary>
         /// Adds items to the menu.
