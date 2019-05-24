@@ -1,5 +1,9 @@
 FROM endeveit/docker-jq AS config
 
+ARG ASPNETCORE_ENVIRONMENT
+ENV ASPNETCORE_ENVIRONMENT ${ASPNETCORE_ENVIRONMENT}
+RUN echo $ASPNETCORE_ENVIRONMENT
+
 EXPOSE 80
 EXPOSE 443
 
@@ -18,8 +22,13 @@ WORKDIR /server
 COPY --from=config /server .
 
 WORKDIR /server/src/server/Cafe.Api
-RUN dotnet publish Cafe.Api.csproj --configuration Release --output ./artifacts
+
+ARG DOTNET_BUILD_CONFIGURATION
+RUN dotnet publish Cafe.Api.csproj --configuration ${DOTNET_BUILD_CONFIGURATION} --output ./artifacts
 
 WORKDIR /server/src/server/Cafe.Api/artifacts
-RUN cat appsettings.json
+
+ARG ASPNETCORE_ENVIRONMENT
+ENV ASPNETCORE_ENVIRONMENT ${ASPNETCORE_ENVIRONMENT}
+
 ENTRYPOINT [ "dotnet", "Cafe.Api.dll" ]
