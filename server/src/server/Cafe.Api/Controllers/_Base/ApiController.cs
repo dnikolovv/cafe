@@ -65,8 +65,8 @@ namespace Cafe.Api.Controllers
             where TContainer : ResourceContainer<TResource>, new()
         {
             var result = await Mediator.Send(query);
-
-            return Ok(ToResourceContainerAsync<TResponse, TResource, TContainer>(result));
+            var resource = await ToResourceContainerAsync<TResponse, TResource, TContainer>(result);
+            return Ok(resource);
         }
 
         protected Task<TContainer> ToResourceContainerAsync<T, TResource, TContainer>(IEnumerable<T> models)
