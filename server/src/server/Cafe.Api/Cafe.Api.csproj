@@ -35,7 +35,6 @@
         <PackageReference Include="Serilog.Extensions.Logging.File" Version="1.1.0" />
         <PackageReference Include="StyleCop.Analyzers" Version="1.0.2" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="4.0.1" />
-        <PackageReference Include="Swashbuckle.AspNetCore.ReDoc" Version="4.0.1" />
         <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="5.4.0" />
         <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.5" PrivateAssets="All" />
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="2.2.0" />
@@ -54,7 +53,6 @@
         <ProjectReference Include="..\Cafe.Core\Cafe.Core.csproj" />
         <ProjectReference Include="..\Cafe.Persistance\Cafe.Persistance.csproj" />
           <PackageReference Include="Swashbuckle.AspNetCore" Version="4.0.1" />
-      <PackageReference Include="Swashbuckle.AspNetCore.ReDoc" Version="4.0.1" />
 </ItemGroup>
 
 </Project>

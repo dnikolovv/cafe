@@ -219,10 +219,47 @@ namespace Cafe.Api.Configuration
 
                 if (File.Exists(documentationPath))
                 {
-                    setup.SwaggerDoc("v1", new Info { Title = "Cafe.Api", Version = "v1" });
                     setup.IncludeXmlComments(documentationPath);
 
-                    setup.AddSecurityDefinition("Bearer", new ApiKeyScheme { In = "header", Description = "Enter 'Bearer {token}' (don't forget to add 'bearer') into the field below.", Name = "Authorization", Type = "apiKey" });
+                    var securityScheme = new ApiKeyScheme
+                    {
+                        In = "header",
+                        Description = "Enter 'Bearer {token}' (don't forget to add 'bearer') into the field below.",
+                        Name = "Authorization",
+                        Type = "apiKey"
+                    };
+
+                    setup.AddSecurityDefinition(
+                        "Bearer",
+                        securityScheme);
+
+                    var info = new Info
+                    {
+                        Contact = new Contact
+                        {
+                            Email = "dobromir@devadventures.net",
+                            Name = "Dobromir Nikolov",
+                            Url = "https://devadventures.net"
+                        },
+                        License = new License
+                        {
+                            Name = "License",
+                            Url = "https://opensource.org/licenses/MIT"
+                        },
+                        Title = "Café",
+                        Version = "v1",
+
+                        // Indentation is important for markdown to work
+                        Description = @"An example domain-driven application.
+
+Features **CQRS**, **event-sourcing**, **REST** with **HATEOAS**, **CI**/**CD** and a complete integration tests suite.
+
+Find out more on [GitHub](https://github.com/dnikolovv/cafe).
+
+---"
+                    };
+
+                    setup.SwaggerDoc("v1", info);
 
                     setup.AddSecurityRequirement(new Dictionary<string, IEnumerable<string>>
                     {
