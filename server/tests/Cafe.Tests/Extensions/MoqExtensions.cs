@@ -2,7 +2,7 @@
 using System;
 using System.Diagnostics;
 using System.Linq.Expressions;
-using System.Threading;
+using System.Threading.Tasks;
 
 namespace Cafe.Tests.Extensions
 {
@@ -16,7 +16,7 @@ namespace Cafe.Tests.Extensions
         /// <param name="expression">Verification expression.</param>
         /// <param name="times">Times the method should have been called.</param>
         /// <param name="timeoutInMs">Timeout in milliseconds.</param>
-        public static void VerifyWithTimeout<T>(this Mock<T> mock, Expression<Action<T>> expression, Times times, int timeoutInMs)
+        public static async Task VerifyWithTimeoutAsync<T>(this Mock<T> mock, Expression<Action<T>> expression, Times times, int timeoutInMs)
             where T : class
         {
             bool hasBeenExecuted = false;
@@ -37,11 +37,14 @@ namespace Cafe.Tests.Extensions
                     mock.Verify(expression, times);
                     hasBeenExecuted = true;
                 }
+#pragma warning disable RCS1075 // Avoid empty catch clause that catches System.Exception.
                 catch (Exception)
+#pragma warning restore RCS1075 // Avoid empty catch clause that catches System.Exception.
                 {
                 }
 
-                Thread.Sleep(20);
+                // Feel free to make this configurable
+                await Task.Delay(20);
             }
 
             mock.Verify(expression, times);

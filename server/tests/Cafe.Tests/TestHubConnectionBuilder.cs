@@ -1,60 +1,59 @@
-﻿using Microsoft.AspNetCore.SignalR.Client;
-using System;
-using System.Threading.Tasks;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Cafe.Tests
 {
-    public class TestHubConnectionBuilder<TEvent>
+    public class TestHubConnectionBuilder
     {
-        private string _accessToken = string.Empty;
-        private string _eventName;
+        private List<(Type Type, string Name)> _expectedEventNames;
         private string _hubUrl;
+        private string _accessToken;
 
-        public TestHubConnection<TEvent> Build()
+        public TestHubConnection Build()
         {
             if (string.IsNullOrEmpty(_hubUrl))
-                throw new InvalidOperationException($"Use {nameof(WithHub)} to set the hub url.");
+                throw new InvalidOperationException($"Use {nameof(OnHub)} to set the hub url.");
 
-            if (string.IsNullOrEmpty(_eventName))
-                throw new InvalidOperationException($"Use {nameof(WithExpectedMessage)} to set the expected event name.");
+            if (_expectedEventNames == null || _expectedEventNames.Count == 0)
+                throw new InvalidOperationException($"Use {nameof(WithExpectedEvent)} to set the expected event name.");
 
-            var connection = GetConnectionWithAccessToken(_hubUrl, _accessToken);
+            var testConnection = new TestHubConnection(_hubUrl, _accessToken);
 
-            return new TestHubConnection<TEvent>(connection, _eventName);
+            foreach (var expected in _expectedEventNames)
+            {
+                testConnection.Expect(expected.Name, expected.Type);
+            }
+
+            Clear();
+
+            return testConnection;
         }
 
-        public TestHubConnectionBuilder<TEvent> WithHub(string hubUrl) =>
-            new TestHubConnectionBuilder<TEvent>
-            {
-                _hubUrl = hubUrl,
-                _eventName = _eventName
-            };
-
-        public TestHubConnectionBuilder<TEvent> WithAccessToken(string accessToken) =>
-            new TestHubConnectionBuilder<TEvent>
-            {
-                _hubUrl = _hubUrl,
-                _eventName = _eventName,
-                _accessToken = accessToken
-            };
-
-        public TestHubConnectionBuilder<TEvent> WithExpectedMessage(string eventName) =>
-            new TestHubConnectionBuilder<TEvent>
-            {
-                _hubUrl = _hubUrl,
-                _eventName = eventName
-            };
-
-        private static HubConnection GetConnectionWithAccessToken(string url, string accessToken)
+        public TestHubConnectionBuilder OnHub(string hubUrl)
         {
-            var hubConnection = new HubConnectionBuilder()
-                .WithUrl(url, o =>
-                {
-                    o.AccessTokenProvider = () => Task.FromResult(accessToken);
-                })
-                .Build();
+            _hubUrl = hubUrl;
+            return this;
+        }
 
-            return hubConnection;
+        public TestHubConnectionBuilder WithExpectedEvent<TEvent>(string eventName)
+        {
+            if (_expectedEventNames == null)
+                _expectedEventNames = new List<(Type, string)>();
+
+            _expectedEventNames.Add((typeof(TEvent), eventName));
+            return this;
+        }
+
+        public TestHubConnectionBuilder WithAccessToken(string accessToken)
+        {
+            _accessToken = accessToken;
+            return this;
+        }
+
+        private void Clear()
+        {
+            _expectedEventNames = null;
+            _hubUrl = null;
         }
     }
 }
