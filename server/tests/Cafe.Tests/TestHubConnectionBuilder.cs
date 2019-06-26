@@ -53,6 +53,7 @@ namespace Cafe.Tests
         private void Clear()
         {
             _expectedEventNames = null;
+            _accessToken = null;
             _hubUrl = null;
         }
     }
