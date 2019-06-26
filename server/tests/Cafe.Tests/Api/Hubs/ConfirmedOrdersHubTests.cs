@@ -44,8 +44,8 @@ namespace Cafe.Tests.Api.Hubs
             await _toGoOrdersHelper.CreateConfirmedOrder(orderId, menuItems);
 
             // Assert
-            testConnection
-                .VerifyMessageReceived(
+            await testConnection
+                .VerifyMessageReceived<OrderConfirmed>(
                     e => e.Order.Id == orderId &&
                          e.Order.OrderedItems.Count == menuItems.Length,
                     Times.Once());
@@ -95,8 +95,8 @@ namespace Cafe.Tests.Api.Hubs
             await _toGoOrdersHelper.CreateConfirmedOrder(orderId, menuItems);
 
             // Assert
-            testConnection
-                .VerifyMessageReceived(
+            await testConnection
+                .VerifyMessageReceived<OrderConfirmed>(
                     e => e.Order.Id == orderId &&
                          e.Order.OrderedItems.Count == menuItems.Length,
                     Times.Once());
@@ -119,10 +119,10 @@ namespace Cafe.Tests.Api.Hubs
             exception.Message.ShouldContain("401");
         }
 
-        private TestHubConnection<OrderConfirmed> BuildTestConnection(string accessToken) =>
-            new TestHubConnectionBuilder<OrderConfirmed>()
-                .WithHub(_hubUrl)
-                .WithExpectedMessage(nameof(OrderConfirmed))
+        private TestHubConnection BuildTestConnection(string accessToken) =>
+            new TestHubConnectionBuilder()
+                .OnHub(_hubUrl)
+                .WithExpectedEvent<OrderConfirmed>(nameof(OrderConfirmed))
                 .WithAccessToken(accessToken)
                 .Build();
     }

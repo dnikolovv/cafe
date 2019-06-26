@@ -40,8 +40,8 @@ namespace Cafe.Tests.Api.Hubs
             await _fixture.SendAsync(hireWaiterCommand);
 
             // Assert
-            testConnection
-                .VerifyMessageReceived(
+            await testConnection
+                .VerifyMessageReceived<WaiterHired>(
                     e => e.Waiter.Id == hireWaiterCommand.Id &&
                          e.Waiter.ShortName == hireWaiterCommand.ShortName,
                     Times.Once());
@@ -90,8 +90,8 @@ namespace Cafe.Tests.Api.Hubs
             await _fixture.SendAsync(hireWaiterCommand);
 
             // Assert
-            testConnection
-                .VerifyMessageReceived(
+            await testConnection
+                .VerifyMessageReceived<WaiterHired>(
                     e => e.Waiter.Id == hireWaiterCommand.Id &&
                          e.Waiter.ShortName == hireWaiterCommand.ShortName,
                     Times.Once());
@@ -113,10 +113,10 @@ namespace Cafe.Tests.Api.Hubs
             exception.Message.ShouldContain("401");
         }
 
-        private TestHubConnection<WaiterHired> BuildTestConnection(string accessToken) =>
-            new TestHubConnectionBuilder<WaiterHired>()
-                .WithHub(_hubUrl)
-                .WithExpectedMessage(nameof(WaiterHired))
+        private TestHubConnection BuildTestConnection(string accessToken) =>
+            new TestHubConnectionBuilder()
+                .OnHub(_hubUrl)
+                .WithExpectedEvent<WaiterHired>(nameof(WaiterHired))
                 .WithAccessToken(accessToken)
                 .Build();
     }

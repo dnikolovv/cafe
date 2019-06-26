@@ -45,7 +45,7 @@ namespace Cafe.Tests.Api.Hubs
             await _fixture.SendAsync(callWaiterCommand);
 
             // Assert
-            testConnection.VerifyMessageReceived(
+            await testConnection.VerifyMessageReceived<WaiterCalled>(
                 e => e.TableNumber == addTableCommand.Number &&
                      e.WaiterId == hireWaiterCommand.Id,
                 Times.Once());
@@ -72,7 +72,7 @@ namespace Cafe.Tests.Api.Hubs
             await _fixture.SendAsync(requestBillCommand);
 
             // Assert
-            testConnection.VerifyMessageReceived(
+            await testConnection.VerifyMessageReceived<BillRequested>(
                 e => e.TableNumber == addTableCommand.Number &&
                      e.WaiterId == hireWaiterCommand.Id,
                 Times.Once());
@@ -104,7 +104,7 @@ namespace Cafe.Tests.Api.Hubs
             await _fixture.SendAsync(requestBillCommand);
 
             // Assert
-            testConnection.VerifyNoMessagesWereReceived();
+            await testConnection.VerifyNoMessagesWereReceived();
         }
 
         [Theory]
@@ -133,7 +133,7 @@ namespace Cafe.Tests.Api.Hubs
             await _fixture.SendAsync(callWaiterCommand);
 
             // Assert
-            testConnection.VerifyNoMessagesWereReceived();
+            await testConnection.VerifyNoMessagesWereReceived();
         }
 
         [Theory]
@@ -169,9 +169,9 @@ namespace Cafe.Tests.Api.Hubs
             await _fixture.SendAsync(callWaiterCommand);
 
             // Assert
-            invalidTestConnection.VerifyNoMessagesWereReceived();
+            await invalidTestConnection.VerifyNoMessagesWereReceived();
 
-            validTestConnection.VerifyMessageReceived(
+            await validTestConnection.VerifyMessageReceived<WaiterCalled>(
                 e => e.TableNumber == addTableCommand.Number &&
                      e.WaiterId == hireAssignedWaiterCommand.Id,
                 Times.Once());
@@ -210,15 +210,15 @@ namespace Cafe.Tests.Api.Hubs
             await _fixture.SendAsync(requestBillCommand);
 
             // Assert
-            invalidTestConnection.VerifyNoMessagesWereReceived();
+            await invalidTestConnection.VerifyNoMessagesWereReceived();
 
-            validTestConnection.VerifyMessageReceived(
+            await validTestConnection.VerifyMessageReceived<BillRequested>(
                 e => e.TableNumber == addTableCommand.Number &&
                      e.WaiterId == hireAssignedWaiterCommand.Id,
                 Times.Once());
         }
 
-        private async Task<TestHubConnection<TEvent>> BuildTestHubConnectionWithoutAssignedWaiter<TEvent>(
+        private async Task<TestHubConnection> BuildTestHubConnectionWithoutAssignedWaiter<TEvent>(
             HireWaiter hireAssignedWaiterCommand,
             HireWaiter hireUnassignedWaiterCommand,
             AddTable addTableCommand,
@@ -248,7 +248,7 @@ namespace Cafe.Tests.Api.Hubs
             return testConnection;
         }
 
-        private async Task<TestHubConnection<TEvent>> BuildTestTableActionConnection<TEvent>(HireWaiter hireWaiterCommand, AddTable addTableCommand, Register registerCommand)
+        private async Task<TestHubConnection> BuildTestTableActionConnection<TEvent>(HireWaiter hireWaiterCommand, AddTable addTableCommand, Register registerCommand)
         {
             await HireWaiterWithTable(hireWaiterCommand, addTableCommand);
 
@@ -283,10 +283,10 @@ namespace Cafe.Tests.Api.Hubs
             await _fixture.SendAsync(assignTableCommand);
         }
 
-        private TestHubConnection<TEvent> BuildTestConnection<TEvent>(string accessToken) =>
-            new TestHubConnectionBuilder<TEvent>()
-                .WithHub(_hubUrl)
-                .WithExpectedMessage(typeof(TEvent).Name)
+        private TestHubConnection BuildTestConnection<TEvent>(string accessToken) =>
+            new TestHubConnectionBuilder()
+                .OnHub(_hubUrl)
+                .WithExpectedEvent<TEvent>(typeof(TEvent).Name)
                 .WithAccessToken(accessToken)
                 .Build();
     }
