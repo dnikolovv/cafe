@@ -2,7 +2,7 @@
 
 ![logo](./cafe-logo.svg)
 
-> Café is an example application demonstrating a combination between domain-driven design and functional programming. It is continuously deployed to https://cafeapi.devadventures.net/openapi and https://cafe.devadventures.net.
+> Café is an example application demonstrating a combination between domain-driven design and functional programming. It is continuously deployed to https://cafeapi.devadventures.net/openapi and https://cafe.devadventures.net. (if those are unavailable it's because I've stopped paying my Azure subscription, sorry)
 
 ## Features
 
