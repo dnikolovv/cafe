@@ -260,7 +260,7 @@ You'll also need at least version `2.2` of the [`.NET Core SDK`](https://dotnet.
 
 #### Using npm
 
-1. While in the context of the `./client`/ folder
+1. While in the context of the `./client` folder
 2. Run `npm i`
 3. Run `npm start`
 
