@@ -43,13 +43,13 @@ See [`Cafe.Business`](https://github.com/dnikolovv/cafe/tree/master/server/src/s
 >
 > **Tab** - An open bill on a table.
 >
-> **To-go order/Order** - An order that is not linked to a particular table. Customers make these orders by going >to the Cashier. When they get paid, the Cashier will issue them to the Barista for completion.
+> **To-go order/Order** - An order that is not linked to a particular table. Customers make these orders by going to the Cashier. When they get paid, the Cashier will issue them to the Barista for completion.
 >
 > **Customer** - A person that opened a tab/made an order.
 >
-> **Table** - Represents a physical table in the café. Tables are assigned to Waiters who are responsible for >managing the tab.
+> **Table** - Represents a physical table in the café. Tables are assigned to Waiters who are responsible for managing the tab.
 >
-> **Manager** - The café manager. Manages the menu items. Manages the tables. Hires Waiters/Cashiers/Baristas. >Assigns waiters to tables.
+> **Manager** - The café manager. Manages the menu items. Manages the tables. Hires Waiters/Cashiers/Baristas. Assigns waiters to tables.
 >
 > **Cashier** - Takes to-go orders.
 >
