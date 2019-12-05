@@ -256,7 +256,7 @@ You'll also need at least version `2.2` of the [`.NET Core SDK`](https://dotnet.
 
 #### Using Docker
 
-1. Execute `run-app.sh`. You should have a client running at http://localhost:3000 and api at http://localhost:5000
+1. Execute `run-app.sh`. You should have a client running at http://localhost:3000 and API at http://localhost:5000
 
 #### Using npm
 
