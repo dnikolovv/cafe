@@ -17,6 +17,8 @@
 
 As a whole, this projects aims to stand out from the other examples by being as complete as possible code/structure wise. It should serve as an example of how a real enterprise project built using these principles would look like.
 
+This project can also serve as an example for my [Integration Testing SignalR Websockets](https://www.dotnetcurry.com/aspnet-core/1519/integration-testing-signalr-kestrel) article. See [some hub tests](/server/tests/Cafe.Tests/Api/Hubs/HiredWaitersHubTests.cs) for examples.
+
 ## What to note
 
 ### 1. Demonstrated DDD concepts
